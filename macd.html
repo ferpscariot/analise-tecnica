@@ -155,6 +155,9 @@
   fill: none; stroke: currentColor; stroke-width: 2;
   stroke-linecap: round; stroke-linejoin: round;
 }
+.eyebrow .inline-icon {
+  width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
+}
 
 /* ===== cores dos gráficos SVG seguem o tema ===== */
 svg [stroke="#16212E"] { stroke: var(--ink); }
@@ -215,7 +218,12 @@ svg [fill="#fff"] { fill: var(--card); }
       <span id="themeLabel">Tema escuro</span>
     </button>
   </div>
-  <div class="eyebrow">🧭 Tendência com gatilho</div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path>
+    </svg>Tendência com gatilho
+  </div>
   <h1>MACD, construído do zero</h1>
   <p class="lead">O MACD parece complicado por ter três elementos — mas cada um nasce do anterior. Vamos montá-lo camada por camada, com os dados reais da AMD.</p>
 

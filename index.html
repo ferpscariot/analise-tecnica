@@ -730,11 +730,20 @@ footer {
         <span style="font-weight:400; color:var(--ink-soft);">períodos atrás</span>
       </div>
       <div class="readout" id="momReadout"></div>
-      <div class="mini-indicators">
-        <p class="how inline-anchor" id="lab-ao">
-          <b>AO</b> compara duas médias do ponto médio dos candles (5 vs 34) para mostrar o pulso ganhando ou perdendo força.
-        </p>
-      </div>
+      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
+    </div>
+
+    <!-- AO LAB -->
+    <div class="lab reveal" id="lab-ao">
+      <span class="lab-tag osc">Laboratório 4</span>
+      <h3>AO — o pulso entre duas médias</h3>
+      <p class="how">
+        O Awesome Oscillator compara duas médias do <b>ponto médio do candle</b> ((máxima + mínima) ÷ 2): uma rápida de 5 períodos
+        e uma lenta de 34. <span class="num">AO = SMA5(ponto médio) − SMA34(ponto médio)</span>.
+        Passe o cursor sobre o histograma e leia o pulso de cada dia da AMD.
+      </p>
+      <div id="aoChart"></div>
+      <div class="readout" id="aoReadout">Passe o cursor sobre uma barra para ler o AO daquele dia.</div>
       <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
     </div>
   </div>
@@ -755,7 +764,7 @@ footer {
 
     <!-- MA LAB -->
     <div class="lab reveal" id="lab-medias">
-      <span class="lab-tag trend">Laboratório 4</span>
+      <span class="lab-tag trend">Laboratório 5</span>
       <h3>Médias móveis — três horizontes, um empilhamento</h3>
       <p class="how">
         Cada média enxerga um prazo: a <b>EMA20</b> reage rápido (curto prazo), a <b>EMA50</b> suaviza (médio) e a
@@ -773,7 +782,7 @@ footer {
 
     <!-- ADX LAB -->
     <div class="lab reveal" id="lab-adx">
-      <span class="lab-tag trend">Laboratório 5</span>
+      <span class="lab-tag trend">Laboratório 6</span>
       <h3>ADX — força, não direção</h3>
       <p class="how">
         O ADX é o dinamômetro: mede a <em>força</em> da tendência (0–100) sem dizer se ela é de alta ou de baixa.
@@ -792,7 +801,7 @@ footer {
 
     <!-- MACD LAB -->
     <div class="lab reveal" id="lab-macd">
-      <span class="lab-tag trend">Laboratório 6</span>
+      <span class="lab-tag trend">Laboratório 7</span>
       <h3>MACD — a tendência com gatilho embutido</h3>
       <p class="how">
         Nascido de médias (<span class="num">EMA12 − EMA26</span>), o MACD segue a tendência — mas seu
@@ -1056,7 +1065,51 @@ function renderMom() {
 document.getElementById('momPeriod').addEventListener('input', renderMom);
 renderMom();
 
-/* ================== LAB 4: MÉDIAS MÓVEIS ================== */
+/* ================== LAB 4: AO ================== */
+var MED_DATA = [113.59,111.62,109.34,113.83,113.8,113.84,110.36,112.94,115.48,117.51,116.98,117.13,120.7,122.44,122.17,120.14,116.47,122.96,128.64,127.49,130.18,130.03,135.86,141.82,143.95,144.69,143.5,137.68,137.5,138.41,135.47,137.53,139.12,143.83,144.5,144.74,156.12,156.61,160.32,158.32,158.63,152.78,157.72,161.15,164.77,171.69,178.5,177.09,177.75,170.61,175.71,174.9,161.99,171.22,173.5,174.1,171.83,183.01,182.5,178.19,176.58,169.63,162.45,164.07,165.17,163.66,167.34,166.17,168.82,165.24,159.51,162.67,159.92,153.66,150.93,154.3,161.26,157.6,157.66,159.95,160.58,158.69,154.31,157.87,160.05,161.3,161.76,158.2,159.58,162.1,160.81,162.34,168.59,166.91,214.86,214.09,223.28,234.81,223.71,219.54,220.44,230.0,236.72,231.64,238.64,238.14,232.51,232.22,247.67,255.11,260.79,262.24,258.1,257.77,257.4,252.38,251.23,244.62,230.26,244.7,241.55,256.75,252.85,244.26,242.96,231.36,227.5,219.39,201.92,211.49,200.43,211.29,216.16,217.24,220.19,214.98,216.63,219.94,221.04,221.37,220.64,215.84,215.78,210.97,207.67,204.51,203.43,209.69,216.74,214.66,215.25,214.93,212.64,215.57,215.72,223.02,227.25,217.08,209.65,207.13,205.19,204.84,219.04,219.6,232.78,231.68,232.46,244.34,251.36,261.61,254.29,251.75,253.81,250.72,239.9,242.49,244.84,208.87,197.38,202.85,210.88,216.26,214.43,211.8,206.97,200.06,199.1,201.2,201.72,196.76,211.61,213.51,205.62,199.81,194.37,190.93,196.15,199.33,195.75,196.0,204.39,206.42,200.14,195.98,197.49,197.24,199.31,199.36,202.28,205.41,203.28,216.42,212.22,200.48,200.65,200.2,209.84,209.2,222.02,218.74,230.55,234.01,244.27,244.68,250.58,255.01,270.42,277.6,279.81,281.41,295.19,304.99,343.76,339.01,318.75,329.51,343.78,356.02,350.27,352.23,416.32,411.39,437.29,460.05,442.46,446.07,444.5,431.18,424.75,411.06,437.72,441.4,471.56,493.6,498.44,510.36,512.72,502.15,511.86,535.37,516.03,484.78,486.34,471.12,462.89,474.24,507.86,544.43,528.1,519.9,533.0,549.35,517.65,514.23,528.94,513.86,518.77,565.15,551.41,526.83];
+var AO5 = sma(MED_DATA, 5), AO34 = sma(MED_DATA, 34);
+var AO_VALS = MED_DATA.map(function(_, i){ return (AO5[i] !== null && AO34[i] !== null) ? AO5[i] - AO34[i] : null; });
+function renderAO() {
+  var W3 = 780, H3 = 250, X0 = 46, X1 = W3 - 14;
+  function xm(i) { return X0 + i / (N - 1) * (X1 - X0); }
+  var pm = mapper(AO_VALS, X0, X1, 14, H3 - 20, 0.12);
+  var zeroY = pm.y(0);
+  var barW = Math.max(1.4, (X1 - X0) / N - 0.6);
+
+  var s = '<svg class="chart" viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" id="aoSvg">';
+  s += '<line x1="' + X0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + X1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3"/>';
+  s += '<text x="' + (X0-6) + '" y="' + (zeroY+4).toFixed(1) + '" font-size="10" fill="var(--wire)" text-anchor="end">0</text>';
+  for (var i = 0; i < N; i++) {
+    if (AO_VALS[i] === null) continue;
+    var prev = AO_VALS[i-1];
+    var green = (prev == null) ? (AO_VALS[i] >= 0) : (AO_VALS[i] >= prev);
+    var col = green ? 'var(--trend)' : 'var(--danger)';
+    var y = pm.y(AO_VALS[i]);
+    var top = Math.min(y, zeroY), h = Math.abs(y - zeroY) || 0.5;
+    s += '<rect x="' + (xm(i) - barW/2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + h.toFixed(1) +
+         '" fill="' + col + '" opacity="0.72" data-i="' + i + '" class="aobar" style="cursor:pointer;"/>';
+  }
+  s += '<text x="' + X0 + '" y="12" font-size="10.5" fill="var(--trend)" font-weight="700">▮ acelerando</text>';
+  s += '<text x="' + (X0 + 110) + '" y="12" font-size="10.5" fill="var(--danger)" font-weight="700">▮ desacelerando</text>';
+  s += '</svg>';
+  document.getElementById('aoChart').innerHTML = s;
+
+  document.getElementById('aoSvg').addEventListener('pointermove', function(e) {
+    var t = e.target;
+    if (!t.classList || !t.classList.contains('aobar')) return;
+    var i = parseInt(t.getAttribute('data-i'), 10);
+    var ao = AO_VALS[i], prev = AO_VALS[i-1];
+    var accel = (prev == null) ? null : (ao >= prev);
+    document.getElementById('aoReadout').innerHTML =
+      'Dia ' + (i+1) + ' de ' + N + ' · SMA5 <span class="num">' + AO5[i].toFixed(2) + '</span> · SMA34 <span class="num">' + AO34[i].toFixed(2) + '</span><br>' +
+      'AO = ' + AO5[i].toFixed(2) + ' − ' + AO34[i].toFixed(2) + ' = ' +
+      (ao >= 0 ? '<span class="g">+' + ao.toFixed(2) + '</span> (rápida acima da lenta)' : '<span class="r">' + ao.toFixed(2) + '</span> (rápida abaixo da lenta)') +
+      (accel === null ? '' : accel ? ' · <span class="g">barra verde</span>: momentum acelerando.' : ' · <span class="r">barra vermelha</span>: momentum desacelerando.');
+  });
+}
+renderAO();
+
+/* ================== LAB 5: MÉDIAS MÓVEIS ================== */
 var maVisible = { ema20: true, ema50: true, sma200: true };
 var E20 = ema(CLOSES, 20), E50 = ema(CLOSES, 50), S200 = sma(CLOSES, 200);
 var MW = 780, MH = 300, MX0 = 46, MX1 = MW - 14;
@@ -1091,7 +1144,7 @@ function renderMA() {
 }
 renderMA();
 
-/* ================== LAB 5: ADX ================== */
+/* ================== LAB 6: ADX ================== */
 function renderADX() {
   var v = parseInt(document.getElementById('adxSlider').value, 10);
   document.getElementById('adxVal').textContent = v;
@@ -1120,7 +1173,7 @@ function renderADX() {
 document.getElementById('adxSlider').addEventListener('input', renderADX);
 renderADX();
 
-/* ================== LAB 6: MACD ================== */
+/* ================== LAB 7: MACD ================== */
 function renderMACD() {
   var e12 = ema(CLOSES, 12), e26 = ema(CLOSES, 26);
   var macd = CLOSES.map(function(_, i){ return (e12[i] !== null && e26[i] !== null) ? e12[i] - e26[i] : null; });
