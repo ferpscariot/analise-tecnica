@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Momentum — o horizonte muda tudo</title>
+<style>
+  :root {
+    --paper: #F7F9FB; --grid: #E3E9F0; --ink: #16212E; --ink-soft: #4A5A6B;
+    --wire: #8CA3B8; --up: #1B6E53; --down: #C0392B; --accent: #E8590C;
+    --card: #FFFFFF;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, serif; background: var(--paper); color: var(--ink);
+    line-height: 1.7; padding: 32px 20px; font-size: 16px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h1 { font-family: var(--sans); font-weight: 800; font-size: clamp(28px, 5vw, 40px);
+    letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px; }
+  p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
+
+  .formula { font-family: var(--mono); background: var(--card); border: 1px solid var(--grid);
+    border-radius: 10px; padding: 14px 18px; font-size: 14.5px; text-align: center;
+    margin: 24px 0; }
+
+  .panel { background: var(--card); border: 1px solid var(--grid); border-radius: 16px;
+    padding: 26px 24px; margin-top: 24px;
+    box-shadow: 0 16px 40px -28px rgba(22,33,46,0.25); }
+
+  .ctrl { display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    font-family: var(--sans); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  input[type=range] { accent-color: var(--accent); flex: 1; min-width: 180px; }
+  input[type=range]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .pill { font-family: var(--mono); background: var(--ink); color: #fff;
+    padding: 4px 14px; border-radius: 999px; font-size: 14px; min-width: 52px; text-align: center; }
+  .ctrl-note { font-family: var(--sans); font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+
+  .verdict { display: flex; align-items: baseline; gap: 12px; margin: 20px 0 4px;
+    flex-wrap: wrap; font-family: var(--sans); }
+  .verdict .big { font-size: 40px; font-weight: 800; font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em; }
+  .verdict .big.up { color: var(--up); }
+  .verdict .big.down { color: var(--down); }
+  .verdict .tag { font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+  .verdict .tag.up { background: #E2F1EB; color: var(--up); }
+  .verdict .tag.down { background: #FBEAE8; color: var(--down); }
+
+  svg { width: 100%; height: auto; display: block; }
+
+  .calc { font-family: var(--mono); font-size: 13.5px; background: var(--paper);
+    border: 1px dashed var(--wire); border-radius: 10px; padding: 12px 16px; margin-top: 16px;
+    line-height: 1.9; }
+  .calc .up { color: var(--up); font-weight: 700; }
+  .calc .down { color: var(--down); font-weight: 700; }
+  .calc .hi { color: var(--accent); font-weight: 700; }
+
+  .presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .preset { font-family: var(--sans); font-weight: 700; font-size: 13px;
+    border: 2px solid var(--grid); background: var(--card); color: var(--ink);
+    padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: all 0.15s; }
+  .preset:hover { border-color: var(--wire); }
+  .preset:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .preset.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .insight { font-size: 14.5px; color: var(--ink-soft); margin-top: 18px;
+    background: #FDF3EC; border-left: 3px solid var(--accent); padding: 12px 16px; border-radius: 0; }
+  .insight b { color: var(--ink); }
+
+  h2 { font-family: var(--sans); font-weight: 800; font-size: 22px; margin: 8px 0 4px;
+    letter-spacing: -0.01em; }
+  .foot { font-family: var(--mono); font-size: 12px; color: var(--wire);
+    text-align: center; margin-top: 40px; }
+
+/* ===== abas do guia (compartilhadas entre as páginas) ===== */
+.site-tabs {
+  position: sticky; top: 0; z-index: 60;
+  margin: -32px -20px 28px;
+  background: var(--paper, #FFFFFF);
+  border-bottom: 1px solid var(--grid, #E3E9F0);
+}
+.site-tabs-inner {
+  max-width: 880px; margin: 0 auto; padding: 0 22px;
+  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.site-tabs a {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Consolas, monospace);
+  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft, #4A5A6B); text-decoration: none;
+  padding: 14px 12px 11px; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.site-tabs a:hover { color: var(--ink, #16212E); }
+.site-tabs a[aria-current="page"] {
+  color: var(--ink, #16212E);
+  border-bottom-color: var(--osc, #E8590C);
+}
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html" aria-current="page">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="eyebrow">⏱ Oscilador · velocidade</div>
+  <h1>Momentum: o horizonte muda tudo</h1>
+  <p class="lead">A régua mais simples do mercado — e a prova de que "está subindo?" é uma pergunta incompleta sem dizer <em>desde quando</em>.</p>
+
+  <div class="formula">Momentum(N) = Preço de hoje − Preço de N períodos atrás</div>
+
+  <div class="panel">
+    <h2>Ajuste o horizonte N</h2>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:18px;">
+      Deslize e veja o Momentum real da AMD ser recalculado. Repare no sinal: o mesmo ativo, no mesmo dia, pode estar
+      "subindo" num horizonte e "caindo" em outro.
+    </p>
+
+    <div class="ctrl">
+      <label for="n">N =</label>
+      <input type="range" id="n" min="2" max="80" value="10" step="1">
+      <span class="pill" id="nval">10</span>
+      <span class="ctrl-note">períodos (pregões) atrás</span>
+    </div>
+
+    <div class="presets" id="presets"></div>
+
+    <div class="verdict">
+      <span class="big" id="momBig">+5.34</span>
+      <span class="tag" id="momTag">momento de alta</span>
+    </div>
+
+    <div id="priceChart"></div>
+
+    <div class="calc" id="calc"></div>
+
+    <div class="insight" id="insight"></div>
+  </div>
+
+  <div class="panel">
+    <h2>O mesmo dia, em todos os horizontes de uma vez</h2>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:8px;">
+      Cada barra é o Momentum da AMD calculado com um N diferente, todos a partir do fechamento de hoje.
+      Verde = positivo, vermelho = negativo. Veja como o sinal alterna conforme o horizonte se estica.
+    </p>
+    <div id="spectrumChart"></div>
+    <p style="font-size:13.5px; color:var(--ink-soft); margin-top:12px;">
+      É por isso que Momentum curto capta <b>viradas recentes</b> e Momentum longo capta a <b>maré de fundo</b> —
+      não são contraditórios, são perguntas diferentes.
+    </p>
+  </div>
+
+  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ) · material educativo, não é recomendação</div>
+</div>
+
+<script>
+var CLOSES = [112.06,110.71,110.31,114.56,112.86,113.03,110.73,114.63,117.31,118.58,115.69,116.19,121.73,123.24,121.14,118.5,116.16,126.39,127.1,126.79,128.24,129.58,138.43,143.4,143.68,143.81,141.9,136.11,138.52,137.91,134.8,137.82,138.41,144.16,146.42,146.24,155.61,160.08,160.41,156.99,157.0,154.72,158.65,162.12,166.47,173.66,177.44,179.51,176.31,171.7,176.78,174.31,163.12,172.4,172.76,172.28,174.95,184.42,180.95,177.51,176.14,166.55,165.2,163.71,167.76,163.36,166.62,167.13,168.58,162.63,162.32,162.13,161.79,151.14,151.41,155.82,159.54,155.67,158.57,161.16,160.46,159.16,157.92,157.39,159.79,160.9,160.88,161.27,159.46,161.36,161.79,164.01,169.73,164.67,203.71,211.51,235.56,232.89,214.9,216.42,218.09,238.6,234.56,233.08,240.56,238.03,230.23,234.99,252.92,259.67,258.01,264.33,254.84,256.12,259.65,250.05,256.33,237.7,233.54,243.98,237.52,258.89,247.96,246.81,240.52,230.29,223.55,206.02,203.78,215.05,206.13,214.24,217.53,219.76,215.24,217.6,215.98,217.97,221.11,221.62,221.42,221.43,210.78,207.58,209.17,198.11,201.06,213.43,214.95,214.9,215.04,214.99,215.61,215.34,214.16,223.47,221.08,214.35,210.02,204.68,203.17,207.69,220.97,223.6,227.92,231.83,231.92,249.8,253.73,259.68,251.31,252.03,252.74,252.18,236.73,246.27,242.11,200.19,192.5,208.44,216.0,213.57,213.58,205.94,207.32,203.08,200.12,203.37,200.15,196.6,213.84,210.86,203.68,200.21,198.62,190.95,202.07,199.45,192.43,202.68,203.23,204.83,197.74,193.39,196.58,196.31,199.46,205.27,201.33,202.68,205.37,220.27,203.77,201.99,196.04,203.43,210.21,217.5,220.18,221.53,231.82,236.64,245.04,246.83,255.07,258.12,278.26,278.39,274.95,284.49,303.46,305.33,347.81,334.63,323.21,337.11,354.49,360.54,341.54,355.26,421.39,408.46,455.19,458.79,448.29,445.5,449.7,424.1,420.99,414.05,447.58,449.59,467.51,503.89,495.54,518.09,516.1,510.13,521.54,542.52,523.2,466.38,490.33,475.505,452.4,488.45,511.57,547.26,507.29,512.48,537.37,551.63,519.85,519.74,532.57,521.58,539.49,580.91,540.88,517.82];
+var N_TOTAL = CLOSES.length;
+var TODAY = CLOSES[N_TOTAL - 1];
+
+function poly(pts, color, w, dash) {
+  return '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color +
+    '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-linejoin="round"/>';
+}
+
+/* ---- price chart: show a tail of history with the two compared points marked ---- */
+function renderPriceChart(nBack) {
+  var W = 720, H = 240, X0 = 44, X1 = W - 14, Y0 = 16, Y1 = H - 26;
+  var tail = Math.max(nBack + 8, 40);
+  var start = Math.max(0, N_TOTAL - tail);
+  var seg = CLOSES.slice(start);
+  var m = seg.length;
+  function xm(i) { return X0 + i / (m - 1) * (X1 - X0); }
+  var mn = Math.min.apply(null, seg), mx = Math.max.apply(null, seg);
+  var pad = (mx - mn) * 0.12 || 1; mn -= pad; mx += pad;
+  function ym(v) { return Y1 - (v - mn) / (mx - mn) * (Y1 - Y0); }
+
+  var pts = seg.map(function(v, i) { return xm(i).toFixed(1) + ',' + ym(v).toFixed(1); });
+  var todayIdx = m - 1;
+  var pastIdx = m - 1 - nBack;
+
+  var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" role="img" aria-label="Preço da AMD com o ponto de hoje e o de N períodos atrás destacados">';
+  s += poly(pts, '#16212E', 1.7);
+
+  if (pastIdx >= 0) {
+    var pastPrice = seg[pastIdx];
+    var up = TODAY >= pastPrice;
+    var col = up ? '#1B6E53' : '#C0392B';
+    var xPast = xm(pastIdx), yPast = ym(pastPrice);
+    var xTod = xm(todayIdx), yTod = ym(TODAY);
+    s += '<line x1="' + xPast.toFixed(1) + '" y1="' + yPast.toFixed(1) + '" x2="' + xTod.toFixed(1) + '" y2="' + yTod.toFixed(1) + '" stroke="' + col + '" stroke-width="1.4" stroke-dasharray="4,3" opacity="0.85"/>';
+    s += '<circle cx="' + xPast.toFixed(1) + '" cy="' + yPast.toFixed(1) + '" r="5" fill="#fff" stroke="' + col + '" stroke-width="2"/>';
+    s += '<circle cx="' + xTod.toFixed(1) + '" cy="' + yTod.toFixed(1) + '" r="5" fill="' + col + '"/>';
+    s += '<text x="' + xPast.toFixed(1) + '" y="' + (yPast - 10).toFixed(1) + '" font-size="10.5" fill="' + col + '" text-anchor="middle" font-weight="700">há ' + nBack + '</text>';
+    s += '<text x="' + xTod.toFixed(1) + '" y="' + (yTod - 10).toFixed(1) + '" font-size="10.5" fill="' + col + '" text-anchor="end" font-weight="700">hoje</text>';
+  }
+  s += '</svg>';
+  document.getElementById('priceChart').innerHTML = s;
+}
+
+/* ---- spectrum: momentum across many N values ---- */
+function renderSpectrum() {
+  var Ns = [];
+  for (var k = 2; k <= 80; k += 2) Ns.push(k);
+  var vals = Ns.map(function(nb) { return TODAY - CLOSES[N_TOTAL - 1 - nb]; });
+  var W = 720, H = 220, X0 = 44, X1 = W - 14, Y0 = 14, Y1 = H - 28;
+  var mx = Math.max.apply(null, vals), mn = Math.min.apply(null, vals);
+  var span = Math.max(Math.abs(mx), Math.abs(mn)) * 1.1 || 1;
+  function ym(v) { return (Y0 + Y1) / 2 - v / span * ((Y1 - Y0) / 2); }
+  var zeroY = ym(0);
+  var bw = (X1 - X0) / Ns.length * 0.72;
+  function xm(i) { return X0 + (i + 0.5) / Ns.length * (X1 - X0); }
+
+  var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" role="img" aria-label="Momentum da AMD calculado para horizontes de 2 a 80 pregões, mostrando alternância de sinal">';
+  s += '<line x1="' + X0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + X1 + '" y2="' + zeroY.toFixed(1) + '" stroke="#8CA3B8" stroke-width="1"/>';
+  s += '<text x="' + (X0 - 6) + '" y="' + (zeroY + 3).toFixed(1) + '" font-size="10" fill="#8CA3B8" text-anchor="end">0</text>';
+  vals.forEach(function(v, i) {
+    var y = ym(v), top = Math.min(y, zeroY), h = Math.abs(y - zeroY) || 0.5;
+    var col = v >= 0 ? '#1B6E53' : '#C0392B';
+    s += '<rect x="' + (xm(i) - bw/2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + col + '" opacity="0.75" rx="1"/>';
+  });
+  [2,20,40,60,80].forEach(function(lbl) {
+    var i = Ns.indexOf(lbl);
+    if (i >= 0) s += '<text x="' + xm(i).toFixed(1) + '" y="' + (H - 10) + '" font-size="10" fill="#8CA3B8" text-anchor="middle">N=' + lbl + '</text>';
+  });
+  s += '</svg>';
+  document.getElementById('spectrumChart').innerHTML = s;
+}
+
+var PRESETS = [
+  { n: 5, label: 'Curtíssimo (5)' },
+  { n: 10, label: 'Curto (10)' },
+  { n: 20, label: 'Médio (20)' },
+  { n: 60, label: 'Longo (60)' }
+];
+var presetWrap = document.getElementById('presets');
+PRESETS.forEach(function(p) {
+  var b = document.createElement('button');
+  b.className = 'preset'; b.textContent = p.label;
+  b.setAttribute('data-n', p.n);
+  b.onclick = function() { document.getElementById('n').value = p.n; update(); };
+  presetWrap.appendChild(b);
+});
+
+function update() {
+  var nBack = parseInt(document.getElementById('n').value, 10);
+  document.getElementById('nval').textContent = nBack;
+  var past = CLOSES[N_TOTAL - 1 - nBack];
+  var mom = TODAY - past;
+  var up = mom >= 0;
+
+  var big = document.getElementById('momBig');
+  big.textContent = (up ? '+' : '') + mom.toFixed(2);
+  big.className = 'big ' + (up ? 'up' : 'down');
+  var tag = document.getElementById('momTag');
+  tag.textContent = up ? 'momento de alta' : 'momento de baixa';
+  tag.className = 'tag ' + (up ? 'up' : 'down');
+
+  document.getElementById('calc').innerHTML =
+    'Preço de hoje: <span class="hi">$' + TODAY.toFixed(2) + '</span><br>' +
+    'Preço há ' + nBack + ' pregões: <span class="hi">$' + past.toFixed(2) + '</span><br>' +
+    'Momentum(' + nBack + ') = ' + TODAY.toFixed(2) + ' − ' + past.toFixed(2) + ' = ' +
+    (up ? '<span class="up">+' + mom.toFixed(2) + '</span>' : '<span class="down">' + mom.toFixed(2) + '</span>');
+
+  var pctRoc = (TODAY / past - 1) * 100;
+  document.getElementById('insight').innerHTML =
+    'Em ' + nBack + ' pregões, o preço ' + (up ? '<b>subiu</b>' : '<b>caiu</b>') +
+    ' ' + Math.abs(pctRoc).toFixed(1) + '% (isso seria o ROC, a versão em porcentagem). ' +
+    (nBack <= 8 ? 'Horizonte curtíssimo: capta o humor dos últimos dias, muito sensível a ruído.'
+     : nBack >= 50 ? 'Horizonte longo: reflete a maré de fundo, ignora solavancos do dia a dia.'
+     : 'Horizonte intermediário: equilíbrio entre reagir rápido e filtrar ruído.');
+
+  document.querySelectorAll('.preset').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.getAttribute('data-n'), 10) === nBack);
+  });
+
+  renderPriceChart(nBack);
+}
+
+document.getElementById('n').addEventListener('input', update);
+renderSpectrum();
+update();
+</script>
+</body>
+</html>

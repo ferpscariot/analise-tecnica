@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>De onde vem a Média de Ganho e Perda (RSI)</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    margin: 0;
+    padding: 32px 20px;
+    color: #1a1a1a;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 21px; margin: 0 0 6px 0; text-align: center; }
+  p.sub { margin: 0 0 40px 0; font-size: 13.5px; color: #666; text-align: center; }
+
+  .step {
+    margin-bottom: 44px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #eee;
+  }
+  .step:last-child { border-bottom: none; }
+
+  .step-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #1a1a1a; color: #fff; font-weight: 700; font-size: 13px;
+    margin-right: 10px; flex-shrink: 0;
+  }
+  .step-title {
+    display: flex; align-items: center;
+    font-size: 16px; font-weight: 700; margin-bottom: 14px;
+  }
+  .step-text { font-size: 14px; line-height: 1.7; color: #333; margin-bottom: 16px; }
+
+  /* day cards for step 1 & 2 */
+  .day-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .day-card {
+    flex: 0 0 auto; width: 110px;
+    border: 1px solid #e5e5e5; border-radius: 10px;
+    padding: 10px 8px; text-align: center; background: #fafafa;
+  }
+  .day-card .date { font-size: 10.5px; color: #888; margin-bottom: 4px; }
+  .day-card .price { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .day-card .change { font-size: 12px; font-weight: 700; }
+  .change.up { color: #2e8b57; }
+  .change.down { color: #c25c5c; }
+  .day-card .tag { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; }
+  .tag-gain { background: #eaf7ef; color: #2e8b57; }
+  .tag-loss { background: #fdeeee; color: #c25c5c; }
+
+  /* equation blocks */
+  .eq {
+    background: #f7f7f8; border: 1px solid #e5e5e5; border-radius: 10px;
+    padding: 18px 20px; font-size: 15px; text-align: center; line-height: 2;
+  }
+  .eq .big { font-size: 19px; font-weight: 700; }
+  .eq .highlight { color: #5b7fd9; }
+  .eq .g { color: #2e8b57; font-weight: 700; }
+  .eq .l { color: #c25c5c; font-weight: 700; }
+
+  .result-box {
+    background: #eef3ff; border: 1px solid #5b7fd9; border-radius: 10px;
+    padding: 18px 20px; text-align: center; font-size: 17px; font-weight: 700; color: #1a1a1a;
+  }
+
+  /* gauge */
+  .gauge-wrap { margin-top: 18px; }
+  .gauge-bar { position: relative; height: 26px; border-radius: 13px; overflow: hidden; display: flex; }
+  .gauge-seg { height: 100%; }
+  .gauge-pointer {
+    position: absolute; top: -10px; width: 0; height: 0;
+    border-left: 8px solid transparent; border-right: 8px solid transparent;
+    border-top: 10px solid #1a1a1a; transform: translateX(-8px);
+  }
+  .gauge-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: #888; margin-top: 4px; }
+
+  .note {
+    font-size: 12.5px; color: #666; font-style: italic; margin-top: 14px;
+    background: #fafafa; border-left: 3px solid #ccc; padding: 8px 12px;
+  }
+
+/* ===== abas do guia (compartilhadas entre as páginas) ===== */
+.site-tabs {
+  position: sticky; top: 0; z-index: 60;
+  margin: -32px -20px 28px;
+  background: var(--paper, #FFFFFF);
+  border-bottom: 1px solid var(--grid, #E3E9F0);
+}
+.site-tabs-inner {
+  max-width: 880px; margin: 0 auto; padding: 0 22px;
+  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.site-tabs a {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Consolas, monospace);
+  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft, #4A5A6B); text-decoration: none;
+  padding: 14px 12px 11px; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.site-tabs a:hover { color: var(--ink, #16212E); }
+.site-tabs a[aria-current="page"] {
+  color: var(--ink, #16212E);
+  border-bottom-color: var(--osc, #E8590C);
+}
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html" aria-current="page">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1>De onde vem a Média de Ganho e Perda do RSI?</h1>
+  <p class="sub">Passo a passo, com os fechamentos reais da AMD</p>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-title"><span class="step-badge">1</span> Cada dia vira uma variação</div>
+    <div class="step-text">
+      A conta parte do fechamento de cada dia comparado com o dia anterior. Veja os 5 primeiros dias do nosso histórico:
+    </div>
+    <div class="day-row" id="step1-cards"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-title"><span class="step-badge">2</span> A variação vira Ganho ou Perda — nunca os dois</div>
+    <div class="step-text">
+      Se o dia subiu, essa variação é um <b style="color:#2e8b57;">Ganho</b> (e a Perda do dia é zero).
+      Se caiu, é uma <b style="color:#c25c5c;">Perda</b> (e o Ganho do dia é zero).
+    </div>
+    <div class="day-row" id="step2-cards"></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-title"><span class="step-badge">3</span> Somar 14 dias e tirar a média</div>
+    <div class="step-text">
+      Repetindo isso pelos <b>14 primeiros dias</b> reais (não só os 5 que vimos acima), separamos tudo em duas pilhas
+      — a pilha dos ganhos e a pilha das perdas — e tiramos a média de cada uma:
+    </div>
+    <div class="eq">
+      Soma dos 14 Ganhos = <span class="g">19,82</span> &nbsp;→&nbsp; Média de Ganho = 19,82 ÷ 14 = <span class="big g">1,42</span>
+      <br>
+      Soma das 14 Perdas = <span class="l">10,74</span> &nbsp;→&nbsp; Média de Perda = 10,74 ÷ 14 = <span class="big l">0,77</span>
+    </div>
+    <div class="note">
+      Essa é a "semente" — a primeira média, calculada do jeito simples (soma ÷ 14). A partir do 15º dia, o cálculo muda
+      de método (ele passa a usar só o valor de ontem + o dia de hoje, sem precisar somar tudo de novo).
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step">
+    <div class="step-title"><span class="step-badge">4</span> Dividir: Ganho médio ÷ Perda médio = RS</div>
+    <div class="step-text">
+      Agora é só dividir uma média pela outra:
+    </div>
+    <div class="eq">
+      RS = <span class="g">1,42</span> ÷ <span class="l">0,77</span> = <span class="big highlight">1,85</span>
+    </div>
+    <div class="step-text" style="margin-top:14px;">
+      RS = 1,85 significa que, nesses 14 dias, os dias de alta subiram <b>quase o dobro</b>, em média, do que os dias de baixa caíram.
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-title"><span class="step-badge">5</span> Encaixar o RS na fórmula final do RSI</div>
+    <div class="step-text">
+      Por último, esse RS entra numa fórmula que só serve pra "comprimir" o resultado numa escala fixa de 0 a 100:
+    </div>
+    <div class="eq">
+      RSI = 100 − 100 ÷ (1 + RS) = 100 − 100 ÷ (1 + 1,85) = 100 − 35,1
+    </div>
+    <div class="result-box">RSI ≈ 64,9</div>
+    <div class="gauge-wrap">
+      <div class="gauge-bar">
+        <div class="gauge-seg" style="width:30%; background:#4caf7d;"></div>
+        <div class="gauge-seg" style="width:40%; background:#f2c14e;"></div>
+        <div class="gauge-seg" style="width:30%; background:#e05c5c;"></div>
+      </div>
+      <div class="gauge-pointer" id="gauge-pointer"></div>
+      <div class="gauge-labels"><span>0 (sobrevendido)</span><span>50</span><span>100 (sobrecomprado)</span></div>
+    </div>
+    <div class="note">
+      64,9 fica na faixa neutra, mas já puxando pro lado de "ganhos dominando" — bem coerente com o RS de 1,85 que calculamos.
+    </div>
+  </div>
+
+</div>
+
+<script>
+var days = [
+  { t: 1747834200, c: 112.06 },
+  { t: 1747920600, c: 110.71 },
+  { t: 1748007000, c: 110.31 },
+  { t: 1748352600, c: 114.56 },
+  { t: 1748439000, c: 112.86 },
+  { t: 1748525400, c: 113.03 }
+];
+
+function fmtDate(t) {
+  return new Date(t * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
+var step1Html = '';
+var step2Html = '';
+for (var i = 1; i < days.length; i++) {
+  var change = days[i].c - days[i-1].c;
+  var isUp = change >= 0;
+  step1Html += '<div class="day-card">' +
+    '<div class="date">' + fmtDate(days[i].t) + '</div>' +
+    '<div class="price">$' + days[i].c.toFixed(2) + '</div>' +
+    '<div class="change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲' : '▼') + ' ' + (isUp ? '+' : '') + change.toFixed(2) + '</div>' +
+    '</div>';
+
+  var gain = isUp ? change : 0;
+  var loss = isUp ? 0 : -change;
+  step2Html += '<div class="day-card">' +
+    '<div class="date">' + fmtDate(days[i].t) + '</div>' +
+    '<div class="change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '+' : '') + change.toFixed(2) + '</div>' +
+    '<div class="tag ' + (isUp ? 'tag-gain' : 'tag-loss') + '">' + (isUp ? 'GANHO ' + gain.toFixed(2) : 'PERDA ' + loss.toFixed(2)) + '</div>' +
+    '</div>';
+}
+document.getElementById('step1-cards').innerHTML = step1Html;
+document.getElementById('step2-cards').innerHTML = step2Html;
+
+// gauge pointer at RSI = 64.9
+var rsiValue = 64.9;
+document.getElementById('gauge-pointer').style.left = rsiValue + '%';
+</script>
+</body>
+</html>

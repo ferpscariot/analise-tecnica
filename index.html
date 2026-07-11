@@ -529,9 +529,43 @@ footer {
   color: var(--wire);
   font-family: var(--font-mono);
 }
+
+/* ===== abas do guia (compartilhadas entre as páginas) ===== */
+.site-tabs {
+  position: sticky; top: 0; z-index: 60;
+  background: var(--paper, #F7F9FB);
+  border-bottom: 1px solid var(--grid, #E3E9F0);
+}
+.site-tabs-inner {
+  max-width: 880px; margin: 0 auto; padding: 0 22px;
+  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.site-tabs a {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Consolas, monospace);
+  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft, #4A5A6B); text-decoration: none;
+  padding: 14px 12px 11px; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.site-tabs a:hover { color: var(--ink, #16212E); }
+.site-tabs a[aria-current="page"] {
+  color: var(--ink, #16212E);
+  border-bottom-color: var(--osc, #E8590C);
+}
 </style>
 </head>
 <body>
+
+<!-- ================= ABAS ================= -->
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html" aria-current="page">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+  </div>
+</nav>
 
 <!-- ================= HERO ================= -->
 <section id="hero">
