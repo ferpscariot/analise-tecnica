@@ -173,6 +173,10 @@
     fill: none; stroke: currentColor; stroke-width: 2;
     stroke-linecap: round; stroke-linejoin: round;
   }
+  .eyebrow .inline-icon {
+    display: inline-block;
+    width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
+  }
 
 /* ===== abas do guia (compartilhadas entre as páginas) ===== */
 .site-tabs {
@@ -219,7 +223,13 @@
     </button>
   </div>
 
-  <div class="eyebrow">⏱ Oscilador · a fórmula do RSI</div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
+    </svg>Oscilador · a fórmula do RSI
+  </div>
   <h1>De onde vem a Média de Ganho e Perda do RSI?</h1>
   <p class="lead">Passo a passo, com os fechamentos reais da AMD.</p>
 

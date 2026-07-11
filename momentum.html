@@ -166,6 +166,10 @@
   fill: none; stroke: currentColor; stroke-width: 2;
   stroke-linecap: round; stroke-linejoin: round;
 }
+.eyebrow .inline-icon {
+  display: inline-block;
+  width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
+}
 
 /* ===== cores dos gráficos SVG seguem o tema ===== */
 svg [stroke="#16212E"] { stroke: var(--ink); }
@@ -226,7 +230,13 @@ svg [fill="#fff"] { fill: var(--card); }
       <span id="themeLabel">Tema escuro</span>
     </button>
   </div>
-  <div class="eyebrow">⏱ Oscilador · velocidade</div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
+    </svg>Oscilador · velocidade
+  </div>
   <h1>Momentum: o horizonte muda tudo</h1>
   <p class="lead">A régua mais simples do mercado — e a prova de que "está subindo?" é uma pergunta incompleta sem dizer <em>desde quando</em>.</p>
 

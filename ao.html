@@ -145,6 +145,10 @@
   fill: none; stroke: currentColor; stroke-width: 2;
   stroke-linecap: round; stroke-linejoin: round;
 }
+.eyebrow .inline-icon {
+  display: inline-block;
+  width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
+}
 
 /* ===== cores dos gráficos SVG seguem o tema ===== */
 svg [stroke="#16212E"] { stroke: var(--ink); }
@@ -205,7 +209,13 @@ svg [fill="#fff"] { fill: var(--card); }
       <span id="themeLabel">Tema escuro</span>
     </button>
   </div>
-  <div class="eyebrow">⏱ Oscilador · pulso do momentum</div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
+    </svg>Oscilador · pulso do momentum
+  </div>
   <h1>AO — o pulso entre duas médias</h1>
   <p class="lead">O Awesome Oscillator mede a diferença entre uma média rápida e uma lenta — não do preço de fechamento, mas do <b>ponto médio</b> de cada candle.</p>
 
