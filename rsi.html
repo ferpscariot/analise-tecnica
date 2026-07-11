@@ -2,83 +2,176 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>De onde vem a Média de Ganho e Perda (RSI)</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
 <style>
+  :root {
+    color-scheme: light;
+    --paper: #F7F9FB;
+    --grid: #E3E9F0;
+    --ink: #16212E;
+    --ink-soft: #4A5A6B;
+    --wire: #8CA3B8;
+    --osc: #E8590C;
+    --osc-soft: #FDEBE0;
+    --trend: #1B6E53;
+    --trend-soft: #E2F1EB;
+    --card: #FFFFFF;
+    --card-strong: #F7F9FB;
+    --danger: #C0392B;
+    --danger-soft: #FDEDEC;
+    --amber: #E0A93E;
+    --on-accent: #FFFFFF;
+    --surface-glow: transparent;
+    --shadow-card: 0 1px 0 rgba(22,33,46,0.04), 0 12px 30px -20px rgba(22,33,46,0.15);
+    --shadow-lab: 0 1px 0 rgba(22,33,46,0.04), 0 16px 40px -26px rgba(22,33,46,0.2);
+    --font-display: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-body: Georgia, "Times New Roman", serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0F141B;
+    --grid: rgba(142, 166, 191, 0.14);
+    --ink: #EEF4F8;
+    --ink-soft: #B3C0CB;
+    --wire: #73869A;
+    --osc: #FF8A3D;
+    --osc-soft: rgba(255, 138, 61, 0.15);
+    --trend: #43D391;
+    --trend-soft: rgba(67, 211, 145, 0.14);
+    --card: #151D27;
+    --card-strong: #1B2531;
+    --danger: #FF6B6B;
+    --danger-soft: rgba(255, 107, 107, 0.14);
+    --amber: #F2C14E;
+    --on-accent: #071016;
+    --surface-glow: rgba(255,255,255,0.035);
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 48px -34px rgba(0,0,0,0.95);
+    --shadow-lab: 0 1px 0 rgba(255,255,255,0.04) inset, 0 22px 58px -38px rgba(0,0,0,0.95);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    background: #ffffff;
-    margin: 0;
-    padding: 32px 20px;
-    color: #1a1a1a;
+    font-family: var(--font-body);
+    background:
+      linear-gradient(180deg, var(--surface-glow), transparent 260px),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      var(--paper);
+    background-size: auto, 28px 28px, 28px 28px, auto;
+    color: var(--ink);
+    line-height: 1.7; padding: 32px 20px; font-size: 16.5px;
   }
-  .wrap { max-width: 760px; margin: 0 auto; }
-  h1 { font-size: 21px; margin: 0 0 6px 0; text-align: center; }
-  p.sub { margin: 0 0 40px 0; font-size: 13.5px; color: #666; text-align: center; }
+  .wrap { max-width: 880px; margin: 0 auto; }
 
-  .step {
-    margin-bottom: 44px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid #eee;
-  }
-  .step:last-child { border-bottom: none; }
+  .eyebrow { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--osc); margin-bottom: 12px; }
+  h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(28px, 5vw, 40px);
+    letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px; }
+  p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
 
-  .step-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: #1a1a1a; color: #fff; font-weight: 700; font-size: 13px;
-    margin-right: 10px; flex-shrink: 0;
-  }
+  .step { margin-top: 40px; }
   .step-title {
-    display: flex; align-items: center;
-    font-size: 16px; font-weight: 700; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-display); font-weight: 800; font-size: 20px;
+    letter-spacing: -0.01em; margin-bottom: 12px;
   }
-  .step-text { font-size: 14px; line-height: 1.7; color: #333; margin-bottom: 16px; }
+  .step-badge {
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--ink); color: var(--on-accent);
+    font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  }
+  .step-text { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 14px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--grid); border-radius: 14px;
+    padding: 20px; box-shadow: var(--shadow-card);
+  }
 
   /* day cards for step 1 & 2 */
   .day-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
   .day-card {
     flex: 0 0 auto; width: 110px;
-    border: 1px solid #e5e5e5; border-radius: 10px;
-    padding: 10px 8px; text-align: center; background: #fafafa;
+    border: 1px solid var(--grid); border-radius: 10px;
+    padding: 10px 8px; text-align: center; background: var(--card);
+    box-shadow: var(--shadow-card);
   }
-  .day-card .date { font-size: 10.5px; color: #888; margin-bottom: 4px; }
-  .day-card .price { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-  .day-card .change { font-size: 12px; font-weight: 700; }
-  .change.up { color: #2e8b57; }
-  .change.down { color: #c25c5c; }
-  .day-card .tag { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 700; }
-  .tag-gain { background: #eaf7ef; color: #2e8b57; }
-  .tag-loss { background: #fdeeee; color: #c25c5c; }
+  .day-card .date { font-family: var(--font-mono); font-size: 10.5px; color: var(--wire); margin-bottom: 4px; }
+  .day-card .price { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .day-card .change { font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+  .change.up { color: var(--trend); }
+  .change.down { color: var(--danger); }
+  .day-card .tag { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 10px;
+    font-family: var(--font-display); font-size: 10.5px; font-weight: 700; }
+  .tag-gain { background: var(--trend-soft); color: var(--trend); }
+  .tag-loss { background: var(--danger-soft); color: var(--danger); }
 
   /* equation blocks */
   .eq {
-    background: #f7f7f8; border: 1px solid #e5e5e5; border-radius: 10px;
-    padding: 18px 20px; font-size: 15px; text-align: center; line-height: 2;
+    font-family: var(--font-mono); background: var(--card); border: 1px dashed var(--wire);
+    border-radius: 10px; padding: 18px 20px; font-size: 14px; text-align: center; line-height: 2;
   }
-  .eq .big { font-size: 19px; font-weight: 700; }
-  .eq .highlight { color: #5b7fd9; }
-  .eq .g { color: #2e8b57; font-weight: 700; }
-  .eq .l { color: #c25c5c; font-weight: 700; }
+  .eq .big { font-size: 18px; font-weight: 700; }
+  .eq .highlight { color: var(--osc); font-weight: 700; }
+  .eq .g { color: var(--trend); font-weight: 700; }
+  .eq .l { color: var(--danger); font-weight: 700; }
 
   .result-box {
-    background: #eef3ff; border: 1px solid #5b7fd9; border-radius: 10px;
-    padding: 18px 20px; text-align: center; font-size: 17px; font-weight: 700; color: #1a1a1a;
+    background: var(--osc-soft); border: 1px solid var(--osc); border-radius: 10px;
+    padding: 18px 20px; text-align: center;
+    font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--ink);
+    margin-top: 14px;
   }
 
   /* gauge */
-  .gauge-wrap { margin-top: 18px; }
+  .gauge-wrap { margin-top: 18px; position: relative; }
   .gauge-bar { position: relative; height: 26px; border-radius: 13px; overflow: hidden; display: flex; }
   .gauge-seg { height: 100%; }
   .gauge-pointer {
-    position: absolute; top: -10px; width: 0; height: 0;
+    position: absolute; top: 8px; width: 0; height: 0;
     border-left: 8px solid transparent; border-right: 8px solid transparent;
-    border-top: 10px solid #1a1a1a; transform: translateX(-8px);
+    border-top: 10px solid var(--ink); transform: translateX(-8px);
   }
-  .gauge-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: #888; margin-top: 4px; }
+  .gauge-labels { display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--wire); margin-top: 4px; }
 
   .note {
-    font-size: 12.5px; color: #666; font-style: italic; margin-top: 14px;
-    background: #fafafa; border-left: 3px solid #ccc; padding: 8px 12px;
+    font-size: 14.5px; color: var(--ink-soft); font-style: italic; margin-top: 14px;
+    background: var(--osc-soft); border-left: 3px solid var(--osc); padding: 12px 16px;
+  }
+  .note b { color: var(--ink); }
+
+  .foot { font-family: var(--font-mono); font-size: 12px; color: var(--wire);
+    text-align: center; margin-top: 44px; }
+
+  /* ===== toggle de tema (padrão do guia) ===== */
+  .page-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--grid); border-radius: 999px;
+    background: var(--card); color: var(--ink);
+    box-shadow: var(--shadow-card); cursor: pointer;
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    padding: 9px 14px;
+    transition: border-color 0.15s, transform 0.15s, background 0.15s;
+  }
+  .theme-toggle:hover { border-color: var(--wire); transform: translateY(-1px); }
+  .theme-toggle:focus-visible { outline: 3px solid var(--osc); outline-offset: 2px; }
+  .theme-toggle .theme-icon { width: 16px; height: 16px; display: inline-flex; }
+  .lucide-icon {
+    display: block; width: 100%; height: 100%;
+    fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
   }
 
 /* ===== abas do guia (compartilhadas entre as páginas) ===== */
@@ -119,8 +212,16 @@
 </nav>
 
 <div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"><svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+
+  <div class="eyebrow">⏱ Oscilador · a fórmula do RSI</div>
   <h1>De onde vem a Média de Ganho e Perda do RSI?</h1>
-  <p class="sub">Passo a passo, com os fechamentos reais da AMD</p>
+  <p class="lead">Passo a passo, com os fechamentos reais da AMD.</p>
 
   <!-- STEP 1 -->
   <div class="step">
@@ -135,8 +236,8 @@
   <div class="step">
     <div class="step-title"><span class="step-badge">2</span> A variação vira Ganho ou Perda — nunca os dois</div>
     <div class="step-text">
-      Se o dia subiu, essa variação é um <b style="color:#2e8b57;">Ganho</b> (e a Perda do dia é zero).
-      Se caiu, é uma <b style="color:#c25c5c;">Perda</b> (e o Ganho do dia é zero).
+      Se o dia subiu, essa variação é um <b style="color:var(--trend);">Ganho</b> (e a Perda do dia é zero).
+      Se caiu, é uma <b style="color:var(--danger);">Perda</b> (e o Ganho do dia é zero).
     </div>
     <div class="day-row" id="step2-cards"></div>
   </div>
@@ -185,9 +286,9 @@
     <div class="result-box">RSI ≈ 64,9</div>
     <div class="gauge-wrap">
       <div class="gauge-bar">
-        <div class="gauge-seg" style="width:30%; background:#4caf7d;"></div>
-        <div class="gauge-seg" style="width:40%; background:#f2c14e;"></div>
-        <div class="gauge-seg" style="width:30%; background:#e05c5c;"></div>
+        <div class="gauge-seg" style="width:30%; background:var(--trend);"></div>
+        <div class="gauge-seg" style="width:40%; background:var(--amber);"></div>
+        <div class="gauge-seg" style="width:30%; background:var(--danger);"></div>
       </div>
       <div class="gauge-pointer" id="gauge-pointer"></div>
       <div class="gauge-labels"><span>0 (sobrevendido)</span><span>50</span><span>100 (sobrecomprado)</span></div>
@@ -197,6 +298,7 @@
     </div>
   </div>
 
+  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ) · material educativo, não é recomendação</div>
 </div>
 
 <script>
@@ -238,6 +340,28 @@ document.getElementById('step2-cards').innerHTML = step2Html;
 // gauge pointer at RSI = 64.9
 var rsiValue = 64.9;
 document.getElementById('gauge-pointer').style.left = rsiValue + '%';
+
+/* ===== tema (padrão do guia) ===== */
+var themeIcons = {
+  dark: '<svg class="lucide-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>',
+  light: '<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>'
+};
+function setTheme(theme) {
+  var next = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('vxd-theme', next); } catch (e) {}
+  var toggle = document.getElementById('themeToggle');
+  var icon = document.getElementById('themeIcon');
+  var label = document.getElementById('themeLabel');
+  if (toggle) toggle.setAttribute('aria-pressed', next === 'dark');
+  if (icon) icon.innerHTML = next === 'dark' ? themeIcons.dark : themeIcons.light;
+  if (label) label.textContent = next === 'dark' ? 'Tema claro' : 'Tema escuro';
+}
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+setTheme(document.documentElement.getAttribute('data-theme') || 'light');
 </script>
 </body>
 </html>
