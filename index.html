@@ -938,20 +938,11 @@ var heroRSI = calcRSI(CLOSES, 14);
 var heroE20 = ema(CLOSES, 20), heroE50 = ema(CLOSES, 50), heroS200 = sma(CLOSES, 200);
 
 function heroSvg(lens) {
-  var hh = lens === 'osc' ? 400 : HH;
-  var priceY0 = 16, priceY1 = lens === 'osc' ? 190 : 296;
-  var pm = mapper(CLOSES, HX0, HX1, priceY0, priceY1);
+  var hh = HH;
   var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + hh + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
 
-  if (lens === 'trend') {
-    s += poly(ptsOf(heroS200, hxm, pm.y), 'var(--trend)', 3);
-    s += poly(ptsOf(heroE50, hxm, pm.y), 'var(--ma-mid)', 1.8);
-    s += poly(ptsOf(heroE20, hxm, pm.y), 'var(--ma-fast)', 1.8);
-  }
-  s += poly(ptsOf(CLOSES, hxm, pm.y), 'var(--ink)', 1.7);
-
   if (lens === 'osc') {
-    var ry0 = 224, ry1 = 384;
+    var ry0 = 40, ry1 = hh - 16;
     function rym(v) { return ry1 - v / 100 * (ry1 - ry0); }
     s += '<rect x="' + HX0 + '" y="' + ry0 + '" width="' + (HX1-HX0) + '" height="' + (rym(70)-ry0) + '" fill="var(--osc-soft)"/>';
     s += '<rect x="' + HX0 + '" y="' + rym(30) + '" width="' + (HX1-HX0) + '" height="' + (ry1-rym(30)) + '" fill="var(--osc-soft)"/>';
@@ -960,8 +951,13 @@ function heroSvg(lens) {
     s += '<text x="' + (HX0-6) + '" y="' + (rym(70)+4) + '" font-size="10" fill="var(--osc)" text-anchor="end">70</text>';
     s += '<text x="' + (HX0-6) + '" y="' + (rym(30)+4) + '" font-size="10" fill="var(--osc)" text-anchor="end">30</text>';
     s += poly(ptsOf(heroRSI, hxm, rym), 'var(--osc)', 2);
-    s += '<text x="' + HX0 + '" y="' + (ry0-8) + '" font-size="11" fill="var(--osc)" font-weight="700">RSI(14) — a leitura de velocidade</text>';
+    s += '<text x="' + HX0 + '" y="16" font-size="11" fill="var(--osc)" font-weight="700">RSI(14) — a leitura de velocidade</text>';
   } else {
+    var pm = mapper(CLOSES, HX0, HX1, 16, hh - 20);
+    s += poly(ptsOf(heroS200, hxm, pm.y), 'var(--trend)', 3);
+    s += poly(ptsOf(heroE50, hxm, pm.y), 'var(--ma-mid)', 1.8);
+    s += poly(ptsOf(heroE20, hxm, pm.y), 'var(--ma-fast)', 1.8);
+    s += poly(ptsOf(CLOSES, hxm, pm.y), 'var(--ink)', 1.7);
     var lastI = N - 1;
     s += '<text x="' + (HX1-4) + '" y="' + (pm.y(heroE20[lastI])-6) + '" font-size="10" fill="var(--ma-fast)" text-anchor="end" font-weight="700">EMA20</text>';
     s += '<text x="' + (HX1-4) + '" y="' + (pm.y(heroE50[lastI])+14) + '" font-size="10" fill="var(--ma-mid)" text-anchor="end" font-weight="700">EMA50</text>';
@@ -972,7 +968,7 @@ function heroSvg(lens) {
 }
 
 var captions = {
-  osc: 'A lente da <b class="osc-word">velocidade</b>: embaixo do preço, o RSI mostra quando o movimento ficou rápido demais (faixas laranja). Repare: mesmo numa alta gigante, o velocímetro raramente ficou no vermelho — sinal de subida sem euforia.',
+  osc: 'A lente da <b class="osc-word">velocidade</b>: o RSI mostra quando o movimento ficou rápido demais (faixas laranja). Repare: mesmo numa alta gigante, o velocímetro raramente ficou no vermelho — sinal de subida sem euforia.',
   trend: 'A lente da <b class="trend-word">direção</b>: as três médias revelam a rota de fundo. Preço acima da SMA200 (verde) o tempo todo — a bússola nunca deixou de apontar para cima, mesmo nos solavancos.'
 };
 function setLens(lens) {
