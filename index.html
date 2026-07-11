@@ -637,7 +637,6 @@ footer {
           <li><a href="#lab-estocastico">Estocástico — posição no range</a></li>
           <li><a href="#lab-momentum">Momentum — velocidade bruta</a></li>
           <li><a href="#lab-ao">AO — pulso do momentum</a></li>
-          <li><a href="#lab-cci">CCI — desvio da média</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"está esticado?"</em></p>
       </div>
@@ -716,7 +715,7 @@ footer {
       <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
     </div>
 
-    <!-- MOM / AO / CCI compact -->
+    <!-- MOM / AO compact -->
     <div class="lab reveal" id="lab-momentum">
       <span class="lab-tag osc">Laboratório 3</span>
       <h3>Momentum — a régua mais simples de todas</h3>
@@ -734,9 +733,6 @@ footer {
       <div class="mini-indicators">
         <p class="how inline-anchor" id="lab-ao">
           <b>AO</b> compara duas médias do ponto médio dos candles (5 vs 34) para mostrar o pulso ganhando ou perdendo força.
-        </p>
-        <p class="how inline-anchor" id="lab-cci">
-          <b>CCI</b> mede o desvio do preço em relação à sua média estatística — acima de <span class="num">+100</span> ou abaixo de <span class="num">−100</span>, o mercado saiu do "normal".
         </p>
       </div>
       <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
@@ -932,9 +928,10 @@ var heroRSI = calcRSI(CLOSES, 14);
 var heroE20 = ema(CLOSES, 20), heroE50 = ema(CLOSES, 50), heroS200 = sma(CLOSES, 200);
 
 function heroSvg(lens) {
-  var priceY0 = 16, priceY1 = lens === 'osc' ? 196 : 296;
+  var hh = lens === 'osc' ? 400 : HH;
+  var priceY0 = 16, priceY1 = lens === 'osc' ? 190 : 296;
   var pm = mapper(CLOSES, HX0, HX1, priceY0, priceY1);
-  var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + HH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + hh + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
 
   if (lens === 'trend') {
     s += poly(ptsOf(heroS200, hxm, pm.y), 'var(--trend)', 3);
@@ -944,7 +941,7 @@ function heroSvg(lens) {
   s += poly(ptsOf(CLOSES, hxm, pm.y), 'var(--ink)', 1.7);
 
   if (lens === 'osc') {
-    var ry0 = 226, ry1 = 306;
+    var ry0 = 224, ry1 = 384;
     function rym(v) { return ry1 - v / 100 * (ry1 - ry0); }
     s += '<rect x="' + HX0 + '" y="' + ry0 + '" width="' + (HX1-HX0) + '" height="' + (rym(70)-ry0) + '" fill="var(--osc-soft)"/>';
     s += '<rect x="' + HX0 + '" y="' + rym(30) + '" width="' + (HX1-HX0) + '" height="' + (ry1-rym(30)) + '" fill="var(--osc-soft)"/>';
