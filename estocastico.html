@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estocástico — onde o preço parou dentro do range</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --accent: var(--osc); --accent-soft: var(--osc-soft); }
+
+  /* laboratório de arrastar */
+  .stoch-band-wrap { padding: 20px 0 4px; }
+  .stoch-band {
+    position: relative;
+    height: 54px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(67,211,145,0.2), rgba(255,138,61,0.22));
+    border: 1px solid var(--grid);
+  }
+  .stoch-band .edge {
+    position: absolute; top: 60px; font-family: var(--mono); font-size: 11.5px; color: var(--wire);
+  }
+  .stoch-handle {
+    position: absolute; top: -8px; width: 26px; height: 70px;
+    transform: translateX(-13px);
+    cursor: grab; touch-action: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stoch-handle:active { cursor: grabbing; }
+  .stoch-handle::before {
+    content: ""; width: 6px; height: 100%;
+    background: var(--ink); border-radius: 3px;
+    box-shadow: 0 0 0 1px var(--handle-ring);
+  }
+  .stoch-handle:focus-visible { outline: 3px solid var(--osc); outline-offset: 2px; border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="volume.html">Volume</a>
+    <a href="risco.html">Risco</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
+    </svg>Oscilador · posição no range
+  </div>
+  <h1>Estocástico — onde o preço parou dentro do range</h1>
+  <p class="lead">O %K ignora quanto o preço andou. Ele responde uma pergunta mais simples: <em>onde o fechamento parou</em> entre a mínima e a máxima do período?</p>
+
+  <div class="formula">
+    %K = (fechamento − mínima do período) ÷ (máxima − mínima) × 100<br>
+    %D = média móvel de 3 dias do %K &nbsp;<span style="color:var(--wire);">(a "linha de sinal" que suaviza o %K)</span>
+  </div>
+
+  <div class="panel">
+    <h2>Sinta a conta na mão</h2>
+    <p class="ptext">
+      Um range de $100 a $150. Arraste a barra preta (o fechamento) e veja o %K reagir:
+      fechar colado na máxima dá %K alto; colado na mínima, %K baixo. É só isso que ele mede.
+    </p>
+    <div class="stoch-band-wrap">
+      <div class="stoch-band" id="stochBand">
+        <span class="edge" style="left:0;">Mínima · $100</span>
+        <span class="edge" style="right:0;">Máxima · $150</span>
+        <div class="stoch-handle" id="stochHandle" tabindex="0" role="slider"
+             aria-label="Posição do fechamento no range" aria-valuemin="0" aria-valuemax="100" aria-valuenow="63"></div>
+      </div>
+    </div>
+    <div class="readout" id="stochReadout" style="margin-top:34px;"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Agora com os dados reais da AMD</h2>
+    <p class="ptext">
+      O mesmo cálculo, aplicado aos ~280 pregões reais. Arraste o período e repare como o %K vive nos extremos:
+      ele é o mais "nervoso" dos osciladores — por isso quase sempre é lido junto com a média %D.
+      <em>(Aqui usamos máxima e mínima dos fechamentos do período — aproximação didática.)</em>
+    </p>
+    <div class="controls-row">
+      <label for="stPeriod">Período</label>
+      <input type="range" id="stPeriod" min="5" max="30" value="14">
+      <span class="value-pill" id="stPeriodVal">14</span>
+    </div>
+    <div id="stChart"></div>
+    <div class="readout" id="stReadout"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Como (não) usar</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">%K = 95 não é previsão de queda.</b> Significa, literalmente, que o preço fechou a 95% do caminho entre a mínima e a máxima — nada mais.
+    </p>
+    <p class="ptext" style="margin-bottom:8px;">
+      Em <b style="color:var(--ink);">mercado lateral</b>, os extremos do estocástico marcam bem as bordas do range — é o habitat natural dele.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      Em <b style="color:var(--ink);">tendência forte</b>, ele gruda no extremo e fica lá — vender só porque "está sobrecomprado" numa alta consistente é o erro clássico. Veja no gráfico acima quanto tempo a AMD passou colada no topo durante a grande alta.
+    </p>
+    <div class="insight">
+      Resumo: o estocástico descreve <b>posição</b>, não destino. Use-o para mapear os extremos de um range — e desconfie dele quando o mercado está em tendência.
+    </div>
+  </div>
+
+  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+</div>
+
+<script src="assets/amd.js"></script>
+<script>
+/* ---- lab 1: arrastar o fechamento ---- */
+var stochPct = 63;
+var band = document.getElementById('stochBand');
+var handle = document.getElementById('stochHandle');
+function renderStoch() {
+  handle.style.left = stochPct + '%';
+  handle.setAttribute('aria-valuenow', Math.round(stochPct));
+  var price = 100 + stochPct / 100 * 50;
+  var zona = stochPct >= 80 ? '<span class="r">acima de 80 → sobrecomprado: fechou colado na máxima</span>'
+           : stochPct <= 20 ? '<span class="g">abaixo de 20 → sobrevendido: fechou colado na mínima</span>'
+           : 'entre 20 e 80 → sem excesso; a posição sozinha não é sinal';
+  document.getElementById('stochReadout').innerHTML =
+    'Fechamento em <span class="num">$' + price.toFixed(2) + '</span> num range de $100–$150<br>' +
+    '%K = (' + price.toFixed(0) + ' − 100) ÷ (150 − 100) × 100 = <span class="hi">' + stochPct.toFixed(0) + '</span><br>' + zona;
+}
+function setStochFromEvent(e) {
+  var r = band.getBoundingClientRect();
+  var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+  stochPct = Math.max(0, Math.min(100, x / r.width * 100));
+  renderStoch();
+}
+var dragging = false;
+handle.addEventListener('pointerdown', function(e){ dragging = true; handle.setPointerCapture(e.pointerId); });
+window.addEventListener('pointermove', function(e){ if (dragging) setStochFromEvent(e); });
+window.addEventListener('pointerup', function(){ dragging = false; });
+band.addEventListener('click', setStochFromEvent);
+handle.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowLeft') { stochPct = Math.max(0, stochPct - 5); renderStoch(); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { stochPct = Math.min(100, stochPct + 5); renderStoch(); e.preventDefault(); }
+});
+renderStoch();
+
+/* ---- lab 2: %K nos dados reais ---- */
+function calcStochK(closes, period) {
+  var out = new Array(closes.length).fill(null);
+  for (var i = period - 1; i < closes.length; i++) {
+    var hh = -Infinity, ll = Infinity;
+    for (var j = i - period + 1; j <= i; j++) {
+      if (closes[j] > hh) hh = closes[j];
+      if (closes[j] < ll) ll = closes[j];
+    }
+    out[i] = (hh === ll) ? 50 : (closes[i] - ll) / (hh - ll) * 100;
+  }
+  return out;
+}
+var SW = 780, SH = 250, SX0 = 40, SX1 = SW - 14;
+function sxm(i) { return SX0 + i / (N - 1) * (SX1 - SX0); }
+function renderStochChart() {
+  var p = parseInt(document.getElementById('stPeriod').value, 10);
+  document.getElementById('stPeriodVal').textContent = p;
+  var k = calcStochK(CLOSES, p);
+  var y0 = 14, y1 = SH - 26;
+  function ym(v) { return y1 - v / 100 * (y1 - y0); }
+  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  s += '<rect x="' + SX0 + '" y="' + y0 + '" width="' + (SX1-SX0) + '" height="' + (ym(80)-y0) + '" fill="var(--osc-soft)"/>';
+  s += '<rect x="' + SX0 + '" y="' + ym(20) + '" width="' + (SX1-SX0) + '" height="' + (y1-ym(20)) + '" fill="var(--trend-soft)"/>';
+  [[80,'var(--osc)'],[50,'var(--wire)'],[20,'var(--trend)']].forEach(function(g){
+    s += '<line x1="' + SX0 + '" y1="' + ym(g[0]) + '" x2="' + SX1 + '" y2="' + ym(g[0]) + '" stroke="' + g[1] + '" stroke-dasharray="4,3" opacity="0.55"/>';
+    s += '<text x="' + (SX0-6) + '" y="' + (ym(g[0])+4) + '" font-size="10" fill="' + g[1] + '" text-anchor="end">' + g[0] + '</text>';
+  });
+  s += poly(ptsOf(k, sxm, ym), 'var(--osc)', 1.8);
+  s += '</svg>';
+  document.getElementById('stChart').innerHTML = s;
+
+  var last = k[N-1];
+  var above80 = 0, below20 = 0, count = 0;
+  for (var i = 0; i < N; i++) if (k[i] !== null) { count++; if (k[i] > 80) above80++; if (k[i] < 20) below20++; }
+  var zona = last >= 80 ? '<span class="r">sobrecomprado</span>' : last <= 20 ? '<span class="g">sobrevendido</span>' : 'zona neutra';
+  document.getElementById('stReadout').innerHTML =
+    '%K(' + p + ') hoje = <span class="hi">' + last.toFixed(1) + '</span> · ' + zona + '<br>' +
+    'Com período ' + p + ', o %K passou <span class="hi">' + (above80/count*100).toFixed(0) + '%</span> do tempo acima de 80 e <span class="hi">' + (below20/count*100).toFixed(0) + '%</span> abaixo de 20 — repare como ele visita os extremos com muito mais frequência que o RSI.';
+}
+document.getElementById('stPeriod').addEventListener('input', renderStochChart);
+renderStochChart();
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

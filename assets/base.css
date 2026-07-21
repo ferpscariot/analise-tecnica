@@ -1,0 +1,219 @@
+/* ============================================================
+   base.css — design system compartilhado do guia
+   Tokens, reset, navegação, toggle de tema e componentes comuns.
+   Estilos específicos de cada página ficam inline na própria página.
+   ============================================================ */
+
+/* ============ TOKENS ============ */
+:root {
+  color-scheme: light;
+  --paper: #F7F9FB;
+  --grid: #E3E9F0;
+  --ink: #16212E;
+  --ink-soft: #4A5A6B;
+  --wire: #8CA3B8;
+  --osc: #E8590C;        /* velocidade: calor */
+  --osc-soft: #FDEBE0;
+  --trend: #1B6E53;      /* direção: constância */
+  --trend-soft: #E2F1EB;
+  --vol: #2A6BB0;        /* volume: convicção */
+  --vol-soft: #EAF1F8;
+  --risk: #7B5EA7;       /* risco: terreno firme */
+  --risk-soft: #F0EBF7;
+  --card: #FFFFFF;
+  --card-strong: #F7F9FB;
+  --danger: #C0392B;
+  --danger-soft: #FDEDEC;
+  --ok: #1E8449;
+  --ok-soft: #E9F7EF;
+  --ma-fast: #E07B39;
+  --ma-mid: #7B5EA7;
+  --amber: #E0A93E;
+  --on-accent: #FFFFFF;
+  --surface-glow: transparent;
+  --handle-ring: transparent;
+  --shadow-chart: 0 1px 0 rgba(22,33,46,0.04), 0 12px 30px -18px rgba(22,33,46,0.18);
+  --shadow-card: 0 1px 0 rgba(22,33,46,0.04), 0 12px 30px -20px rgba(22,33,46,0.15);
+  --shadow-lab: 0 1px 0 rgba(22,33,46,0.04), 0 16px 40px -26px rgba(22,33,46,0.2);
+  --font-display: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+  --sans: var(--font-display);
+  --mono: var(--font-mono);
+  --accent: var(--osc);            /* cada página pode sobrescrever */
+  --tab-accent: var(--osc);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0F141B;
+  --grid: rgba(142, 166, 191, 0.14);
+  --ink: #EEF4F8;
+  --ink-soft: #B3C0CB;
+  --wire: #73869A;
+  --osc: #FF8A3D;
+  --osc-soft: rgba(255, 138, 61, 0.15);
+  --trend: #43D391;
+  --trend-soft: rgba(67, 211, 145, 0.14);
+  --vol: #6FB3FF;
+  --vol-soft: rgba(111, 179, 255, 0.14);
+  --risk: #B79CFF;
+  --risk-soft: rgba(183, 156, 255, 0.14);
+  --card: #151D27;
+  --card-strong: #1B2531;
+  --danger: #FF6B6B;
+  --danger-soft: rgba(255, 107, 107, 0.14);
+  --ok: #57D68D;
+  --ok-soft: rgba(87, 214, 141, 0.14);
+  --ma-fast: #FFB05F;
+  --ma-mid: #B79CFF;
+  --amber: #F2C14E;
+  --on-accent: #071016;
+  --surface-glow: rgba(255,255,255,0.035);
+  --handle-ring: rgba(15,20,27,0.65);
+  --shadow-chart: 0 1px 0 rgba(255,255,255,0.04) inset, 0 22px 60px -32px rgba(0,0,0,0.9);
+  --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 48px -34px rgba(0,0,0,0.95);
+  --shadow-lab: 0 1px 0 rgba(255,255,255,0.04) inset, 0 22px 58px -38px rgba(0,0,0,0.95);
+}
+
+/* ============ RESET E BASE ============ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background:
+    linear-gradient(180deg, var(--surface-glow), transparent 260px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    var(--paper);
+  background-size: auto, 28px 28px, 28px 28px, auto;
+  color: var(--ink);
+  line-height: 1.7;
+  padding: 32px 20px;
+  font-size: 16.5px;
+}
+
+.wrap { max-width: 880px; margin: 0 auto; }
+
+h1 {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(28px, 5vw, 42px);
+  letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 12px;
+}
+h2 {
+  font-family: var(--sans); font-weight: 800; font-size: 21px;
+  margin: 8px 0 4px; letter-spacing: -0.01em;
+}
+p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
+
+.eyebrow {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+}
+.eyebrow.osc { color: var(--osc); }
+.eyebrow.trend { color: var(--trend); }
+.eyebrow.vol { color: var(--vol); }
+.eyebrow.risk { color: var(--risk); }
+
+.lucide-icon {
+  display: block; width: 100%; height: 100%;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.eyebrow .inline-icon {
+  display: inline-block;
+  width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
+}
+
+/* ============ TOGGLE DE TEMA ============ */
+.page-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--grid); border-radius: 999px;
+  background: var(--card); color: var(--ink);
+  box-shadow: var(--shadow-card); cursor: pointer;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  padding: 9px 14px;
+  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+}
+.theme-toggle:hover { border-color: var(--wire); transform: translateY(-1px); }
+.theme-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.theme-toggle .theme-icon { width: 16px; height: 16px; display: inline-flex; }
+
+/* ============ ABAS DO GUIA ============ */
+.site-tabs {
+  position: sticky; top: 0; z-index: 60;
+  margin: -32px -20px 28px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--grid);
+}
+.site-tabs-inner {
+  max-width: 880px; margin: 0 auto; padding: 0 22px;
+  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.site-tabs a {
+  font-family: var(--font-mono);
+  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft); text-decoration: none;
+  padding: 14px 12px 11px; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.site-tabs a:hover { color: var(--ink); }
+.site-tabs a[aria-current="page"] {
+  color: var(--ink);
+  border-bottom-color: var(--tab-accent);
+}
+
+/* ============ COMPONENTES COMUNS ============ */
+.panel {
+  background: var(--card); border: 1px solid var(--grid); border-radius: 16px;
+  padding: 24px; margin-top: 22px; box-shadow: var(--shadow-card);
+}
+.panel .ptext { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 14px; }
+
+.formula {
+  font-family: var(--mono); font-size: 13px; background: var(--paper);
+  border: 1px dashed var(--wire); border-radius: 10px;
+  padding: 14px 18px; margin: 22px 0; line-height: 1.85;
+}
+
+.controls-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  font-family: var(--font-display); font-size: 13.5px; font-weight: 600;
+  margin-bottom: 16px;
+}
+input[type="range"] { accent-color: var(--accent); width: 200px; }
+input[type="range"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.value-pill {
+  font-family: var(--mono);
+  background: var(--card-strong); color: var(--ink);
+  border: 1px solid var(--grid);
+  padding: 3px 12px; border-radius: 999px; font-size: 13px;
+  min-width: 44px; text-align: center;
+}
+
+.readout {
+  font-family: var(--mono); font-size: 13.5px;
+  background: var(--paper); border: 1px dashed var(--wire);
+  border-radius: 10px; padding: 12px 16px; margin-top: 16px; line-height: 1.9;
+}
+.readout .g { color: var(--ok); font-weight: 700; }
+.readout .r { color: var(--danger); font-weight: 700; }
+.readout .hi { color: var(--accent); font-weight: 700; }
+.readout .tr { color: var(--trend); font-weight: 700; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+svg.chart { width: 100%; height: auto; display: block; }
+
+.insight {
+  font-size: 14px; color: var(--ink-soft); margin-top: 16px;
+  background: var(--accent-soft, var(--osc-soft));
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px; border-radius: 0 8px 8px 0;
+}
+.insight b { color: var(--ink); }
+
+.foot {
+  font-family: var(--mono); font-size: 12px; color: var(--wire);
+  text-align: center; margin-top: 40px;
+}

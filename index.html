@@ -34,6 +34,10 @@
   --ok-soft: #E9F7EF;
   --ma-fast: #E07B39;
   --ma-mid: #7B5EA7;
+  --vol: #2A6BB0;       /* família de volume: convicção */
+  --vol-soft: #EAF1F8;
+  --risk: #7B5EA7;      /* risco: o terreno firme */
+  --risk-soft: #F0EBF7;
   --on-accent: #FFFFFF;
   --surface-glow: transparent;
   --switch-border: var(--ink);
@@ -66,6 +70,10 @@
   --ok-soft: rgba(87, 214, 141, 0.14);
   --ma-fast: #FFB05F;
   --ma-mid: #B79CFF;
+  --vol: #6FB3FF;
+  --vol-soft: rgba(111, 179, 255, 0.14);
+  --risk: #B79CFF;
+  --risk-soft: rgba(183, 156, 255, 0.14);
   --on-accent: #071016;
   --surface-glow: rgba(255,255,255,0.035);
   --switch-border: rgba(238,244,248,0.76);
@@ -337,6 +345,63 @@ p + p { margin-top: 12px; }
 .family-card .asks {
   font-family: var(--font-display); font-weight: 700; font-size: 15px;
   margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--grid);
+}
+
+/* ============ FAMILY CARDS: VOLUME E RISCO ============ */
+.family-card.vol { border-color: var(--vol); }
+.family-card.vol .icon { color: var(--vol); }
+.family-card.vol li::before { color: var(--vol); }
+.family-card.vol li a:hover,
+.family-card.vol li a:focus-visible { color: var(--vol); }
+.family-card.vol li a:focus-visible { outline-color: var(--vol); }
+.family-card.risk { border-color: var(--risk); }
+.family-card.risk .icon { color: var(--risk); }
+.family-card.risk li::before { color: var(--risk); }
+.family-card.risk li a:hover,
+.family-card.risk li a:focus-visible { color: var(--risk); }
+.family-card.risk li a:focus-visible { outline-color: var(--risk); }
+.eyebrow.vol { color: var(--vol); }
+.eyebrow.risk { color: var(--risk); }
+
+.soon {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--wire);
+  border: 1px dashed var(--wire); border-radius: 999px;
+  padding: 1px 7px; margin-left: 6px; vertical-align: 1px; white-space: nowrap;
+}
+
+/* ============ TRILHA ============ */
+.trail { list-style: none; margin-top: 30px; }
+.trail li {
+  display: flex; gap: 18px; align-items: flex-start;
+  padding: 22px 24px; margin-top: 14px;
+  background: var(--card); border: 1px solid var(--grid);
+  border-radius: 14px; box-shadow: var(--shadow-card);
+}
+.t-num {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--ink); color: var(--card);
+  font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; margin-top: 2px;
+}
+.t-num.osc { background: var(--osc); color: var(--on-accent); }
+.t-num.trend { background: var(--trend); color: var(--on-accent); }
+.t-num.vol { background: var(--vol); color: var(--on-accent); }
+.t-num.risk { background: var(--risk); color: var(--on-accent); }
+.trail h3 { margin-bottom: 4px; }
+.trail > li > div > p { font-size: 14.5px; color: var(--ink-soft); }
+.trail p a { color: inherit; font-weight: 700; text-decoration: none;
+  border-bottom: 1px solid var(--wire); transition: color 0.15s, border-color 0.15s; }
+.trail p a:hover, .trail p a:focus-visible { color: var(--ink); border-color: var(--ink); }
+.t-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.t-links a {
+  font-family: var(--font-display); font-size: 12.5px; font-weight: 700;
+  border: 1px solid var(--grid); border-radius: 999px; padding: 5px 12px;
+  background: var(--card-strong); text-decoration: none;
+  color: var(--ink-soft); transition: color 0.15s, border-color 0.15s, transform 0.15s;
+}
+.t-links a:hover, .t-links a:focus-visible {
+  color: var(--ink); border-color: var(--wire); transform: translateY(-1px);
 }
 
 /* ============ LAB CARDS ============ */
@@ -615,15 +680,24 @@ footer {
 </section>
 
 <nav class="section-nav" aria-label="Navegação interna">
-  <a href="#families">Mapa dos indicadores</a>
-  <a href="#osciladores">Osciladores</a>
-  <a href="#tendencia">Tendência</a>
+  <a href="#families">Mapa das famílias</a>
+  <a href="#trilha">Trilha sugerida</a>
   <a href="#quiz">Quiz</a>
 </nav>
 
 <!-- ================= FAMILIES ================= -->
 <section id="families" style="padding-top:10px;">
   <div class="spine">
+    <div class="divider">Mapa · quatro territórios</div>
+    <div class="eyebrow" style="margin-top:40px;">
+      <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"></path>
+        <path d="M15 5.764v15"></path>
+        <path d="M9 3.236v15"></path>
+      </svg>Mapa dos indicadores
+    </div>
+    <h2>Escolha pela pergunta, não pela sigla</h2>
+    <p class="lead">Cada família responde a uma pergunta diferente sobre o mesmo gráfico. Entre pela pergunta que você quer responder — cada link leva à página completa, com laboratório interativo e dados reais.</p>
     <div class="families">
       <div class="family-card osc reveal">
         <span class="icon" aria-hidden="true">
@@ -633,14 +707,14 @@ footer {
             <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
           </svg>
         </span>
-        <h3 style="color:var(--osc);">Osciladores</h3>
-        <p style="font-size:14.5px; color:var(--ink-soft);">O velocímetro do mercado. Oscilam dentro de uma faixa e apontam excessos — quando o movimento ficou rápido demais e pode "descansar".</p>
+        <h3 style="color:var(--osc);">Velocidade</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">O velocímetro do mercado. Osciladores vivem presos numa faixa e apontam excessos — quando o movimento ficou rápido demais e pode "descansar".</p>
         <ul>
-          <li><a href="#lab-rsi">RSI — força relativa</a></li>
-          <li><a href="#lab-estocastico">Estocástico — posição no range</a></li>
-          <li><a href="#lab-momentum">Momentum — velocidade bruta</a></li>
-          <li><a href="#lab-roc">ROC — variação percentual</a></li>
-          <li><a href="#lab-ao">AO — pulso do momentum</a></li>
+          <li><a href="rsi.html">RSI — força relativa</a></li>
+          <li><a href="estocastico.html">Estocástico — posição no range</a></li>
+          <li><a href="momentum.html">Momentum — velocidade bruta</a></li>
+          <li><a href="roc.html">ROC — variação percentual</a></li>
+          <li><a href="ao.html">AO — pulso do momentum</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"está esticado?"</em></p>
       </div>
@@ -651,191 +725,126 @@ footer {
             <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path>
           </svg>
         </span>
-        <h3 style="color:var(--trend);">Indicadores de tendência</h3>
+        <h3 style="color:var(--trend);">Direção</h3>
         <p style="font-size:14.5px; color:var(--ink-soft);">A bússola do mercado. Suavizam o ruído para revelar a direção de fundo — e confirmar se ela ainda está de pé.</p>
         <ul>
-          <li><a href="#lab-medias">Médias móveis — SMA e EMA</a></li>
-          <li><a href="#lab-adx">ADX — força da tendência</a></li>
-          <li><a href="#lab-macd">MACD — tendência com gatilho</a></li>
+          <li><a href="medias.html">Médias móveis — SMA e EMA</a></li>
+          <li><a href="adx.html">ADX — força da tendência</a></li>
+          <li><a href="macd.html">MACD — tendência com gatilho</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"para onde isso vai?"</em></p>
       </div>
+      <div class="family-card vol reveal">
+        <span class="icon" aria-hidden="true">
+          <svg class="lucide-icon" viewBox="0 0 24 24">
+            <line x1="12" x2="12" y1="20" y2="10"></line>
+            <line x1="18" x2="18" y1="20" y2="4"></line>
+            <line x1="6" x2="6" y1="20" y2="16"></line>
+          </svg>
+        </span>
+        <h3 style="color:var(--vol);">Volume</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">O detector de convicção. Preço diz o que aconteceu; volume diz quanta gente sustentou o movimento — e se a tendência tem combustível.</p>
+        <ul>
+          <li><a href="volume.html">OBV — volume com direção</a></li>
+          <li><a href="volume.html">A/D — ponderado pelo range do dia</a></li>
+        </ul>
+        <p class="asks">Pergunta que respondem: <em>"tem convicção por trás?"</em></p>
+      </div>
+      <div class="family-card risk reveal">
+        <span class="icon" aria-hidden="true">
+          <svg class="lucide-icon" viewBox="0 0 24 24">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+          </svg>
+        </span>
+        <h3 style="color:var(--risk);">Risco</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">O terreno mais firme. Não tenta prever para onde o preço vai — controla quanto você pode perder. É a parte com a melhor base científica.</p>
+        <ul>
+          <li><a href="risco.html">ATR e stops — o tamanho do passo</a></li>
+          <li><a href="risco.html">Dimensionamento de posição</a></li>
+          <li><a href="risco.html">Correlação e diversificação</a></li>
+          <li><a href="risco.html">Alvos e relação risco/retorno</a></li>
+        </ul>
+        <p class="asks">Pergunta que respondem: <em>"quanto posso perder?"</em></p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ================= OSCILADORES ================= -->
-<section id="osciladores">
+<!-- ================= TRILHA ================= -->
+<section id="trilha" style="padding-top:0;">
   <div class="spine">
-    <div class="divider">Família 1 · velocidade e reversão</div>
-    <div class="eyebrow osc" style="margin-top:40px;">
+    <div class="divider">Trilha sugerida</div>
+    <div class="eyebrow" style="margin-top:40px;">
       <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
-        <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
-        <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
-      </svg>Osciladores
+        <circle cx="6" cy="19" r="3"></circle>
+        <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+        <circle cx="18" cy="5" r="3"></circle>
+      </svg>Do zero ao risco
     </div>
-    <h2>Medindo o quanto o mercado correu</h2>
-    <p class="lead">Osciladores vivem presos numa faixa (geralmente 0–100). Quando batem no teto ou no chão, avisam: o movimento pode ter ido longe demais.</p>
-
-    <!-- RSI LAB -->
-    <div class="lab reveal" id="lab-rsi">
-      <span class="lab-tag osc">Laboratório 1</span>
-      <h3>RSI — o placar entre ganhos e perdas</h3>
-      <p class="how">
-        O RSI compara a força média dos dias de alta com a dos dias de baixa:
-        <span class="num">RS = ganho médio ÷ perda média</span>, depois
-        <span class="num">RSI = 100 − 100/(1+RS)</span>.
-        Arraste o período e veja o mesmo histórico da AMD recalculado — períodos curtos deixam o RSI "nervoso", longos o acalmam.
-      </p>
-      <div class="controls-row">
-        <label for="rsiPeriod">Período</label>
-        <input type="range" id="rsiPeriod" min="5" max="30" value="14">
-        <span class="value-pill" id="rsiPeriodVal">14</span>
-      </div>
-      <div id="rsiChart"></div>
-      <div class="readout" id="rsiReadout"></div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-
-    <!-- STOCH LAB -->
-    <div class="lab reveal" id="lab-estocastico">
-      <span class="lab-tag osc">Laboratório 2</span>
-      <h3>Estocástico — onde o preço parou dentro do range</h3>
-      <p class="how">
-        O %K ignora quanto o preço andou; só olha <em>onde ele fechou</em> entre a mínima e a máxima do período:
-        <span class="num">%K = (fechamento − mín) ÷ (máx − mín) × 100</span>.
-        Arraste a barra preta (o fechamento) dentro do range e sinta a conta acontecer.
-      </p>
-      <div class="stoch-band-wrap">
-        <div class="stoch-band" id="stochBand">
-          <span class="edge" style="left:0;">Mínima · $100</span>
-          <span class="edge" style="right:0;">Máxima · $150</span>
-          <div class="stoch-handle" id="stochHandle" tabindex="0" role="slider"
-               aria-label="Posição do fechamento no range" aria-valuemin="0" aria-valuemax="100" aria-valuenow="63"></div>
+    <h2>Uma ordem que faz sentido</h2>
+    <p class="lead">Dá para explorar em qualquer ordem — mas se você está começando, esta sequência constrói cada conceito sobre o anterior.</p>
+    <ol class="trail">
+      <li class="reveal">
+        <span class="t-num">1</span>
+        <div>
+          <h3>As duas lentes</h3>
+          <p>Todo indicador responde "com que velocidade?" ou "em que direção?". Entenda isso primeiro e as siglas viram detalhes. <a href="#hero">Reveja no topo ↑</a></p>
         </div>
-      </div>
-      <div class="readout" id="stochReadout" style="margin-top:34px;"></div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-
-    <!-- MOM / AO compact -->
-    <div class="lab reveal" id="lab-momentum">
-      <span class="lab-tag osc">Laboratório 3</span>
-      <h3>Momentum — a régua mais simples de todas</h3>
-      <p class="how">
-        <span class="num">Momentum = preço de hoje − preço de N períodos atrás</span>. Positivo: subindo em relação ao passado recente. Negativo: caindo.
-        Mova o N e veja o momentum real da AMD mudar de resposta.
-      </p>
-      <div class="controls-row">
-        <label for="momPeriod">Olhar</label>
-        <input type="range" id="momPeriod" min="2" max="60" value="10">
-        <span class="value-pill" id="momPeriodVal">10</span>
-        <span style="font-weight:400; color:var(--ink-soft);">períodos atrás</span>
-      </div>
-      <div class="readout" id="momReadout"></div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-
-    <!-- ROC LAB -->
-    <div class="lab reveal" id="lab-roc">
-      <span class="lab-tag osc">Laboratório 4</span>
-      <h3>ROC — o Momentum em porcentagem</h3>
-      <p class="how">
-        O ROC é o mesmo cálculo do Momentum, só que normalizado em %:
-        <span class="num">ROC = (preço de hoje − preço de N períodos atrás) ÷ preço de N períodos atrás × 100</span>.
-        Isso resolve o problema do Momentum bruto: uma variação de $10 significa coisas bem diferentes numa ação de $20 e numa de $500.
-        Arraste o período e veja a curva completa do ROC da AMD, não só o valor de hoje.
-      </p>
-      <div class="controls-row">
-        <label for="rocPeriod">Período</label>
-        <input type="range" id="rocPeriod" min="2" max="60" value="12">
-        <span class="value-pill" id="rocPeriodVal">12</span>
-      </div>
-      <div id="rocChart"></div>
-      <div class="readout" id="rocReadout"></div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-
-    <!-- AO LAB -->
-    <div class="lab reveal" id="lab-ao">
-      <span class="lab-tag osc">Laboratório 5</span>
-      <h3>AO — o pulso entre duas médias</h3>
-      <p class="how">
-        O Awesome Oscillator compara duas médias do <b>ponto médio do candle</b> ((máxima + mínima) ÷ 2): uma rápida de 5 períodos
-        e uma lenta de 34. <span class="num">AO = SMA5(ponto médio) − SMA34(ponto médio)</span>.
-        Passe o cursor sobre o histograma e leia o pulso de cada dia da AMD.
-      </p>
-      <div id="aoChart"></div>
-      <div class="readout" id="aoReadout">Passe o cursor sobre uma barra para ler o AO daquele dia.</div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= TENDÊNCIA ================= -->
-<section id="tendencia" style="padding-top:20px;">
-  <div class="spine">
-    <div class="divider">Família 2 · direção e continuação</div>
-    <div class="eyebrow trend" style="margin-top:40px;">
-      <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="10"></circle>
-        <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path>
-      </svg>Indicadores de tendência
-    </div>
-    <h2>Encontrando a direção por trás do ruído</h2>
-    <p class="lead">Enquanto osciladores procuram excessos, os indicadores de tendência filtram os solavancos do dia a dia para responder: a rota de fundo ainda está de pé?</p>
-
-    <!-- MA LAB -->
-    <div class="lab reveal" id="lab-medias">
-      <span class="lab-tag trend">Laboratório 6</span>
-      <h3>Médias móveis — três horizontes, um empilhamento</h3>
-      <p class="how">
-        Cada média enxerga um prazo: a <b>EMA20</b> reage rápido (curto prazo), a <b>EMA50</b> suaviza (médio) e a
-        <b>SMA200</b> é o piso do longo prazo. Ligue e desligue as camadas — e observe o veredito do empilhamento mudar embaixo.
-      </p>
-      <div class="ma-toggles">
-        <button class="ma-toggle c1" id="tgEma20" aria-pressed="true" onclick="toggleMA('ema20', this)">EMA20</button>
-        <button class="ma-toggle c2" id="tgEma50" aria-pressed="true" onclick="toggleMA('ema50', this)">EMA50</button>
-        <button class="ma-toggle c3" id="tgSma200" aria-pressed="true" onclick="toggleMA('sma200', this)">SMA200</button>
-      </div>
-      <div id="maChart"></div>
-      <div class="readout" id="maReadout"></div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-
-    <!-- ADX LAB -->
-    <div class="lab reveal" id="lab-adx">
-      <span class="lab-tag trend">Laboratório 7</span>
-      <h3>ADX — força, não direção</h3>
-      <p class="how">
-        O ADX é o dinamômetro: mede a <em>força</em> da tendência (0–100) sem dizer se ela é de alta ou de baixa.
-        Mova o ponteiro e leia como o mercado interpreta cada zona.
-      </p>
-      <div class="adx-meter">
-        <div class="adx-arc" id="adxArc"></div>
-        <div class="controls-row adx-slider-row" style="margin-top:8px;">
-          <input type="range" id="adxSlider" min="0" max="60" value="24" aria-label="Valor do ADX">
-          <span class="value-pill" id="adxVal">24</span>
+      </li>
+      <li class="reveal">
+        <span class="t-num osc">2</span>
+        <div>
+          <h3>Velocidade — os osciladores</h3>
+          <p>Comece pelo RSI (o mais usado), sinta a mecânica no Estocástico e no Momentum, e feche com ROC e AO.</p>
+          <div class="t-links">
+            <a href="rsi.html">RSI</a>
+            <a href="estocastico.html">Estocástico</a>
+            <a href="momentum.html">Momentum</a>
+            <a href="roc.html">ROC</a>
+            <a href="ao.html">AO</a>
+          </div>
         </div>
-        <div class="readout" id="adxReadout" style="text-align:left;"></div>
-      </div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
-
-    <!-- MACD LAB -->
-    <div class="lab reveal" id="lab-macd">
-      <span class="lab-tag trend">Laboratório 8</span>
-      <h3>MACD — a tendência com gatilho embutido</h3>
-      <p class="how">
-        Nascido de médias (<span class="num">EMA12 − EMA26</span>), o MACD segue a tendência — mas seu
-        <b>histograma</b> (MACD − linha de sinal) encolhe e cresce como um oscilador, antecipando os cruzamentos.
-        Passe o mouse (ou o dedo) sobre as barras do histograma real da AMD.
-      </p>
-      <div id="macdChart"></div>
-      <div class="readout" id="macdReadout">Passe o cursor sobre uma barra do histograma para ler aquele dia.</div>
-      <div class="lab-back"><a href="#hero">Voltar ao topo</a></div>
-    </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num trend">3</span>
+        <div>
+          <h3>Direção — a tendência</h3>
+          <p>Médias móveis são o alicerce; o ADX mede a força da rota; o MACD junta tendência e gatilho no mesmo instrumento.</p>
+          <div class="t-links">
+            <a href="medias.html">Médias móveis</a>
+            <a href="adx.html">ADX</a>
+            <a href="macd.html">MACD</a>
+          </div>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num vol">4</span>
+        <div>
+          <h3>Volume — a convicção</h3>
+          <p>Preço sem volume é opinião sem voto. OBV e A/D transformam o volume numa linha que confirma (ou desmente) a tendência.</p>
+          <div class="t-links">
+            <a href="volume.html">OBV e A/D</a>
+          </div>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num risk">5</span>
+        <div>
+          <h3>Risco — o que sustenta tudo</h3>
+          <p>A parte com melhor evidência: ATR, dimensionamento, correlação e R:R. Se for ler uma página só, que seja esta.</p>
+          <div class="t-links">
+            <a href="risco.html">Gestão de risco</a>
+          </div>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num">6</span>
+        <div>
+          <h3>Prova de pista</h3>
+          <p>Seis situações para testar se as lentes ficaram calibradas. <a href="#quiz">Fazer o quiz ↓</a></p>
+        </div>
+      </li>
+    </ol>
   </div>
 </section>
 
@@ -850,7 +859,7 @@ footer {
         <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path>
       </svg>Fixação
     </div>
-    <h2>Seis situações, duas famílias</h2>
+    <h2>Seis situações para testar as lentes</h2>
     <p class="lead">Para cada situação, escolha o instrumento certo. Errar aqui é barato — errar na corretora, não.</p>
     <div id="quizContainer"></div>
     <div class="quiz-score" id="quizScore"></div>
@@ -1002,285 +1011,6 @@ function setLens(lens) {
   bt.className = lens === 'trend' ? 'active-trend' : '';
 }
 setLens('osc');
-
-/* ================== LAB 1: RSI ================== */
-var RW = 780, RH = 250, RX0 = 40, RX1 = RW - 14;
-function rxm(i) { return RX0 + i / (N - 1) * (RX1 - RX0); }
-function renderRSI() {
-  var p = parseInt(document.getElementById('rsiPeriod').value, 10);
-  document.getElementById('rsiPeriodVal').textContent = p;
-  var rsi = calcRSI(CLOSES, p);
-  var y0 = 14, y1 = RH - 26;
-  function ym(v) { return y1 - v / 100 * (y1 - y0); }
-  var s = '<svg class="chart" viewBox="0 0 ' + RW + ' ' + RH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
-  s += '<rect x="' + RX0 + '" y="' + y0 + '" width="' + (RX1-RX0) + '" height="' + (ym(70)-y0) + '" fill="var(--osc-soft)"/>';
-  s += '<rect x="' + RX0 + '" y="' + ym(30) + '" width="' + (RX1-RX0) + '" height="' + (y1-ym(30)) + '" fill="var(--trend-soft)"/>';
-  [[70,'var(--osc)'],[50,'var(--wire)'],[30,'var(--trend)']].forEach(function(g){
-    s += '<line x1="' + RX0 + '" y1="' + ym(g[0]) + '" x2="' + RX1 + '" y2="' + ym(g[0]) + '" stroke="' + g[1] + '" stroke-dasharray="4,3" opacity="0.55"/>';
-    s += '<text x="' + (RX0-6) + '" y="' + (ym(g[0])+4) + '" font-size="10" fill="' + g[1] + '" text-anchor="end">' + g[0] + '</text>';
-  });
-  s += poly(ptsOf(rsi, rxm, ym), 'var(--osc)', 2);
-  s += '</svg>';
-  document.getElementById('rsiChart').innerHTML = s;
-
-  var last = rsi[N-1];
-  var above70 = 0, below30 = 0, count = 0;
-  for (var i = 0; i < N; i++) if (rsi[i] !== null) { count++; if (rsi[i] > 70) above70++; if (rsi[i] < 30) below30++; }
-  var zona = last >= 70 ? '<span class="r">sobrecomprado</span>' : last <= 30 ? '<span class="g">sobrevendido</span>' : 'zona neutra';
-  document.getElementById('rsiReadout').innerHTML =
-    'RSI(' + p + ') hoje = <span class="hi">' + last.toFixed(1) + '</span> · ' + zona + '<br>' +
-    'Com período ' + p + ', o RSI passou <span class="hi">' + (above70/count*100).toFixed(0) + '%</span> do tempo acima de 70 e <span class="hi">' + (below30/count*100).toFixed(0) + '%</span> abaixo de 30.' +
-    (p <= 8 ? ' Período curto: muitos alarmes.' : p >= 22 ? ' Período longo: quase nunca dispara — mas quando dispara, pesa.' : '');
-}
-document.getElementById('rsiPeriod').addEventListener('input', renderRSI);
-renderRSI();
-
-/* ================== LAB 2: ESTOCÁSTICO (arrastar) ================== */
-var stochPct = 63;
-var band = document.getElementById('stochBand');
-var handle = document.getElementById('stochHandle');
-function renderStoch() {
-  handle.style.left = stochPct + '%';
-  handle.setAttribute('aria-valuenow', Math.round(stochPct));
-  var price = 100 + stochPct / 100 * 50;
-  var zona = stochPct >= 80 ? '<span class="r">acima de 80 → sobrecomprado: fechou colado na máxima</span>'
-           : stochPct <= 20 ? '<span class="g">abaixo de 20 → sobrevendido: fechou colado na mínima</span>'
-           : 'entre 20 e 80 → sem excesso; a posição sozinha não é sinal';
-  document.getElementById('stochReadout').innerHTML =
-    'Fechamento em <span class="num">$' + price.toFixed(2) + '</span> num range de $100–$150<br>' +
-    '%K = (' + price.toFixed(0) + ' − 100) ÷ (150 − 100) × 100 = <span class="hi">' + stochPct.toFixed(0) + '</span><br>' + zona;
-}
-function setStochFromEvent(e) {
-  var r = band.getBoundingClientRect();
-  var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-  stochPct = Math.max(0, Math.min(100, x / r.width * 100));
-  renderStoch();
-}
-var dragging = false;
-handle.addEventListener('pointerdown', function(e){ dragging = true; handle.setPointerCapture(e.pointerId); });
-window.addEventListener('pointermove', function(e){ if (dragging) setStochFromEvent(e); });
-window.addEventListener('pointerup', function(){ dragging = false; });
-band.addEventListener('click', setStochFromEvent);
-handle.addEventListener('keydown', function(e){
-  if (e.key === 'ArrowLeft') { stochPct = Math.max(0, stochPct - 5); renderStoch(); e.preventDefault(); }
-  if (e.key === 'ArrowRight') { stochPct = Math.min(100, stochPct + 5); renderStoch(); e.preventDefault(); }
-});
-renderStoch();
-
-/* ================== LAB 3: MOMENTUM ================== */
-function renderMom() {
-  var p = parseInt(document.getElementById('momPeriod').value, 10);
-  document.getElementById('momPeriodVal').textContent = p;
-  var today = CLOSES[N-1], past = CLOSES[N-1-p];
-  var mom = today - past;
-  var pos = mom >= 0;
-  document.getElementById('momReadout').innerHTML =
-    'AMD hoje: <span class="num">$' + today.toFixed(2) + '</span> · há ' + p + ' períodos: <span class="num">$' + past.toFixed(2) + '</span><br>' +
-    'Momentum(' + p + ') = ' + today.toFixed(2) + ' − ' + past.toFixed(2) + ' = ' +
-    (pos ? '<span class="g">+' : '<span class="r">') + mom.toFixed(2) + '</span> → ' +
-    (pos ? 'o preço está <span class="g">acima</span> de onde estava: momento de alta nesse horizonte.'
-         : 'o preço está <span class="r">abaixo</span> de onde estava: momento de baixa nesse horizonte.') +
-    '<br><em style="color:var(--ink-soft);">Repare: mudar o N pode inverter a resposta — momentum sempre depende do horizonte escolhido.</em>';
-}
-document.getElementById('momPeriod').addEventListener('input', renderMom);
-renderMom();
-
-/* ================== LAB 4: ROC ================== */
-var ROCW = 780, ROCH = 250, ROCX0 = 46, ROCX1 = ROCW - 14;
-function rocxm(i) { return ROCX0 + i / (N - 1) * (ROCX1 - ROCX0); }
-function calcROC(closes, period) {
-  var out = new Array(closes.length).fill(null);
-  for (var i = period; i < closes.length; i++) {
-    out[i] = (closes[i] - closes[i - period]) / closes[i - period] * 100;
-  }
-  return out;
-}
-function renderROC() {
-  var p = parseInt(document.getElementById('rocPeriod').value, 10);
-  document.getElementById('rocPeriodVal').textContent = p;
-  var roc = calcROC(CLOSES, p);
-  var pm = mapper(roc, ROCX0, ROCX1, 14, ROCH - 20, 0.12);
-  var zeroY = pm.y(0);
-
-  var s = '<svg class="chart" viewBox="0 0 ' + ROCW + ' ' + ROCH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
-  s += '<line x1="' + ROCX0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + ROCX1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3"/>';
-  s += '<text x="' + (ROCX0-6) + '" y="' + (zeroY+4).toFixed(1) + '" font-size="10" fill="var(--wire)" text-anchor="end">0%</text>';
-  s += poly(ptsOf(roc, rocxm, pm.y), 'var(--osc)', 2);
-  s += '</svg>';
-  document.getElementById('rocChart').innerHTML = s;
-
-  var last = roc[N-1];
-  var pos = 0, count = 0;
-  for (var i = 0; i < N; i++) if (roc[i] !== null) { count++; if (roc[i] >= 0) pos++; }
-  document.getElementById('rocReadout').innerHTML =
-    'ROC(' + p + ') hoje = <span class="hi">' + (last >= 0 ? '+' : '') + last.toFixed(1) + '%</span> em relação a ' + p + ' períodos atrás — ' +
-    (last >= 0 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + '.<br>' +
-    'Com esse período, o ROC ficou positivo em <span class="hi">' + (pos/count*100).toFixed(0) + '%</span> dos dias do histórico.' +
-    '<br><em style="color:var(--ink-soft);">Diferença para o Momentum: aqui o resultado é uma porcentagem — dá para comparar a "velocidade" de ativos com preços bem diferentes, ou até o mesmo ativo em épocas distintas.</em>';
-}
-document.getElementById('rocPeriod').addEventListener('input', renderROC);
-renderROC();
-
-/* ================== LAB 5: AO ================== */
-var MED_DATA = [113.59,111.62,109.34,113.83,113.8,113.84,110.36,112.94,115.48,117.51,116.98,117.13,120.7,122.44,122.17,120.14,116.47,122.96,128.64,127.49,130.18,130.03,135.86,141.82,143.95,144.69,143.5,137.68,137.5,138.41,135.47,137.53,139.12,143.83,144.5,144.74,156.12,156.61,160.32,158.32,158.63,152.78,157.72,161.15,164.77,171.69,178.5,177.09,177.75,170.61,175.71,174.9,161.99,171.22,173.5,174.1,171.83,183.01,182.5,178.19,176.58,169.63,162.45,164.07,165.17,163.66,167.34,166.17,168.82,165.24,159.51,162.67,159.92,153.66,150.93,154.3,161.26,157.6,157.66,159.95,160.58,158.69,154.31,157.87,160.05,161.3,161.76,158.2,159.58,162.1,160.81,162.34,168.59,166.91,214.86,214.09,223.28,234.81,223.71,219.54,220.44,230.0,236.72,231.64,238.64,238.14,232.51,232.22,247.67,255.11,260.79,262.24,258.1,257.77,257.4,252.38,251.23,244.62,230.26,244.7,241.55,256.75,252.85,244.26,242.96,231.36,227.5,219.39,201.92,211.49,200.43,211.29,216.16,217.24,220.19,214.98,216.63,219.94,221.04,221.37,220.64,215.84,215.78,210.97,207.67,204.51,203.43,209.69,216.74,214.66,215.25,214.93,212.64,215.57,215.72,223.02,227.25,217.08,209.65,207.13,205.19,204.84,219.04,219.6,232.78,231.68,232.46,244.34,251.36,261.61,254.29,251.75,253.81,250.72,239.9,242.49,244.84,208.87,197.38,202.85,210.88,216.26,214.43,211.8,206.97,200.06,199.1,201.2,201.72,196.76,211.61,213.51,205.62,199.81,194.37,190.93,196.15,199.33,195.75,196.0,204.39,206.42,200.14,195.98,197.49,197.24,199.31,199.36,202.28,205.41,203.28,216.42,212.22,200.48,200.65,200.2,209.84,209.2,222.02,218.74,230.55,234.01,244.27,244.68,250.58,255.01,270.42,277.6,279.81,281.41,295.19,304.99,343.76,339.01,318.75,329.51,343.78,356.02,350.27,352.23,416.32,411.39,437.29,460.05,442.46,446.07,444.5,431.18,424.75,411.06,437.72,441.4,471.56,493.6,498.44,510.36,512.72,502.15,511.86,535.37,516.03,484.78,486.34,471.12,462.89,474.24,507.86,544.43,528.1,519.9,533.0,549.35,517.65,514.23,528.94,513.86,518.77,565.15,551.41,526.83];
-var AO5 = sma(MED_DATA, 5), AO34 = sma(MED_DATA, 34);
-var AO_VALS = MED_DATA.map(function(_, i){ return (AO5[i] !== null && AO34[i] !== null) ? AO5[i] - AO34[i] : null; });
-function renderAO() {
-  var W3 = 780, H3 = 250, X0 = 46, X1 = W3 - 14;
-  function xm(i) { return X0 + i / (N - 1) * (X1 - X0); }
-  var pm = mapper(AO_VALS, X0, X1, 14, H3 - 20, 0.12);
-  var zeroY = pm.y(0);
-  var barW = Math.max(1.4, (X1 - X0) / N - 0.6);
-
-  var s = '<svg class="chart" viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" id="aoSvg">';
-  s += '<line x1="' + X0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + X1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3"/>';
-  s += '<text x="' + (X0-6) + '" y="' + (zeroY+4).toFixed(1) + '" font-size="10" fill="var(--wire)" text-anchor="end">0</text>';
-  for (var i = 0; i < N; i++) {
-    if (AO_VALS[i] === null) continue;
-    var prev = AO_VALS[i-1];
-    var green = (prev == null) ? (AO_VALS[i] >= 0) : (AO_VALS[i] >= prev);
-    var col = green ? 'var(--trend)' : 'var(--danger)';
-    var y = pm.y(AO_VALS[i]);
-    var top = Math.min(y, zeroY), h = Math.abs(y - zeroY) || 0.5;
-    s += '<rect x="' + (xm(i) - barW/2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + h.toFixed(1) +
-         '" fill="' + col + '" opacity="0.72" data-i="' + i + '" class="aobar" style="cursor:pointer;"/>';
-  }
-  s += '<text x="' + X0 + '" y="12" font-size="10.5" fill="var(--trend)" font-weight="700">▮ acelerando</text>';
-  s += '<text x="' + (X0 + 110) + '" y="12" font-size="10.5" fill="var(--danger)" font-weight="700">▮ desacelerando</text>';
-  s += '</svg>';
-  document.getElementById('aoChart').innerHTML = s;
-
-  document.getElementById('aoSvg').addEventListener('pointermove', function(e) {
-    var t = e.target;
-    if (!t.classList || !t.classList.contains('aobar')) return;
-    var i = parseInt(t.getAttribute('data-i'), 10);
-    var ao = AO_VALS[i], prev = AO_VALS[i-1];
-    var accel = (prev == null) ? null : (ao >= prev);
-    document.getElementById('aoReadout').innerHTML =
-      'Dia ' + (i+1) + ' de ' + N + ' · SMA5 <span class="num">' + AO5[i].toFixed(2) + '</span> · SMA34 <span class="num">' + AO34[i].toFixed(2) + '</span><br>' +
-      'AO = ' + AO5[i].toFixed(2) + ' − ' + AO34[i].toFixed(2) + ' = ' +
-      (ao >= 0 ? '<span class="g">+' + ao.toFixed(2) + '</span> (rápida acima da lenta)' : '<span class="r">' + ao.toFixed(2) + '</span> (rápida abaixo da lenta)') +
-      (accel === null ? '' : accel ? ' · <span class="g">barra verde</span>: momentum acelerando.' : ' · <span class="r">barra vermelha</span>: momentum desacelerando.');
-  });
-}
-renderAO();
-
-/* ================== LAB 6: MÉDIAS MÓVEIS ================== */
-var maVisible = { ema20: true, ema50: true, sma200: true };
-var E20 = ema(CLOSES, 20), E50 = ema(CLOSES, 50), S200 = sma(CLOSES, 200);
-var MW = 780, MH = 300, MX0 = 46, MX1 = MW - 14;
-function mxm(i) { return MX0 + i / (N - 1) * (MX1 - MX0); }
-function toggleMA(key, btn) {
-  maVisible[key] = !maVisible[key];
-  btn.setAttribute('aria-pressed', maVisible[key]);
-  renderMA();
-}
-function renderMA() {
-  var pm = mapper(CLOSES, MX0, MX1, 14, MH - 20);
-  var s = '<svg class="chart" viewBox="0 0 ' + MW + ' ' + MH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
-  if (maVisible.sma200) s += poly(ptsOf(S200, mxm, pm.y), 'var(--trend)', 2.6);
-  if (maVisible.ema50) s += poly(ptsOf(E50, mxm, pm.y), 'var(--ma-mid)', 1.8);
-  if (maVisible.ema20) s += poly(ptsOf(E20, mxm, pm.y), 'var(--ma-fast)', 1.8);
-  s += poly(ptsOf(CLOSES, mxm, pm.y), 'var(--ink)', 1.6);
-  s += '</svg>';
-  document.getElementById('maChart').innerHTML = s;
-
-  var last = N - 1, price = CLOSES[last];
-  var e20 = E20[last], e50 = E50[last], s200 = S200[last];
-  var stacked = e20 > e50 && e50 > s200;
-  var lines = [];
-  lines.push('Preço <span class="num">$' + price.toFixed(2) + '</span> está ' +
-    (price > e20 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + ' da EMA20, ' +
-    (price > e50 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + ' da EMA50 e ' +
-    (price > s200 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + ' da SMA200.');
-  lines.push('Empilhamento: EMA20 (' + e20.toFixed(0) + ') ' + (e20 > e50 ? '>' : '<') + ' EMA50 (' + e50.toFixed(0) + ') ' + (e50 > s200 ? '>' : '<') + ' SMA200 (' + s200.toFixed(0) + ') → ' +
-    (stacked ? '<span class="tr">ordem perfeita de alta: tendência saudável em todos os prazos.</span>'
-             : 'ordem quebrada: prazos em conflito, tendência indefinida.'));
-  document.getElementById('maReadout').innerHTML = lines.join('<br>');
-}
-renderMA();
-
-/* ================== LAB 7: ADX ================== */
-function renderADX() {
-  var v = parseInt(document.getElementById('adxSlider').value, 10);
-  document.getElementById('adxVal').textContent = v;
-  var frac = Math.min(v, 60) / 60;
-  var ang = -90 + frac * 180;
-  var rad = (ang - 90) * Math.PI / 180;
-  var cx = 160, cy = 150, r = 118;
-  var nx = cx + r * Math.cos(rad), ny = cy + r * Math.sin(rad);
-  function arcPt(a) { var rr = (a - 90) * Math.PI / 180; return (cx + 130 * Math.cos(rr)).toFixed(1) + ' ' + (cy + 130 * Math.sin(rr)).toFixed(1); }
-  var s = '<svg class="chart" viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
-  s += '<path d="M ' + arcPt(-90) + ' A 130 130 0 0 1 ' + arcPt(-30) + '" fill="none" stroke="var(--wire)" stroke-width="18" stroke-linecap="round"/>';
-  s += '<path d="M ' + arcPt(-30) + ' A 130 130 0 0 1 ' + arcPt(-15) + '" fill="none" stroke="#F2C14E" stroke-width="18"/>';
-  s += '<path d="M ' + arcPt(-15) + ' A 130 130 0 0 1 ' + arcPt(90) + '" fill="none" stroke="var(--trend)" stroke-width="18" stroke-linecap="round"/>';
-  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + nx.toFixed(1) + '" y2="' + ny.toFixed(1) + '" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>';
-  s += '<circle cx="' + cx + '" cy="' + cy + '" r="7" fill="var(--ink)"/>';
-  s += '<text x="30" y="164" font-size="10" fill="var(--wire)">0 · lateral</text>';
-  s += '<text x="235" y="164" font-size="10" fill="var(--trend)">60 · muito forte</text>';
-  s += '</svg>';
-  document.getElementById('adxArc').innerHTML = s;
-
-  var msg = v < 20 ? 'ADX ' + v + ' → <span class="r">mercado lateral</span>: sem tendência aproveitável; sinais de rompimento falham com frequência. (TSM estava aqui: 17,3.)'
-          : v < 25 ? 'ADX ' + v + ' → zona de transição: uma tendência pode estar nascendo — ou morrendo. (AMD: 24,5.)'
-          : 'ADX ' + v + ' → <span class="tr">tendência forte</span>: o mercado tem direção definida — seja ela de alta ou de baixa. O ADX não diz qual!';
-  document.getElementById('adxReadout').innerHTML = msg;
-}
-document.getElementById('adxSlider').addEventListener('input', renderADX);
-renderADX();
-
-/* ================== LAB 8: MACD ================== */
-function renderMACD() {
-  var e12 = ema(CLOSES, 12), e26 = ema(CLOSES, 26);
-  var macd = CLOSES.map(function(_, i){ return (e12[i] !== null && e26[i] !== null) ? e12[i] - e26[i] : null; });
-  var firstValid = macd.findIndex(function(v){ return v !== null; });
-  var macdVals = macd.slice(firstValid);
-  var sig9 = ema(macdVals, 9);
-  var signal = new Array(N).fill(null);
-  for (var i = 0; i < sig9.length; i++) if (sig9[i] !== null) signal[firstValid + i] = sig9[i];
-  var hist = CLOSES.map(function(_, i){ return (macd[i] !== null && signal[i] !== null) ? macd[i] - signal[i] : null; });
-
-  var W2 = 780, H2 = 280, X0 = 46, X1 = W2 - 14;
-  function xm(i) { return X0 + i / (N - 1) * (X1 - X0); }
-  var allVals = [];
-  for (var a = 0; a < N; a++) { if (macd[a] !== null) allVals.push(macd[a]); if (signal[a] !== null) allVals.push(signal[a]); if (hist[a] !== null) allVals.push(hist[a]); }
-  var pm = mapper(allVals, X0, X1, 14, H2 - 24, 0.1);
-  var zeroY = pm.y(0);
-  var barW = Math.max(1.4, (X1 - X0) / N - 0.6);
-
-  var s = '<svg class="chart" viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" id="macdSvg">';
-  s += '<line x1="' + X0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + X1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3"/>';
-  s += '<text x="' + (X0-6) + '" y="' + (zeroY+4).toFixed(1) + '" font-size="10" fill="var(--wire)" text-anchor="end">0</text>';
-  for (var b = 0; b < N; b++) {
-    if (hist[b] === null) continue;
-    var hY = pm.y(hist[b]);
-    var top = Math.min(hY, zeroY), h = Math.abs(hY - zeroY) || 0.5;
-    var col = hist[b] >= 0 ? 'var(--trend)' : 'var(--danger)';
-    s += '<rect x="' + (xm(b) - barW/2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + h.toFixed(1) +
-         '" fill="' + col + '" opacity="0.55" data-i="' + b + '" class="hbar" style="cursor:pointer;"/>';
-  }
-  s += poly(ptsOf(macd, xm, pm.y), 'var(--ink)', 1.7);
-  s += poly(ptsOf(signal, xm, pm.y), 'var(--osc)', 1.5, '5,3');
-  s += '<text x="' + X0 + '" y="12" font-size="10.5" fill="var(--ink)" font-weight="700">— MACD (EMA12−EMA26)</text>';
-  s += '<text x="' + (X0 + 190) + '" y="12" font-size="10.5" fill="var(--osc)" font-weight="700">- - Sinal (EMA9)</text>';
-  s += '<text x="' + (X0 + 340) + '" y="12" font-size="10.5" fill="var(--trend)" font-weight="700">▮ Histograma</text>';
-  s += '</svg>';
-  document.getElementById('macdChart').innerHTML = s;
-
-  document.getElementById('macdSvg').addEventListener('pointermove', function(e) {
-    var t = e.target;
-    if (!t.classList || !t.classList.contains('hbar')) return;
-    var i = parseInt(t.getAttribute('data-i'), 10);
-    var m = macd[i], sg = signal[i], h = hist[i];
-    var shrinking = i > 0 && hist[i-1] !== null && Math.abs(h) < Math.abs(hist[i-1]);
-    document.getElementById('macdReadout').innerHTML =
-      'Dia ' + (i+1) + ' de ' + N + ' · MACD <span class="num">' + m.toFixed(2) + '</span> · Sinal <span class="num">' + sg.toFixed(2) + '</span><br>' +
-      'Histograma = ' + m.toFixed(2) + ' − ' + sg.toFixed(2) + ' = ' +
-      (h >= 0 ? '<span class="g">+' + h.toFixed(2) + '</span> (momentum de alta)' : '<span class="r">' + h.toFixed(2) + '</span> (momentum de baixa)') +
-      (shrinking ? ' · barra <b>encolhendo</b>: o movimento perde força, cruzamento pode vir aí.' : ' · barra crescendo: movimento acelerando.');
-  });
-}
-renderMACD();
 
 /* ================== QUIZ ================== */
 var QUIZ = [

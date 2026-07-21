@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Médias móveis — três horizontes, um empilhamento</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --accent: var(--trend); --accent-soft: var(--trend-soft); --tab-accent: var(--trend); }
+
+  .ma-toggles { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ma-toggle {
+    font-family: var(--font-display); font-weight: 700; font-size: 13px;
+    border: 2px solid var(--grid); background: var(--card);
+    color: var(--ink);
+    padding: 8px 16px; border-radius: 999px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ma-toggle:focus-visible { outline: 3px solid var(--trend); outline-offset: 2px; }
+  .ma-toggle[aria-pressed="true"].c1 { background: var(--ma-fast); border-color: var(--ma-fast); color: var(--on-accent); }
+  .ma-toggle[aria-pressed="true"].c2 { background: var(--ma-mid); border-color: var(--ma-mid); color: var(--on-accent); }
+  .ma-toggle[aria-pressed="true"].c3 { background: var(--trend); border-color: var(--trend); color: var(--on-accent); }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="volume.html">Volume</a>
+    <a href="risco.html">Risco</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow trend">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path>
+    </svg>Tendência · o alicerce
+  </div>
+  <h1>Médias móveis — três horizontes, um empilhamento</h1>
+  <p class="lead">A ferramenta mais antiga da análise técnica: trocar o ruído de cada dia pela média dos últimos N. Toda a família de tendência — MACD incluído — nasce daqui.</p>
+
+  <div class="formula">
+    SMA(N) = média simples dos últimos N fechamentos &nbsp;<span style="color:var(--wire);">(todos os dias pesam igual)</span><br>
+    EMA(N) = média exponencial &nbsp;<span style="color:var(--wire);">(os dias recentes pesam mais → reage mais rápido)</span>
+  </div>
+
+  <div class="panel">
+    <h2>Cada média enxerga um prazo</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      A <b style="color:var(--ma-fast);">EMA20</b> conta a história do último mês — reage rápido, erra rápido.
+      A <b style="color:var(--ma-mid);">EMA50</b> suaviza o trimestre. E a
+      <b style="color:var(--trend);">SMA200</b> é o piso do longo prazo — a linha que separa "mercado de alta" de "mercado de baixa" para muita gente.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      O sinal clássico não está em nenhuma delas isoladamente, mas no <b style="color:var(--ink);">empilhamento</b>:
+      quando EMA20 &gt; EMA50 &gt; SMA200, todos os prazos apontam na mesma direção.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>Ligue e desligue as camadas</h2>
+    <p class="ptext">
+      O preço real da AMD com as três médias. Desligue e religue cada uma — e observe o veredito do empilhamento mudar embaixo.
+    </p>
+    <div class="ma-toggles">
+      <button class="ma-toggle c1" id="tgEma20" aria-pressed="true" onclick="toggleMA('ema20', this)">EMA20</button>
+      <button class="ma-toggle c2" id="tgEma50" aria-pressed="true" onclick="toggleMA('ema50', this)">EMA50</button>
+      <button class="ma-toggle c3" id="tgSma200" aria-pressed="true" onclick="toggleMA('sma200', this)">SMA200</button>
+    </div>
+    <div id="maChart"></div>
+    <div class="readout" id="maReadout"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Como (não) usar</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">Médias atrasam por construção.</b> Elas confirmam a tendência depois que ela começou e avisam a reversão depois que ela aconteceu. O preço desse alisamento é o atraso — não existe média rápida <em>e</em> estável.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">Em lateral, viram moedor de stops.</b> Cruzamentos de médias num mercado sem direção geram sinal falso atrás de sinal falso (o "whipsaw"). Cheque a força da tendência — o <a href="adx.html" style="color:var(--trend); font-weight:700;">ADX</a> existe para isso — antes de confiar num cruzamento.
+    </p>
+    <div class="insight">
+      O empilhamento EMA20 &gt; EMA50 &gt; SMA200 com preço acima das três é o desenho mais saudável de uma alta — foi exatamente o quadro da AMD na segunda metade do histórico.
+    </div>
+  </div>
+
+  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+</div>
+
+<script src="assets/amd.js"></script>
+<script>
+var maVisible = { ema20: true, ema50: true, sma200: true };
+var E20 = ema(CLOSES, 20), E50 = ema(CLOSES, 50), S200 = sma(CLOSES, 200);
+var MW = 780, MH = 300, MX0 = 46, MX1 = MW - 14;
+function mxm(i) { return MX0 + i / (N - 1) * (MX1 - MX0); }
+function toggleMA(key, btn) {
+  maVisible[key] = !maVisible[key];
+  btn.setAttribute('aria-pressed', maVisible[key]);
+  renderMA();
+}
+function renderMA() {
+  var pm = mapper(CLOSES, MX0, MX1, 14, MH - 20);
+  var s = '<svg class="chart" viewBox="0 0 ' + MW + ' ' + MH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  if (maVisible.sma200) s += poly(ptsOf(S200, mxm, pm.y), 'var(--trend)', 2.6);
+  if (maVisible.ema50) s += poly(ptsOf(E50, mxm, pm.y), 'var(--ma-mid)', 1.8);
+  if (maVisible.ema20) s += poly(ptsOf(E20, mxm, pm.y), 'var(--ma-fast)', 1.8);
+  s += poly(ptsOf(CLOSES, mxm, pm.y), 'var(--ink)', 1.6);
+  s += '</svg>';
+  document.getElementById('maChart').innerHTML = s;
+
+  var last = N - 1, price = CLOSES[last];
+  var e20 = E20[last], e50 = E50[last], s200 = S200[last];
+  var stacked = e20 > e50 && e50 > s200;
+  var lines = [];
+  lines.push('Preço <span class="num">$' + price.toFixed(2) + '</span> está ' +
+    (price > e20 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + ' da EMA20, ' +
+    (price > e50 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + ' da EMA50 e ' +
+    (price > s200 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + ' da SMA200.');
+  lines.push('Empilhamento: EMA20 (' + e20.toFixed(0) + ') ' + (e20 > e50 ? '>' : '<') + ' EMA50 (' + e50.toFixed(0) + ') ' + (e50 > s200 ? '>' : '<') + ' SMA200 (' + s200.toFixed(0) + ') → ' +
+    (stacked ? '<span class="tr">ordem perfeita de alta: tendência saudável em todos os prazos.</span>'
+             : 'ordem quebrada: prazos em conflito, tendência indefinida.'));
+  document.getElementById('maReadout').innerHTML = lines.join('<br>');
+}
+renderMA();
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROC — o Momentum em porcentagem</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --accent: var(--osc); --accent-soft: var(--osc-soft); }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="volume.html">Volume</a>
+    <a href="risco.html">Risco</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
+      <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"></path>
+    </svg>Oscilador · variação percentual
+  </div>
+  <h1>ROC — o Momentum em porcentagem</h1>
+  <p class="lead">O mesmo cálculo do Momentum, normalizado em %. Essa pequena mudança resolve o maior defeito do Momentum bruto — e torna a leitura comparável entre ativos e épocas.</p>
+
+  <div class="formula">
+    ROC(N) = (preço de hoje − preço de N períodos atrás) ÷ preço de N períodos atrás × 100<br>
+    <span style="color:var(--wire);">Momentum(N) = preço de hoje − preço de N períodos atrás &nbsp;(a versão bruta, em dólares)</span>
+  </div>
+
+  <div class="panel">
+    <h2>Por que dividir muda tudo</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      Uma variação de <span class="num">$10</span> é um terremoto numa ação de $20 (<b style="color:var(--ink);">+50%</b>)
+      e um bocejo numa de $500 (<b style="color:var(--ink);">+2%</b>). O Momentum bruto trata as duas como iguais; o ROC não.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      Isso também vale para o <em>mesmo</em> ativo em épocas diferentes: a AMD a $110 no início do histórico e a $520 no fim.
+      Um Momentum de $15 significava muito lá atrás e pouco hoje — o ROC corrige essa distorção automaticamente.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>A curva completa, com dados reais</h2>
+    <p class="ptext">
+      Arraste o período e veja o ROC de toda a série da AMD. Acima de zero: preço acima de onde estava há N pregões.
+      Períodos curtos deixam a curva nervosa; longos revelam os grandes ciclos.
+    </p>
+    <div class="controls-row">
+      <label for="rocPeriod">Período</label>
+      <input type="range" id="rocPeriod" min="2" max="60" value="12">
+      <span class="value-pill" id="rocPeriodVal">12</span>
+    </div>
+    <div id="rocChart"></div>
+    <div class="readout" id="rocReadout"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Como (não) usar</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">O ROC depende do horizonte.</b> O mesmo dia pode ter ROC(5) negativo e ROC(60) fortemente positivo — nenhum dos dois está "errado"; eles respondem a perguntas diferentes.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">Sem faixas fixas.</b> Diferente do RSI (0–100), o ROC não tem teto nem chão — "esticado" para um ativo calmo é rotina para um volátil. Compare o ROC de hoje com o histórico do próprio ativo, não com números mágicos.
+    </p>
+    <div class="insight">
+      O ROC é a ponte entre os osciladores e o <b>fator momentum</b> da literatura acadêmica: "retorno percentual dos últimos N meses" é exatamente um ROC de horizonte longo. É a versão do momentum que sobrevive fora do gráfico.
+    </div>
+  </div>
+
+  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+</div>
+
+<script src="assets/amd.js"></script>
+<script>
+var ROCW = 780, ROCH = 250, ROCX0 = 46, ROCX1 = ROCW - 14;
+function rocxm(i) { return ROCX0 + i / (N - 1) * (ROCX1 - ROCX0); }
+function calcROC(closes, period) {
+  var out = new Array(closes.length).fill(null);
+  for (var i = period; i < closes.length; i++) {
+    out[i] = (closes[i] - closes[i - period]) / closes[i - period] * 100;
+  }
+  return out;
+}
+function renderROC() {
+  var p = parseInt(document.getElementById('rocPeriod').value, 10);
+  document.getElementById('rocPeriodVal').textContent = p;
+  var roc = calcROC(CLOSES, p);
+  var pm = mapper(roc, ROCX0, ROCX1, 14, ROCH - 20, 0.12);
+  var zeroY = pm.y(0);
+
+  var s = '<svg class="chart" viewBox="0 0 ' + ROCW + ' ' + ROCH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  s += '<line x1="' + ROCX0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + ROCX1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3"/>';
+  s += '<text x="' + (ROCX0-6) + '" y="' + (zeroY+4).toFixed(1) + '" font-size="10" fill="var(--wire)" text-anchor="end">0%</text>';
+  s += poly(ptsOf(roc, rocxm, pm.y), 'var(--osc)', 2);
+  s += '</svg>';
+  document.getElementById('rocChart').innerHTML = s;
+
+  var last = roc[N-1];
+  var pos = 0, count = 0;
+  for (var i = 0; i < N; i++) if (roc[i] !== null) { count++; if (roc[i] >= 0) pos++; }
+  document.getElementById('rocReadout').innerHTML =
+    'ROC(' + p + ') hoje = <span class="hi">' + (last >= 0 ? '+' : '') + last.toFixed(1) + '%</span> em relação a ' + p + ' períodos atrás — ' +
+    (last >= 0 ? '<span class="g">acima</span>' : '<span class="r">abaixo</span>') + '.<br>' +
+    'Com esse período, o ROC ficou positivo em <span class="hi">' + (pos/count*100).toFixed(0) + '%</span> dos dias do histórico.' +
+    '<br><em style="color:var(--ink-soft);">Repare: mudar o N pode inverter a resposta — como todo indicador de momentum, o ROC depende do horizonte escolhido.</em>';
+}
+document.getElementById('rocPeriod').addEventListener('input', renderROC);
+renderROC();
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

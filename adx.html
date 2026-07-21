@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADX — força, não direção</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --accent: var(--trend); --accent-soft: var(--trend-soft); --tab-accent: var(--trend); }
+
+  .adx-meter { text-align: center; padding: 8px 0; }
+  .adx-arc { max-width: 340px; margin: 0 auto; }
+  .adx-slider-row { justify-content: center; }
+
+  .zones { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px;
+    font-size: 14px; color: var(--ink-soft); margin-top: 4px; }
+  .zones .z { font-family: var(--mono); font-size: 12.5px; font-weight: 700; white-space: nowrap; padding-top: 2px; }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="volume.html">Volume</a>
+    <a href="risco.html">Risco</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow trend">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path>
+    </svg>Tendência · força, não direção
+  </div>
+  <h1>ADX — o dinamômetro do mercado</h1>
+  <p class="lead">O ADX mede a <em>força</em> da tendência numa escala de 0 a 100 — sem dizer se ela é de alta ou de baixa. É o filtro que decide se os outros indicadores de tendência merecem confiança.</p>
+
+  <div class="formula">
+    +DI = pressão compradora média &nbsp;·&nbsp; −DI = pressão vendedora média<br>
+    ADX = média suavizada da diferença entre +DI e −DI &nbsp;<span style="color:var(--wire);">(quanto mais um lado domina, maior o ADX)</span>
+  </div>
+
+  <div class="panel">
+    <h2>As zonas de leitura</h2>
+    <div class="zones">
+      <span class="z" style="color:var(--danger);">0–20</span>
+      <span>Mercado lateral. Sem tendência aproveitável — rompimentos falham com frequência, cruzamentos de médias viram serra.</span>
+      <span class="z" style="color:var(--amber);">20–25</span>
+      <span>Zona de transição. Uma tendência pode estar nascendo — ou morrendo. Aguarde confirmação.</span>
+      <span class="z" style="color:var(--trend);">25–40</span>
+      <span>Tendência estabelecida. Indicadores de tendência (médias, MACD) funcionam no seu habitat.</span>
+      <span class="z" style="color:var(--trend);">40+</span>
+      <span>Tendência muito forte. Rara e geralmente insustentável por muito tempo — cuidado ao entrar atrasado.</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Mova o ponteiro</h2>
+    <p class="ptext">
+      Arraste e leia como o mercado interpreta cada nível. Os valores reais no fim do histórico: AMD em 24,5 (transição) e TSM em 17,3 (lateral).
+    </p>
+    <div class="adx-meter">
+      <div class="adx-arc" id="adxArc"></div>
+      <div class="controls-row adx-slider-row" style="margin-top:8px;">
+        <input type="range" id="adxSlider" min="0" max="60" value="24" aria-label="Valor do ADX">
+        <span class="value-pill" id="adxVal">24</span>
+      </div>
+      <div class="readout" id="adxReadout" style="text-align:left;"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Como (não) usar</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">A pegadinha clássica:</b> ADX 45 subindo não significa "alta forte" — significa <em>tendência</em> forte. Pode ser uma queda violenta. A direção você lê no preço (ou no +DI/−DI); o ADX só mede o músculo.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">Ele atrasa duas vezes.</b> O ADX nasce de médias de médias — quando ele finalmente confirma a tendência, ela já tem estrada. Use-o como filtro de contexto ("vale operar tendência aqui?"), não como gatilho de entrada.
+    </p>
+    <div class="insight">
+      Uso combinado que faz sentido: <b>ADX responde "há tendência?"</b> — se sim, as <a href="medias.html" style="color:var(--trend); font-weight:700;">médias móveis</a> e o <a href="macd.html" style="color:var(--trend); font-weight:700;">MACD</a> dizem a direção; se não, os <a href="rsi.html" style="color:var(--trend); font-weight:700;">osciladores</a> voltam a ser úteis nos extremos do range.
+    </div>
+  </div>
+
+  <div class="foot">Referências: ADX(14) clássico de Wilder · leituras finais reais de AMD e TSM · material educativo, não é recomendação</div>
+</div>
+
+<script>
+function renderADX() {
+  var v = parseInt(document.getElementById('adxSlider').value, 10);
+  document.getElementById('adxVal').textContent = v;
+  var frac = Math.min(v, 60) / 60;
+  var ang = -90 + frac * 180;
+  var rad = (ang - 90) * Math.PI / 180;
+  var cx = 160, cy = 150, r = 118;
+  var nx = cx + r * Math.cos(rad), ny = cy + r * Math.sin(rad);
+  function arcPt(a) { var rr = (a - 90) * Math.PI / 180; return (cx + 130 * Math.cos(rr)).toFixed(1) + ' ' + (cy + 130 * Math.sin(rr)).toFixed(1); }
+  var s = '<svg class="chart" viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  s += '<path d="M ' + arcPt(-90) + ' A 130 130 0 0 1 ' + arcPt(-30) + '" fill="none" stroke="var(--wire)" stroke-width="18" stroke-linecap="round"/>';
+  s += '<path d="M ' + arcPt(-30) + ' A 130 130 0 0 1 ' + arcPt(-15) + '" fill="none" stroke="var(--amber)" stroke-width="18"/>';
+  s += '<path d="M ' + arcPt(-15) + ' A 130 130 0 0 1 ' + arcPt(90) + '" fill="none" stroke="var(--trend)" stroke-width="18" stroke-linecap="round"/>';
+  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + nx.toFixed(1) + '" y2="' + ny.toFixed(1) + '" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>';
+  s += '<circle cx="' + cx + '" cy="' + cy + '" r="7" fill="var(--ink)"/>';
+  s += '<text x="30" y="164" font-size="10" fill="var(--wire)">0 · lateral</text>';
+  s += '<text x="235" y="164" font-size="10" fill="var(--trend)">60 · muito forte</text>';
+  s += '</svg>';
+  document.getElementById('adxArc').innerHTML = s;
+
+  var msg = v < 20 ? 'ADX ' + v + ' → <span class="r">mercado lateral</span>: sem tendência aproveitável; sinais de rompimento falham com frequência. (TSM estava aqui: 17,3.)'
+          : v < 25 ? 'ADX ' + v + ' → zona de transição: uma tendência pode estar nascendo — ou morrendo. (AMD: 24,5.)'
+          : 'ADX ' + v + ' → <span class="tr">tendência forte</span>: o mercado tem direção definida — seja ela de alta ou de baixa. O ADX não diz qual!';
+  document.getElementById('adxReadout').innerHTML = msg;
+}
+document.getElementById('adxSlider').addEventListener('input', renderADX);
+renderADX();
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

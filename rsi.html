@@ -178,6 +178,29 @@
     width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
   }
 
+  /* ===== laboratório de período ===== */
+  .controls-row {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    font-family: var(--font-display); font-size: 13.5px; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .controls-row input[type="range"] { accent-color: var(--osc); width: 200px; }
+  .controls-row input[type="range"]:focus-visible { outline: 3px solid var(--osc); outline-offset: 3px; border-radius: 4px; }
+  .value-pill {
+    font-family: var(--font-mono); background: var(--card-strong); color: var(--ink);
+    border: 1px solid var(--grid); padding: 3px 12px; border-radius: 999px;
+    font-size: 13px; min-width: 44px; text-align: center;
+  }
+  .readout {
+    font-family: var(--font-mono); font-size: 13.5px; background: var(--paper);
+    border: 1px dashed var(--wire); border-radius: 10px;
+    padding: 12px 16px; margin-top: 16px; line-height: 1.9;
+  }
+  .readout .g { color: var(--trend); font-weight: 700; }
+  .readout .r { color: var(--danger); font-weight: 700; }
+  .readout .hi { color: var(--osc); font-weight: 700; }
+  svg.chart { width: 100%; height: auto; display: block; }
+
 /* ===== abas do guia (compartilhadas entre as páginas) ===== */
 .site-tabs {
   position: sticky; top: 0; z-index: 60;
@@ -310,6 +333,23 @@
     </div>
   </div>
 
+  <!-- STEP 6: LABORATÓRIO -->
+  <div class="step">
+    <div class="step-title"><span class="step-badge">6</span> Laboratório: o período muda o humor</div>
+    <div class="step-text">
+      Tudo acima usou o período clássico de 14 dias — mas o 14 é uma escolha, não uma lei.
+      Arraste e veja o mesmo histórico completo da AMD recalculado: períodos curtos deixam o RSI
+      "nervoso" (muitos alarmes), longos o acalmam.
+    </div>
+    <div class="controls-row">
+      <label for="rsiPeriod">Período</label>
+      <input type="range" id="rsiPeriod" min="5" max="30" value="14">
+      <span class="value-pill" id="rsiPeriodVal">14</span>
+    </div>
+    <div id="rsiChart"></div>
+    <div class="readout" id="rsiReadout"></div>
+  </div>
+
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ) · material educativo, não é recomendação</div>
 </div>
 
@@ -374,6 +414,40 @@ document.getElementById('themeToggle').addEventListener('click', function() {
   setTheme(current === 'dark' ? 'light' : 'dark');
 });
 setTheme(document.documentElement.getAttribute('data-theme') || 'light');
+</script>
+<script src="assets/amd.js"></script>
+<script>
+/* ===== laboratório: o período muda o humor ===== */
+var RW = 780, RH = 250, RX0 = 40, RX1 = RW - 14;
+function rxm(i) { return RX0 + i / (N - 1) * (RX1 - RX0); }
+function renderRSILab() {
+  var p = parseInt(document.getElementById('rsiPeriod').value, 10);
+  document.getElementById('rsiPeriodVal').textContent = p;
+  var rsi = calcRSI(CLOSES, p);
+  var y0 = 14, y1 = RH - 26;
+  function ym(v) { return y1 - v / 100 * (y1 - y0); }
+  var s = '<svg class="chart" viewBox="0 0 ' + RW + ' ' + RH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  s += '<rect x="' + RX0 + '" y="' + y0 + '" width="' + (RX1-RX0) + '" height="' + (ym(70)-y0) + '" fill="var(--osc-soft)"/>';
+  s += '<rect x="' + RX0 + '" y="' + ym(30) + '" width="' + (RX1-RX0) + '" height="' + (y1-ym(30)) + '" fill="var(--trend-soft)"/>';
+  [[70,'var(--osc)'],[50,'var(--wire)'],[30,'var(--trend)']].forEach(function(g){
+    s += '<line x1="' + RX0 + '" y1="' + ym(g[0]) + '" x2="' + RX1 + '" y2="' + ym(g[0]) + '" stroke="' + g[1] + '" stroke-dasharray="4,3" opacity="0.55"/>';
+    s += '<text x="' + (RX0-6) + '" y="' + (ym(g[0])+4) + '" font-size="10" fill="' + g[1] + '" text-anchor="end">' + g[0] + '</text>';
+  });
+  s += poly(ptsOf(rsi, rxm, ym), 'var(--osc)', 2);
+  s += '</svg>';
+  document.getElementById('rsiChart').innerHTML = s;
+
+  var last = rsi[N-1];
+  var above70 = 0, below30 = 0, count = 0;
+  for (var i = 0; i < N; i++) if (rsi[i] !== null) { count++; if (rsi[i] > 70) above70++; if (rsi[i] < 30) below30++; }
+  var zona = last >= 70 ? '<span class="r">sobrecomprado</span>' : last <= 30 ? '<span class="g">sobrevendido</span>' : 'zona neutra';
+  document.getElementById('rsiReadout').innerHTML =
+    'RSI(' + p + ') hoje = <span class="hi">' + last.toFixed(1) + '</span> · ' + zona + '<br>' +
+    'Com período ' + p + ', o RSI passou <span class="hi">' + (above70/count*100).toFixed(0) + '%</span> do tempo acima de 70 e <span class="hi">' + (below30/count*100).toFixed(0) + '%</span> abaixo de 30.' +
+    (p <= 8 ? ' Período curto: muitos alarmes.' : p >= 22 ? ' Período longo: quase nunca dispara — mas quando dispara, pesa.' : '');
+}
+document.getElementById('rsiPeriod').addEventListener('input', renderRSILab);
+renderRSILab();
 </script>
 </body>
 </html>
