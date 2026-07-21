@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBV e A/D — indicadores de volume acumulado (AMD)</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #F7F9FB;
+    --grid: #E3E9F0;
+    --ink: #16212E;
+    --ink-soft: #4A5A6B;
+    --wire: #8CA3B8;
+    --osc: #E8590C;
+    --osc-soft: #FDEBE0;
+    --trend: #1B6E53;
+    --trend-soft: #E2F1EB;
+    --card: #FFFFFF;
+    --card-strong: #F7F9FB;
+    --danger: #C0392B;
+    --danger-soft: #FDEDEC;
+    --obv: #2A6BB0;
+    --obv-soft: #EAF1F8;
+    --ad: #B0632A;
+    --price-soft: #D5DCE4;
+    --warn-bg: #FBF3E8;
+    --warn-border: #E8C99A;
+    --warn-head: #8A5A16;
+    --warn-text: #6B5230;
+    --on-accent: #FFFFFF;
+    --surface-glow: transparent;
+    --shadow-card: 0 1px 0 rgba(22,33,46,0.04), 0 12px 30px -20px rgba(22,33,46,0.15);
+    --font-display: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-body: Georgia, "Times New Roman", serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+    --sans: var(--font-display);
+    --mono: var(--font-mono);
+    --accent: var(--obv);
+    --up: var(--trend);
+    --down: var(--danger);
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0F141B;
+    --grid: rgba(142, 166, 191, 0.14);
+    --ink: #EEF4F8;
+    --ink-soft: #B3C0CB;
+    --wire: #73869A;
+    --osc: #FF8A3D;
+    --osc-soft: rgba(255, 138, 61, 0.15);
+    --trend: #43D391;
+    --trend-soft: rgba(67, 211, 145, 0.14);
+    --card: #151D27;
+    --card-strong: #1B2531;
+    --danger: #FF6B6B;
+    --danger-soft: rgba(255, 107, 107, 0.14);
+    --obv: #6FB3FF;
+    --obv-soft: rgba(111, 179, 255, 0.14);
+    --ad: #E0995A;
+    --price-soft: rgba(238, 244, 248, 0.25);
+    --warn-bg: rgba(242, 193, 78, 0.10);
+    --warn-border: rgba(242, 193, 78, 0.35);
+    --warn-head: #F2C14E;
+    --warn-text: #D9C79A;
+    --on-accent: #071016;
+    --surface-glow: rgba(255,255,255,0.035);
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 48px -34px rgba(0,0,0,0.95);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background:
+      linear-gradient(180deg, var(--surface-glow), transparent 260px),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      var(--paper);
+    background-size: auto, 28px 28px, 28px 28px, auto;
+    color: var(--ink);
+    line-height: 1.7; padding: 32px 20px; font-size: 16.5px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h1 { font-family: var(--sans); font-weight: 800; font-size: clamp(28px, 5vw, 42px);
+    letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 12px; }
+  h2 { font-family: var(--sans); font-weight: 800; font-size: 21px; margin: 8px 0 4px;
+    letter-spacing: -0.01em; }
+  p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
+  .formula { font-family: var(--mono); font-size: 13px; background: var(--paper);
+    border: 1px dashed var(--wire); border-radius: 10px; padding: 14px 18px; margin: 22px 0;
+    line-height: 1.85; }
+  .panel { background: var(--card); border: 1px solid var(--grid); border-radius: 16px;
+    padding: 24px; margin-top: 22px; box-shadow: var(--shadow-card); }
+  svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--ink-soft);
+    margin-bottom: 10px; font-family: var(--sans); }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .toggle-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .tg { font-family: var(--sans); font-weight: 700; font-size: 13px; border: 2px solid var(--grid);
+    background: var(--card); color: var(--ink); padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .tg[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .tg:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .readout { font-family: var(--mono); font-size: 13px; background: var(--paper);
+    border: 1px dashed var(--wire); border-radius: 10px; padding: 12px 16px; margin-top: 14px; line-height: 1.9; }
+  .readout .up { color: var(--up); font-weight: 700; }
+  .readout .down { color: var(--down); font-weight: 700; }
+  .readout .o { color: var(--obv); font-weight: 700; }
+  .insight { font-size: 14px; color: var(--ink-soft); background: var(--obv-soft);
+    border-left: 3px solid var(--obv); padding: 12px 16px; border-radius: 0 8px 8px 0; }
+  .insight b { color: var(--ink); }
+  .caveat { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 12px;
+    padding: 18px 20px; margin-top: 22px; font-size: 14px; }
+  .caveat h3 { font-family: var(--sans); font-size: 15px; margin-bottom: 8px; color: var(--warn-head);
+    display: flex; align-items: center; }
+  .caveat h3 .inline-icon { width: 16px; height: 16px; margin-right: 7px; flex-shrink: 0; }
+  .caveat p { color: var(--warn-text); margin-bottom: 8px; }
+  .caveat p:last-child { margin-bottom: 0; }
+  .steps { font-size: 14.5px; color: var(--ink-soft); }
+  .steps li { margin: 6px 0 6px 20px; }
+  .steps b { color: var(--ink); }
+  .foot { font-family: var(--mono); font-size: 12px; color: var(--wire);
+    text-align: center; margin-top: 40px; }
+
+  /* ===== toggle de tema (padrão do guia) ===== */
+  .page-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--grid); border-radius: 999px;
+    background: var(--card); color: var(--ink);
+    box-shadow: var(--shadow-card); cursor: pointer;
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    padding: 9px 14px;
+    transition: border-color 0.15s, transform 0.15s, background 0.15s;
+  }
+  .theme-toggle:hover { border-color: var(--wire); transform: translateY(-1px); }
+  .theme-toggle:focus-visible { outline: 3px solid var(--osc); outline-offset: 2px; }
+  .theme-toggle .theme-icon { width: 16px; height: 16px; display: inline-flex; }
+  .lucide-icon {
+    display: block; width: 100%; height: 100%;
+    fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .eyebrow .inline-icon {
+    display: inline-block;
+    width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
+  }
+
+  /* ===== cores dos gráficos SVG seguem o tema ===== */
+  svg [stroke="#16212E"] { stroke: var(--ink); }
+  svg [fill="#16212E"] { fill: var(--ink); }
+  svg [stroke="#1B6E53"] { stroke: var(--trend); }
+  svg [fill="#1B6E53"] { fill: var(--trend); }
+  svg [stroke="#C0392B"] { stroke: var(--danger); }
+  svg [fill="#C0392B"] { fill: var(--danger); }
+  svg [stroke="#8CA3B8"] { stroke: var(--wire); }
+  svg [fill="#8CA3B8"] { fill: var(--wire); }
+  svg [stroke="#2A6BB0"] { stroke: var(--obv); }
+  svg [fill="#2A6BB0"] { fill: var(--obv); }
+  svg [stroke="#B0632A"] { stroke: var(--ad); }
+  svg [fill="#B0632A"] { fill: var(--ad); }
+  svg [stroke="#D5DCE4"] { stroke: var(--price-soft); }
+  svg [fill="#fff"] { fill: var(--card); }
+
+  /* ===== abas do guia (compartilhadas entre as páginas) ===== */
+  .site-tabs {
+    position: sticky; top: 0; z-index: 60;
+    margin: -32px -20px 28px;
+    background: var(--paper, #FFFFFF);
+    border-bottom: 1px solid var(--grid, #E3E9F0);
+  }
+  .site-tabs-inner {
+    max-width: 880px; margin: 0 auto; padding: 0 22px;
+    display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .site-tabs a {
+    font-family: var(--font-mono, ui-monospace, "SF Mono", Consolas, monospace);
+    font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-soft, #4A5A6B); text-decoration: none;
+    padding: 14px 12px 11px; border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .site-tabs a:hover { color: var(--ink, #16212E); }
+  .site-tabs a[aria-current="page"] {
+    color: var(--ink, #16212E);
+    border-bottom-color: var(--obv, #2A6BB0);
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="volume.html" aria-current="page">Volume</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"><svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <line x1="12" x2="12" y1="20" y2="10"></line>
+      <line x1="18" x2="18" y1="20" y2="4"></line>
+      <line x1="6" x2="6" y1="20" y2="16"></line>
+    </svg>Indicador de volume
+  </div>
+  <h1>OBV e A/D — o volume vira uma linha</h1>
+  <p class="lead">Dois indicadores que acumulam o volume de forma direcional para inferir acumulação (compra) ou distribuição (venda) por trás do preço. Começamos pelo OBV (Granville, 1963) e depois comparamos com seu primo refinado, o A/D.</p>
+
+  <div class="formula">
+    Se fecha <b style="color:var(--up)">acima</b> de ontem: &nbsp; OBV = OBV anterior <b style="color:var(--up)">+</b> volume do dia<br>
+    Se fecha <b style="color:var(--down)">abaixo</b> de ontem: &nbsp; OBV = OBV anterior <b style="color:var(--down)">−</b> volume do dia<br>
+    Se fecha igual: &nbsp; OBV não muda
+  </div>
+
+  <div class="panel">
+    <h2>Preço, volume e OBV lado a lado</h2>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:14px;">
+      O valor absoluto do OBV não significa nada (depende de onde a soma começou) — o que importa é a
+      <b>direção da linha</b>. Passe o cursor para ler qualquer dia.
+    </p>
+    <div class="toggle-row">
+      <button class="tg" id="tgVol" aria-pressed="true" onclick="toggle('vol', this)">Mostrar volume</button>
+      <button class="tg" id="tgDiv" aria-pressed="true" onclick="toggle('div', this)">Destacar divergência</button>
+    </div>
+    <div id="chart"></div>
+    <div class="readout" id="readout">Passe o cursor sobre o gráfico para ler preço, volume e OBV de cada dia.</div>
+  </div>
+
+  <div class="panel">
+    <h2>O uso principal: divergências</h2>
+    <p class="steps" style="margin-bottom:10px;">A ideia é comparar a direção do OBV com a do preço:</p>
+    <ul class="steps">
+      <li><b style="color:var(--down)">Divergência de baixa:</b> preço faz máximas mais altas, mas o OBV não acompanha → a alta teria pouco volume por trás.</li>
+      <li><b style="color:var(--up)">Divergência de alta:</b> preço faz mínimas mais baixas, mas o OBV segura → sugeriria acumulação escondida.</li>
+      <li><b>Confirmação:</b> OBV subindo junto com o preço "valida" a tendência.</li>
+    </ul>
+    <p style="font-size:14px; color:var(--ink-soft); margin-top:12px;">
+      No período da AMD, o preço e o OBV andaram majoritariamente <b>na mesma direção</b> durante a grande alta —
+      uma tendência com volume acompanhando, não uma divergência de enfraquecimento.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>OBV vs Acumulação/Distribuição (A/D)</h2>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:8px;">
+      O A/D é o "primo refinado" do OBV. Os dois acumulam volume de forma direcional — mas resolvem de forma diferente
+      a maior crítica ao OBV: <b>como pesar o volume de cada dia</b>.
+    </p>
+    <div class="formula" style="margin:14px 0;">
+      OBV: usa o <b>volume inteiro</b>, com sinal dado só pela direção do fechamento (subiu vs ontem → +tudo; caiu → −tudo)<br><br>
+      A/D: pesa o volume pela <b>posição do fechamento dentro do range do dia</b>:<br>
+      Multiplicador = ((C − Mín) − (Máx − C)) ÷ (Máx − Mín) &nbsp;→&nbsp; varia de −1 a +1<br>
+      A/D = soma corrente de (Multiplicador × Volume)
+    </div>
+    <p style="font-size:14px; color:var(--ink-soft); margin-bottom:14px;">
+      A diferença-chave: se o preço fecha <b>no meio</b> do range de um dia, o A/D quase ignora esse volume
+      (multiplicador ≈ 0), enquanto o OBV soma o volume <b>inteiro</b>. O A/D pergunta "<em>onde</em> dentro do dia o preço
+      fechou?"; o OBV só pergunta "subiu ou caiu?".
+    </p>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--obv);"></span>OBV (normalizado)</span>
+      <span><span class="sw" style="background:var(--ad);"></span>A/D (normalizado)</span>
+    </div>
+    <div id="adChart"></div>
+    <div class="readout" id="adReadout">Passe o cursor para comparar OBV e A/D no mesmo dia.</div>
+    <div class="insight" style="margin-top:16px;">
+      Ambos <b>subiram junto com o preço</b> na alta da AMD — as duas versões concordam que houve acumulação de fundo.
+      Mas repare que as linhas <b>não são idênticas</b>: onde elas divergem, é porque muitos fechamentos ficaram longe
+      dos extremos do dia — informação que o A/D capta e o OBV descarta.
+    </div>
+  </div>
+
+  <div class="caveat">
+    <h3>
+      <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+        <path d="M12 9v4"></path>
+        <path d="M12 17h.01"></path>
+      </svg>Uma ressalva honesta sobre a evidência
+    </h3>
+    <p>O OBV tem intuição plausível, mas <b>evidência acadêmica fraca</b> como sinal preditivo mecânico. Dois problemas conhecidos: a regra binária é crua (um dia de +0,1% soma o mesmo volume que um de +5%), e as divergências são ambíguas — podem persistir muito tempo antes de qualquer reversão, ou nunca reverter.</p>
+    <p>O que a literatura apoia melhor é o <b>conceito geral</b> de que volume carrega informação sobre a convicção de um movimento — não este indicador específico como gerador de sinais. Use-o como <b>contexto e confirmação</b>, não como gatilho isolado de compra/venda.</p>
+  </div>
+
+  <div class="foot">Dados: OHLCV diário real de AMD (NASDAQ), ~275 pregões · material educativo, não é recomendação</div>
+</div>
+
+<script>
+var CLOSE=[113.03,110.73,114.63,117.31,118.58,115.69,116.19,121.73,123.24,121.14,118.5,116.16,126.39,127.1,126.79,128.24,129.58,138.43,143.4,143.68,143.81,141.9,136.11,138.52,137.91,134.8,137.82,138.41,144.16,146.42,146.24,155.61,160.08,160.41,156.99,157.0,154.72,158.65,162.12,166.47,173.66,177.44,179.51,176.31,171.7,176.78,174.31,163.12,172.4,172.76,172.28,174.95,184.42,180.95,177.51,176.14,166.55,165.2,163.71,167.76,163.36,166.62,167.13,168.58,162.63,162.32,162.13,161.79,151.14,151.41,155.82,159.54,155.67,158.57,161.16,160.46,159.16,157.92,157.39,159.79,160.9,160.88,161.27,159.46,161.36,161.79,164.01,169.73,164.67,203.71,211.51,235.56,232.89,214.9,216.42,218.09,238.6,234.56,233.08,240.56,238.03,230.23,234.99,252.92,259.67,258.01,264.33,254.84,256.12,259.65,250.05,256.33,237.7,233.54,243.98,237.52,258.89,247.96,246.81,240.52,230.29,223.55,206.02,203.78,215.05,206.13,214.24,217.53,219.76,215.24,217.6,215.98,217.97,221.11,221.62,221.42,221.43,210.78,207.58,209.17,198.11,201.06,213.43,214.95,214.9,215.04,214.99,215.61,215.34,214.16,223.47,221.08,214.35,210.02,204.68,203.17,207.69,220.97,223.6,227.92,231.83,231.92,249.8,253.73,259.68,251.31,252.03,252.74,252.18,236.73,246.27,242.11,200.19,192.5,208.44,216.0,213.57,213.58,205.94,207.32,203.08,200.12,203.37,200.15,196.6,213.84,210.86,203.68,200.21,198.62,190.95,202.07,199.45,192.43,202.68,203.23,204.83,197.74,193.39,196.58,196.31,199.46,205.27,201.33,202.68,205.37,220.27,203.77,201.99,196.04,203.43,210.21,217.5,220.18,221.53,231.82,236.64,245.04,246.83,255.07,258.12,278.26,278.39,274.95,284.49,303.46,305.33,347.81,334.63,323.21,337.11,354.49,360.54,341.54,355.26,421.39,408.46,455.19,458.79,448.29,445.5,449.7,424.1,420.99,414.05,447.58,449.59,467.51,503.89,495.54,518.09,516.1,510.13,521.54,542.52,523.2,466.38,490.33,475.505,452.4,488.45,511.57,547.26,507.29,512.48,537.37,551.63,519.85,519.74,532.57,521.58,539.49,580.91,540.88,517.82];
+var OBV=[0.0,-0.036,-0.002,0.035,0.066,0.032,0.059,0.114,0.156,0.124,0.079,0.039,0.14,0.227,0.177,0.257,0.323,0.401,0.476,0.534,0.596,0.553,0.498,0.537,0.508,0.471,0.507,0.544,0.605,0.655,0.61,0.704,0.763,0.814,0.765,0.804,0.755,0.796,0.845,0.898,0.967,1.075,1.14,1.068,0.992,1.045,0.957,0.823,0.918,0.987,0.917,0.969,1.077,1.011,0.959,0.923,0.859,0.799,0.761,0.805,0.769,0.821,0.858,0.894,0.857,0.818,0.787,0.755,0.677,0.719,0.762,0.814,0.765,0.807,0.844,0.816,0.774,0.69,0.634,0.681,0.72,0.682,0.719,0.688,0.728,0.758,0.798,0.853,0.811,1.059,1.175,1.335,1.241,1.122,1.185,1.257,1.365,1.295,1.24,1.296,1.249,1.189,1.229,1.3,1.365,1.318,1.367,1.322,1.357,1.393,1.336,1.404,1.338,1.286,1.329,1.268,1.377,1.313,1.266,1.228,1.182,1.13,1.064,0.996,1.043,0.973,1.016,1.035,1.066,1.024,1.052,1.028,1.061,1.092,1.117,1.094,1.125,1.088,1.061,1.084,1.052,1.082,1.141,1.165,1.145,1.153,1.137,1.158,1.141,1.124,1.16,1.128,1.088,1.058,1.031,1.007,1.034,1.091,1.131,1.187,1.229,1.274,1.336,1.374,1.421,1.391,1.416,1.443,1.412,1.372,1.408,1.355,1.248,1.186,1.24,1.279,1.254,1.287,1.255,1.281,1.247,1.212,1.237,1.201,1.173,1.254,1.21,1.175,1.143,1.109,1.071,1.112,1.076,1.042,1.081,1.11,1.134,1.105,1.077,1.107,1.085,1.113,1.145,1.108,1.14,1.167,1.216,1.167,1.137,1.096,1.139,1.179,1.218,1.249,1.275,1.311,1.338,1.374,1.397,1.423,1.447,1.512,1.548,1.513,1.552,1.601,1.647,1.728,1.678,1.635,1.679,1.721,1.756,1.714,1.778,1.866,1.821,1.879,1.925,1.886,1.856,1.882,1.852,1.824,1.785,1.821,1.849,1.883,1.922,1.894,1.926,1.895,1.862,1.886,1.915,1.886,1.839,1.865,1.827,1.799,1.829,1.861,1.894,1.866,1.893,1.937,1.963,1.933,1.906,1.933,1.881,1.907,1.942,1.913,1.885];
+var VOL=[30.6,36.1,34.1,37.2,31.0,34.2,27.0,55.4,41.7,32.3,44.7,39.7,101.0,86.6,49.6,79.9,65.2,78.6,74.6,58.2,61.9,43.0,55.3,39.2,28.6,37.4,36.1,37.0,61.1,50.0,44.7,93.4,59.5,50.6,48.9,39.0,49.0,41.5,48.4,53.4,68.3,108.2,64.8,71.8,75.4,53.0,88.8,133.6,95.4,68.9,70.7,52.3,108.3,66.3,51.5,35.9,64.5,60.2,37.9,44.0,36.1,52.1,37.0,36.3,37.5,38.7,30.8,32.1,78.3,41.8,42.8,52.5,48.8,42.2,36.8,27.9,41.8,84.5,55.4,46.5,39.4,38.5,36.8,30.3,39.8,29.7,39.9,55.5,42.7,248.9,115.7,160.0,94.3,118.7,63.1,71.2,108.5,69.7,55.8,56.7,47.1,59.7,39.0,71.2,65.6,47.4,49.3,45.2,34.4,36.4,56.5,67.4,66.0,52.2,43.4,61.3,108.9,63.2,47.7,37.9,45.6,52.1,66.3,67.4,46.7,69.8,43.3,18.7,30.8,42.0,28.5,24.5,33.3,30.9,25.2,23.3,30.7,37.1,27.2,23.5,31.6,29.7,58.4,25.0,20.3,8.0,15.8,20.3,16.4,17.6,36.4,31.9,40.0,29.7,27.5,24.2,27.3,56.9,40.5,55.3,42.5,44.3,62.4,37.9,47.5,30.7,25.7,27.1,31.7,40.0,36.3,53.1,107.2,62.2,54.5,38.8,25.3,33.4,32.2,26.1,33.7,35.7,25.8,36.3,28.2,81.4,44.6,35.0,31.3,34.1,37.8,40.9,36.0,33.9,38.9,29.1,23.1,28.9,27.6,30.3,22.8,28.6,32.2,37.3,31.9,27.3,48.5,49.2,29.2,41.1,42.3,40.8,38.5,30.8,26.5,35.5,27.1,36.5,22.8,25.7,24.7,64.9,35.5,34.8,39.0,49.1,45.6,81.6,50.6,43.0,44.7,42.1,34.3,42.0,64.2,87.7,44.9,58.1,46.1,39.1,30.4,26.1,29.1,28.4,38.8,36.1,27.3,34.8,38.5,27.6,31.4,30.8,33.3,24.3,29.4,29.1,46.9,25.2,37.8,27.8,30.5,31.6,33.5,28.4,27.1,43.8,26.0,30.2,26.5,27.1,52.7,26.7,34.5,28.3,28.2];
+var N = CLOSE.length;
+var show = { vol: true, div: true };
+
+function poly(pts,color,w){return '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="'+w+'" stroke-linejoin="round"/>';}
+
+function render() {
+  var W=760, H=420, X0=48, X1=W-14;
+  var pY0=16, pY1=150;      // price panel
+  var vY0=176, vY1=250;     // volume panel
+  var oY0=276, oY1=404;     // obv panel
+  function xm(i){ return X0 + i/(N-1)*(X1-X0); }
+
+  var pmn=Math.min.apply(null,CLOSE), pmx=Math.max.apply(null,CLOSE);
+  var ppad=(pmx-pmn)*0.08; pmn-=ppad; pmx+=ppad;
+  function pym(v){ return pY1-(v-pmn)/(pmx-pmn)*(pY1-pY0); }
+
+  var vmx=Math.max.apply(null,VOL);
+  function vym(v){ return vY1-(v/vmx)*(vY1-vY0); }
+
+  var omn=Math.min.apply(null,OBV), omx=Math.max.apply(null,OBV);
+  var opad=(omx-omn)*0.08; omn-=opad; omx+=opad;
+  function oym(v){ return oY1-(v-omn)/(omx-omn)*(oY1-oY0); }
+
+  var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" id="svg" role="img" aria-label="Preço, volume e OBV da AMD alinhados no tempo">';
+
+  // labels
+  s+='<text x="'+X0+'" y="12" font-size="11" font-weight="700" fill="#16212E" font-family="'+"ui-monospace,monospace"+'">Preço</text>';
+  if (show.vol) s+='<text x="'+X0+'" y="172" font-size="11" font-weight="700" fill="#8CA3B8" font-family="ui-monospace,monospace">Volume (M)</text>';
+  s+='<text x="'+X0+'" y="272" font-size="11" font-weight="700" fill="#2A6BB0" font-family="ui-monospace,monospace">OBV (acumulado)</text>';
+
+  // price line
+  var pPts=[]; for (var i=0;i<N;i++) pPts.push(xm(i).toFixed(1)+','+pym(CLOSE[i]).toFixed(1));
+  s+=poly(pPts,'#16212E',1.6);
+
+  // volume bars
+  if (show.vol) {
+    var bw=(X1-X0)/N*0.7;
+    for (var v=0;v<N;v++){
+      var up = v>0 && CLOSE[v]>=CLOSE[v-1];
+      s+='<rect x="'+(xm(v)-bw/2).toFixed(1)+'" y="'+vym(VOL[v]).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(vY1-vym(VOL[v])).toFixed(1)+'" fill="'+(up?'#1B6E53':'#C0392B')+'" opacity="0.4"/>';
+    }
+  }
+
+  // obv line
+  var oPts=[]; for (var o=0;o<N;o++) oPts.push(xm(o).toFixed(1)+','+oym(OBV[o]).toFixed(1));
+  s+=poly(oPts,'#2A6BB0',2);
+
+  // divergence-confirmation shading: show that price & OBV rose together in the big rally
+  if (show.div) {
+    // highlight the strong-rally window where both climbed (roughly last third)
+    var a = 210, b = N-1;
+    s+='<rect x="'+xm(a).toFixed(1)+'" y="'+pY0+'" width="'+(xm(b)-xm(a)).toFixed(1)+'" height="'+(oY1-pY0)+'" fill="#2A6BB0" opacity="0.06"/>';
+    s+='<text x="'+xm((a+b)/2).toFixed(1)+'" y="'+(pY0+12)+'" font-size="10" fill="#2A6BB0" text-anchor="middle" font-family="ui-monospace,monospace">preço ↑ e OBV ↑ juntos = confirmação</text>';
+  }
+
+  // hover guideline
+  s+='<line id="cross" x1="0" y1="'+pY0+'" x2="0" y2="'+oY1+'" stroke="#8CA3B8" stroke-width="1" style="display:none;"/>';
+  s+='<rect x="'+X0+'" y="0" width="'+(X1-X0)+'" height="'+H+'" fill="transparent" id="hit"/>';
+
+  s+='</svg>';
+  document.getElementById('chart').innerHTML=s;
+
+  var svg=document.getElementById('svg');
+  var cross=document.getElementById('cross');
+  svg.addEventListener('pointermove', function(e){
+    var r=svg.getBoundingClientRect();
+    var scaleX=r.width/W;
+    var xrel=(e.clientX-r.left)/scaleX;
+    var i=Math.round((xrel-X0)/(X1-X0)*(N-1));
+    if (i<0) i=0; if (i>=N) i=N-1;
+    cross.setAttribute('x1', xm(i).toFixed(1)); cross.setAttribute('x2', xm(i).toFixed(1));
+    cross.style.display='block';
+    var dir = i>0 ? (CLOSE[i]>=CLOSE[i-1]?'<span class="up">alta</span> → soma volume':'<span class="down">baixa</span> → subtrai volume') : '—';
+    document.getElementById('readout').innerHTML =
+      'Dia '+(i+1)+' de '+N+'<br>'+
+      'Preço $'+CLOSE[i].toFixed(2)+' · Volume '+VOL[i].toFixed(1)+'M · dia de '+dir+'<br>'+
+      'OBV acumulado = <span class="o">'+OBV[i].toFixed(3)+' bi</span> (o valor absoluto é arbitrário; olhe a inclinação)';
+  });
+  svg.addEventListener('pointerleave', function(){ cross.style.display='none'; });
+}
+
+function toggle(key, btn) {
+  show[key]=!show[key];
+  btn.setAttribute('aria-pressed', show[key]);
+  render();
+}
+render();
+
+/* ===== OBV vs A/D comparison (precomputed, normalized) ===== */
+var OBV_RAW=[0.0,-0.0361,-0.0022,0.0347,0.0655,0.0324,0.0587,0.1139,0.1556,0.1244,0.0793,0.0388,0.1398,0.2265,0.1769,0.2566,0.3229,0.4009,0.4757,0.5342,0.5959,0.5531,0.4979,0.5372,0.5079,0.4712,0.5073,0.5436,0.6047,0.6547,0.6099,0.7036,0.763,0.8137,0.7648,0.8039,0.7548,0.7962,0.8447,0.8981,0.967,1.0752,1.1401,1.0684,0.9925,1.0455,0.957,0.8234,0.9184,0.9873,0.9166,0.9689,1.0772,1.011,0.9594,0.9234,0.8589,0.7987,0.7607,0.8047,0.7686,0.8207,0.8577,0.894,0.8567,0.8181,0.7873,0.7553,0.677,0.7188,0.7616,0.8141,0.7653,0.8071,0.8439,0.816,0.7742,0.6896,0.6342,0.6812,0.7205,0.682,0.7188,0.6883,0.7281,0.7578,0.7975,0.8532,0.8106,1.0595,1.1752,1.3352,1.2409,1.1222,1.185,1.2567,1.3652,1.2955,1.2397,1.2964,1.2493,1.1896,1.2286,1.3,1.3656,1.3182,1.3675,1.3223,1.3567,1.3931,1.3357,1.4041,1.338,1.2858,1.3292,1.2679,1.3768,1.3136,1.2659,1.228,1.1824,1.1301,1.0637,0.9963,1.0431,0.9727,1.0159,1.0354,1.0663,1.024,1.0516,1.0279,1.0611,1.0918,1.117,1.0938,1.1252,1.0881,1.061,1.0842,1.052,1.0817,1.1411,1.1653,1.145,1.1531,1.1373,1.158,1.1406,1.1237,1.1601,1.1282,1.0882,1.0585,1.031,1.0068,1.0341,1.091,1.1315,1.1868,1.2293,1.2736,1.336,1.3739,1.4214,1.3907,1.4164,1.4435,1.4116,1.3717,1.4085,1.3556,1.2484,1.1862,1.2406,1.2794,1.2541,1.2874,1.2552,1.2809,1.2472,1.2115,1.2373,1.2011,1.1729,1.2543,1.2097,1.1747,1.1434,1.1092,1.0714,1.1123,1.0763,1.0424,1.0812,1.1103,1.1334,1.1047,1.0766,1.1071,1.0854,1.1136,1.1454,1.1077,1.1401,1.1671,1.216,1.1668,1.1365,1.0955,1.1389,1.1793,1.2178,1.2486,1.2748,1.3105,1.3376,1.3741,1.3969,1.4226,1.4473,1.5121,1.5476,1.5128,1.5518,1.6008,1.6464,1.728,1.6774,1.6344,1.6791,1.7212,1.7555,1.7135,1.7777,1.8654,1.8205,1.8788,1.9247,1.886,1.8552,1.8813,1.8517,1.8236,1.7848,1.8205,1.8485,1.8825,1.9216,1.8937,1.9256,1.8944,1.8623,1.8859,1.9151,1.8863,1.8392,1.865,1.8272,1.799,1.8292,1.8609,1.894,1.8658,1.893,1.9367,1.963,1.9331,1.9063,1.9335,1.8811,1.9073,1.9425,1.9127,1.8852];
+var AD_RAW=[0.0141,-0.0221,-0.0002,0.0169,0.0348,0.0159,0.0338,0.0454,0.0561,0.0413,0.0271,0.0126,0.0367,0.0473,0.0369,0.0468,0.0538,0.0561,0.0561,0.0563,0.0583,0.0463,0.0344,0.0433,0.036,0.0286,0.0334,0.0387,0.0454,0.0505,0.0389,0.0517,0.0587,0.0637,0.0533,0.0587,0.0499,0.0561,0.0611,0.0662,0.0724,0.0771,0.0736,0.0625,0.0507,0.056,0.0454,0.028,0.0397,0.0479,0.0389,0.0459,0.0555,0.0491,0.0425,0.0379,0.0284,0.0202,0.0186,0.0251,0.0179,0.0248,0.0296,0.0343,0.0298,0.0247,0.0206,0.016,0.0072,0.0137,0.0206,0.0272,0.0186,0.0253,0.0311,0.0265,0.0201,0.0071,-0.0016,0.0067,0.0135,0.0072,0.0134,0.0083,0.0155,0.0208,0.0272,0.0367,0.0287,0.0563,0.0656,0.0791,0.0625,0.0466,0.0552,0.0651,0.0777,0.0685,0.0596,0.0684,0.062,0.0533,0.0596,0.0692,0.0783,0.0715,0.0783,0.0715,0.0768,0.0824,0.0731,0.0836,0.0729,0.0644,0.0714,0.0611,0.0779,0.0678,0.0596,0.052,0.0439,0.0356,0.0245,0.0146,0.0219,0.0107,0.0181,0.0217,0.0272,0.0203,0.025,0.0208,0.0268,0.0324,0.0369,0.0327,0.0383,0.0311,0.0257,0.0301,0.0238,0.0296,0.041,0.0459,0.0417,0.0438,0.0405,0.0446,0.0405,0.0362,0.0437,0.0362,0.0278,0.0216,0.0158,0.0106,0.0163,0.028,0.0364,0.0479,0.0568,0.066,0.079,0.0872,0.0973,0.0908,0.0963,0.1023,0.0955,0.0871,0.0949,0.0836,0.0603,0.0466,0.0585,0.0672,0.0616,0.0691,0.0619,0.0677,0.06,0.052,0.0578,0.0496,0.0431,0.0615,0.0512,0.0429,0.0355,0.0273,0.0181,0.0281,0.0193,0.0108,0.0203,0.0275,0.0333,0.0261,0.0191,0.0269,0.0214,0.0286,0.0369,0.027,0.0355,0.0426,0.0555,0.0424,0.0343,0.0233,0.0351,0.0461,0.0568,0.0654,0.0728,0.0829,0.0906,0.101,0.1076,0.1151,0.1224,0.1417,0.1524,0.1419,0.1538,0.169,0.1833,0.2095,0.1929,0.1786,0.1938,0.2083,0.2203,0.2058,0.2285,0.2607,0.2438,0.2664,0.2847,0.269,0.2566,0.2672,0.2549,0.2434,0.2274,0.2426,0.2547,0.2695,0.2869,0.2743,0.2891,0.2746,0.2594,0.2708,0.2847,0.2708,0.2478,0.2606,0.2416,0.2272,0.2429,0.2597,0.2775,0.262,0.2769,0.3018,0.3176,0.2997,0.283,0.3002,0.2674,0.2841,0.3068,0.2872,0.7111];
+var CMP_N = CLOSE.length;
+(function(){
+  // trim AD to same length/alignment as CLOSE (both 275)
+  var obv = OBV_RAW.slice(0, CMP_N);
+  var ad = AD_RAW.slice(0, CMP_N);
+  function norm(arr){
+    var mn=Math.min.apply(null,arr), mx=Math.max.apply(null,arr);
+    return arr.map(function(v){ return (v-mn)/(mx-mn); });
+  }
+  var obvN=norm(obv), adN=norm(ad), closeN=norm(CLOSE);
+
+  var W=760,H=260,X0=44,X1=W-14,Y0=16,Y1=H-24;
+  function xm(i){ return X0 + i/(CMP_N-1)*(X1-X0); }
+  function ym(v){ return Y1 - v*(Y1-Y0); }
+  function pl(arr,col,w,dash){
+    var pts=[]; for(var i=0;i<CMP_N;i++) pts.push(xm(i).toFixed(1)+','+ym(arr[i]).toFixed(1));
+    return '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+' stroke-linejoin="round"/>';
+  }
+  var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" id="adSvg" role="img" aria-label="Comparação normalizada entre OBV e linha de Acumulação/Distribuição da AMD">';
+  s+=pl(closeN,'#D5DCE4',1.4);           // price faint reference
+  s+=pl(obvN,'#2A6BB0',2);                // OBV
+  s+=pl(adN,'#B0632A',2);                 // A/D
+  s+='<text x="'+X0+'" y="12" font-size="10" fill="#8CA3B8" font-family="ui-monospace,monospace">linhas normalizadas (0–1) para comparar formato · preço ao fundo em cinza</text>';
+  s+='<line id="adcross" x1="0" y1="'+Y0+'" x2="0" y2="'+Y1+'" stroke="#8CA3B8" stroke-width="1" style="display:none;"/>';
+  s+='</svg>';
+  document.getElementById('adChart').innerHTML=s;
+
+  var svg=document.getElementById('adSvg');
+  var cr=document.getElementById('adcross');
+  svg.addEventListener('pointermove', function(e){
+    var r=svg.getBoundingClientRect(); var sc=r.width/W;
+    var i=Math.round(((e.clientX-r.left)/sc - X0)/(X1-X0)*(CMP_N-1));
+    if(i<0)i=0; if(i>=CMP_N)i=CMP_N-1;
+    cr.setAttribute('x1',xm(i).toFixed(1)); cr.setAttribute('x2',xm(i).toFixed(1)); cr.style.display='block';
+    document.getElementById('adReadout').innerHTML=
+      'Dia '+(i+1)+' de '+CMP_N+' · Preço $'+CLOSE[i].toFixed(2)+'<br>'+
+      'OBV = <span style="color:#2A6BB0;font-weight:700;">'+obv[i].toFixed(3)+' bi</span> · '+
+      'A/D = <span style="color:#B0632A;font-weight:700;">'+ad[i].toFixed(3)+' bi</span><br>'+
+      'Ambos acumulam volume, mas o A/D pondera pela posição do fechamento no range do dia.';
+  });
+  svg.addEventListener('pointerleave', function(){ cr.style.display='none'; });
+})();
+
+/* ===== tema (padrão do guia) ===== */
+var themeIcons = {
+  dark: '<svg class="lucide-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>',
+  light: '<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>'
+};
+function setTheme(theme) {
+  var next = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('vxd-theme', next); } catch (e) {}
+  var toggle = document.getElementById('themeToggle');
+  var icon = document.getElementById('themeIcon');
+  var label = document.getElementById('themeLabel');
+  if (toggle) toggle.setAttribute('aria-pressed', next === 'dark');
+  if (icon) icon.innerHTML = next === 'dark' ? themeIcons.dark : themeIcons.light;
+  if (label) label.textContent = next === 'dark' ? 'Tema claro' : 'Tema escuro';
+}
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+setTheme(document.documentElement.getAttribute('data-theme') || 'light');
+</script>
+</body>
+</html>
