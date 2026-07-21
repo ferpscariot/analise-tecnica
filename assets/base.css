@@ -20,6 +20,8 @@
   --vol-soft: #EAF1F8;
   --risk: #7B5EA7;       /* risco: terreno firme */
   --risk-soft: #F0EBF7;
+  --lvl: #A67C1B;        /* níveis: memória do preço */
+  --lvl-soft: #F7EED9;
   --card: #FFFFFF;
   --card-strong: #F7F9FB;
   --danger: #C0392B;
@@ -59,6 +61,8 @@
   --vol-soft: rgba(111, 179, 255, 0.14);
   --risk: #B79CFF;
   --risk-soft: rgba(183, 156, 255, 0.14);
+  --lvl: #F2C14E;
+  --lvl-soft: rgba(242, 193, 78, 0.14);
   --card: #151D27;
   --card-strong: #1B2531;
   --danger: #FF6B6B;
@@ -114,6 +118,7 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
 .eyebrow.trend { color: var(--trend); }
 .eyebrow.vol { color: var(--vol); }
 .eyebrow.risk { color: var(--risk); }
+.eyebrow.lvl { color: var(--lvl); }
 
 .lucide-icon {
   display: block; width: 100%; height: 100%;

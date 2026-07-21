@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suportes e resistências — a memória do preço</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --accent: var(--lvl); --accent-soft: var(--lvl-soft); --tab-accent: var(--lvl); }
+
+  .zone-band { cursor: pointer; }
+  .zone-band:hover { opacity: 0.9; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px;
+    color: var(--ink-soft); margin: 10px 0; font-family: var(--sans); }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="suportes.html" aria-current="page">Suportes</a>
+    <a href="volume.html">Volume</a>
+    <a href="risco.html">Risco</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow lvl">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 4h18"></path>
+      <path d="M3 20h18"></path>
+      <path d="m6 16 3.5-5 2.5 3 3.5-6 2.5 4"></path>
+    </svg>Estrutura de preço · níveis
+  </div>
+  <h1>Suportes e resistências — a memória do preço</h1>
+  <p class="lead">Não são indicadores: são regiões onde o preço já reagiu antes — e onde tende a reagir de novo. O mapa do território que os indicadores percorrem.</p>
+
+  <div class="formula">
+    Suporte = região onde a queda parou (compradores apareceram) uma ou mais vezes<br>
+    Resistência = região onde a alta parou (vendedores apareceram) uma ou mais vezes<br>
+    <span style="color:var(--wire);">Não há fórmula fechada — há métodos de detecção. Abaixo, um dos mais comuns: agrupar pivôs de preço.</span>
+  </div>
+
+  <div class="panel">
+    <h2>Por que o preço "lembra" de certos níveis</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">Ordens acumuladas:</b> quem não comprou na última visita ao nível deixa ordem para a próxima; quem comprou no topo e sofreu espera "sair no empate". Esses bolsões de ordens fazem o preço reagir nos mesmos lugares.
+    </p>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">Ancoragem:</b> números que todo mundo olhou — a máxima histórica, o número redondo ($100, $500), o preço do IPO — viram referências psicológicas.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">Profecia autorrealizável:</b> se milhares de traders desenham a mesma linha e agem nela, a linha funciona — <em>porque</em> todos agem nela. É circular, e é real.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>Detector de zonas — nos dados reais</h2>
+    <p class="ptext">
+      O método: achar <b>pivôs</b> (dias que foram máxima ou mínima local) e agrupar os que caem perto uns dos outros em <b>zonas</b>.
+      Ajuste o rigor do pivô e a largura da zona — e repare que suporte/resistência é sempre uma <b>faixa</b>, nunca uma linha exata.
+      Clique numa faixa para ler os toques.
+    </p>
+    <div class="controls-row">
+      <label for="pivK">Rigor do pivô</label>
+      <input type="range" id="pivK" min="2" max="10" value="4">
+      <span class="value-pill" id="pivKVal">±4 dias</span>
+    </div>
+    <div class="controls-row">
+      <label for="zoneTol">Largura da zona</label>
+      <input type="range" id="zoneTol" min="0.5" max="3" value="1.5" step="0.25">
+      <span class="value-pill" id="zoneTolVal">±1.5%</span>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--danger);"></span>pivô de alta (possível teto)</span>
+      <span><span class="dot" style="background:var(--trend);"></span>pivô de baixa (possível piso)</span>
+      <span><span class="dot" style="background:var(--lvl); border-radius:2px;"></span>zona com 3+ toques</span>
+    </div>
+    <div id="zoneChart"></div>
+    <div class="readout" id="zoneReadout"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Quando o teto vira piso</h2>
+    <p class="ptext">
+      O fenômeno mais útil dos níveis: uma resistência rompida tende a virar suporte (e vice-versa) — a "troca de papel".
+      Os dados da AMD trazem dois exemplos limpos, detectados pelo mesmo algoritmo acima:
+    </p>
+    <div id="flipChart"></div>
+    <div class="readout" id="flipReadout"></div>
+    <div class="insight">
+      A lógica da troca de papel: quem vendeu no teto viu o preço fugir para cima e quer <b>recomprar no mesmo nível</b>;
+      quem perdeu o rompimento espera o <b>reteste</b> para entrar. As ordens dos dois grupos viram o novo piso.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Como (não) usar</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">Zona, não linha.</b> Definir o suporte num centavo exato é convite para ser estopado por ruído. Trabalhe com a faixa — e posicione stops <em>além</em> dela, não dentro.
+    </p>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">Falsos rompimentos são a regra, não a exceção.</b> Preço atravessa a zona e volta no mesmo dia o tempo todo. Um fechamento além da zona — de preferência com <a href="volume.html" style="color:var(--lvl); font-weight:700;">volume</a> acima da média — vale mais que qualquer violação intradiária.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">Quanto mais toques e mais tempo, mais relevante</b> — e mais violento tende a ser o rompimento quando ele finalmente vem (a tampa dos $221 acima terminou num rali de +150%).
+    </p>
+    <div class="insight">
+      A evidência honesta: como <b>sinal mecânico</b> ("comprar no suporte"), níveis têm resultado fraco em teste — como quase tudo em análise técnica. O uso com melhor fundamento é como <b>mapa de referência para risco</b>: stop lógico abaixo do suporte, alvo perto da resistência — exatamente a conta de R:R da página de <a href="risco.html" style="color:var(--lvl); font-weight:700;">gestão de risco</a>.
+    </div>
+  </div>
+
+  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+</div>
+
+<script src="assets/amd.js"></script>
+<script>
+/* ===== motor: pivôs + zonas ===== */
+function findZones(closes, k, tolPct, minTouches) {
+  var n = closes.length, pivots = [];
+  for (var i = k; i < n - k; i++) {
+    var isH = true, isL = true;
+    for (var j = i - k; j <= i + k; j++) {
+      if (closes[j] > closes[i]) isH = false;
+      if (closes[j] < closes[i]) isL = false;
+    }
+    if (isH) pivots.push({ i: i, kind: 'H', p: closes[i] });
+    else if (isL) pivots.push({ i: i, kind: 'L', p: closes[i] });
+  }
+  var byPrice = pivots.slice().sort(function(a, b){ return a.p - b.p; });
+  var zones = [];
+  byPrice.forEach(function(pv) {
+    for (var z = 0; z < zones.length; z++) {
+      if (Math.abs(pv.p - zones[z].c) / zones[z].c * 100 <= tolPct) {
+        zones[z].pts.push(pv);
+        var s = 0; zones[z].pts.forEach(function(x){ s += x.p; });
+        zones[z].c = s / zones[z].pts.length;
+        return;
+      }
+    }
+    zones.push({ c: pv.p, pts: [pv] });
+  });
+  zones = zones.filter(function(z){ return z.pts.length >= minTouches; });
+  zones.forEach(function(z){ z.pts.sort(function(a, b){ return a.i - b.i; }); });
+  zones.sort(function(a, b){ return b.pts.length - a.pts.length; });
+  return { pivots: pivots, zones: zones };
+}
+
+/* ===== lab 1: detector interativo ===== */
+var ZW = 780, ZH = 320, ZX0 = 46, ZX1 = ZW - 14;
+function zxm(i) { return ZX0 + i / (N - 1) * (ZX1 - ZX0); }
+var currentZones = [];
+function renderZones(selectedIdx) {
+  var k = parseInt(document.getElementById('pivK').value, 10);
+  var tol = parseFloat(document.getElementById('zoneTol').value);
+  document.getElementById('pivKVal').textContent = '±' + k + ' dias';
+  document.getElementById('zoneTolVal').textContent = '±' + tol.toFixed(2).replace(/\.?0+$/, '') + '%';
+
+  var res = findZones(CLOSES, k, tol, 3);
+  currentZones = res.zones;
+  var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH - 20);
+
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" id="zoneSvg">';
+  // faixas primeiro (atrás do preço)
+  res.zones.slice(0, 8).forEach(function(z, zi) {
+    var yTop = pm.y(z.c * (1 + tol / 100)), yBot = pm.y(z.c * (1 - tol / 100));
+    var sel = (zi === selectedIdx);
+    s += '<rect class="zone-band" data-z="' + zi + '" x="' + ZX0 + '" y="' + yTop.toFixed(1) +
+         '" width="' + (ZX1 - ZX0) + '" height="' + (yBot - yTop).toFixed(1) +
+         '" fill="var(--lvl)" opacity="' + (sel ? 0.4 : 0.18) + '" rx="3"/>';
+    if (zi < 3) {
+      var right = (zi % 2 === 0);
+      s += '<text x="' + (right ? ZX1 - 4 : ZX0 + 4) + '" y="' + (yTop - 3).toFixed(1) +
+           '" font-size="10" fill="var(--lvl)" text-anchor="' + (right ? 'end' : 'start') +
+           '" font-weight="700">~$' + z.c.toFixed(0) + ' · ' + z.pts.length + ' toques</text>';
+    }
+  });
+  s += poly(ptsOf(CLOSES, zxm, pm.y), 'var(--ink)', 1.6);
+  // pivôs
+  res.pivots.forEach(function(pv) {
+    s += '<circle cx="' + zxm(pv.i).toFixed(1) + '" cy="' + pm.y(pv.p).toFixed(1) + '" r="3" fill="' +
+         (pv.kind === 'H' ? 'var(--danger)' : 'var(--trend)') + '" opacity="0.8"/>';
+  });
+  s += '</svg>';
+  document.getElementById('zoneChart').innerHTML = s;
+
+  document.getElementById('zoneSvg').addEventListener('click', function(e) {
+    var t = e.target;
+    if (!t.classList || !t.classList.contains('zone-band')) return;
+    var zi = parseInt(t.getAttribute('data-z'), 10);
+    renderZones(zi);
+    var z = currentZones[zi];
+    var tetos = z.pts.filter(function(p){ return p.kind === 'H'; }).length;
+    var pisos = z.pts.length - tetos;
+    var dias = z.pts.map(function(p){ return p.i + 1; }).join(', ');
+    document.getElementById('zoneReadout').innerHTML =
+      'Zona ~<span class="hi">$' + z.c.toFixed(0) + '</span> (faixa de ±' + tol + '%) · <span class="hi">' + z.pts.length + ' toques</span>: ' +
+      '<span class="r">' + tetos + ' como teto</span> e <span class="g">' + pisos + ' como piso</span><br>' +
+      'Dias dos toques: ' + dias + ' (de ' + N + ') — ' +
+      (tetos > 0 && pisos > 0 ? 'a zona <b>trocou de papel</b> ao longo do período.' :
+       tetos > 0 ? 'atuou só como resistência neste período.' : 'atuou só como suporte neste período.');
+  });
+
+  if (selectedIdx === undefined) {
+    var resumo = res.zones.slice(0, 8).map(function(z) {
+      return '~$' + z.c.toFixed(0) + ' (' + z.pts.length + ')';
+    }).join(' · ');
+    document.getElementById('zoneReadout').innerHTML =
+      res.zones.length === 0
+        ? 'Nenhuma zona com 3+ toques nesses parâmetros — afrouxe o rigor ou alargue a faixa.'
+        : '<span class="hi">' + res.zones.length + ' zonas</span> com 3+ toques: ' + resumo +
+          '<br>Clique numa faixa amarela para ver os toques daquela zona.';
+  }
+}
+document.getElementById('pivK').addEventListener('input', function(){ renderZones(); });
+document.getElementById('zoneTol').addEventListener('input', function(){ renderZones(); });
+renderZones();
+
+/* ===== lab 2: troca de papel (parâmetros fixos, histórias reais) ===== */
+(function renderFlip() {
+  var res = findZones(CLOSES, 4, 1.5, 3);
+  // flip: zona com teto(s) antes e piso(s) depois
+  var flip = null, lid = null;
+  res.zones.forEach(function(z) {
+    var kinds = z.pts.map(function(p){ return p.kind; });
+    var firstL = kinds.indexOf('L'), lastH = kinds.lastIndexOf('H');
+    var hasFlip = kinds[0] === 'H' && firstL > 0 && lastH < firstL;
+    if (hasFlip && !flip) flip = z;
+    var allH = kinds.every(function(x){ return x === 'H'; });
+    if (allH && (!lid || z.pts.length > lid.pts.length)) lid = z;
+  });
+
+  var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH - 20);
+  var tol = 1.5;
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  [[flip, 'teto → piso'], [lid, 'a tampa']].forEach(function(pair) {
+    var z = pair[0];
+    if (!z) return;
+    var yTop = pm.y(z.c * (1 + tol / 100)), yBot = pm.y(z.c * (1 - tol / 100));
+    s += '<rect x="' + ZX0 + '" y="' + yTop.toFixed(1) + '" width="' + (ZX1 - ZX0) + '" height="' + (yBot - yTop).toFixed(1) + '" fill="var(--lvl)" opacity="0.25" rx="3"/>';
+    s += '<text x="' + (ZX0 + 4) + '" y="' + (yTop - 4).toFixed(1) + '" font-size="10.5" fill="var(--lvl)" font-weight="700">' + pair[1] + ' · ~$' + z.c.toFixed(0) + '</text>';
+  });
+  s += poly(ptsOf(CLOSES, zxm, pm.y), 'var(--ink)', 1.6);
+  [flip, lid].forEach(function(z) {
+    if (!z) return;
+    z.pts.forEach(function(pv) {
+      s += '<circle cx="' + zxm(pv.i).toFixed(1) + '" cy="' + pm.y(pv.p).toFixed(1) + '" r="4.5" fill="' +
+           (pv.kind === 'H' ? 'var(--danger)' : 'var(--trend)') + '"/>';
+    });
+  });
+  s += '</svg>';
+  document.getElementById('flipChart').innerHTML = s;
+
+  var parts = [];
+  if (flip) {
+    parts.push('<b>Teto → piso (~$' + flip.c.toFixed(0) + '):</b> segurou a alta como <span class="r">resistência</span> no início do histórico; depois do rompimento, o preço voltou a essa faixa e ela virou <span class="g">suporte</span> — reagiu como piso e a alta seguiu.');
+  }
+  if (lid) {
+    var firstDay = lid.pts[0].i + 1, lastDay = lid.pts[lid.pts.length - 1].i + 1;
+    parts.push('<b>A tampa (~$' + lid.c.toFixed(0) + '):</b> <span class="r">' + lid.pts.length + ' toques como teto</span> entre os dias ' + firstDay + ' e ' + lastDay + ' — meses segurando o preço. Quando finalmente rompeu, veio o maior rali do histórico. Zona muito testada + rompimento = movimento com energia acumulada.');
+  }
+  document.getElementById('flipReadout').innerHTML = parts.join('<br><br>');
+})();
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>
