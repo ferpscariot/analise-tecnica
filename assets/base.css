@@ -154,6 +154,7 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
 /* ============ TOGGLE DE TEMA (ícone no canto da barra) ============ */
 .site-tabs .theme-toggle {
   position: absolute; top: 0; bottom: 0; margin: auto 0;
+  right: 12px; /* fallback p/ navegadores sem max() */
   /* encosta na borda direita do container de 880px; nunca sai da tela */
   right: max(12px, calc((100% - 880px) / 2 + 14px));
   width: 34px; height: 34px; padding: 0;

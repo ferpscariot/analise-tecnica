@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/base.css?v=7b9b5ae3">
 <style>
   :root { --accent: var(--osc); --accent-soft: var(--osc-soft); }
 </style>
@@ -130,7 +130,7 @@
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
 </main>
 
-<script src="assets/amd.js"></script>
+<script src="assets/amd.js?v=2be7c134"></script>
 <script>
 var ROCW = 780, ROCH = 250, ROCX0 = 46, ROCX1 = ROCW - 14;
 function rocxm(i) { return ROCX0 + i / (N - 1) * (ROCX1 - ROCX0); }
@@ -167,7 +167,7 @@ function renderROC() {
 document.getElementById('rocPeriod').addEventListener('input', renderROC);
 renderROC();
 </script>
-<script src="assets/site.js"></script>
-<script src="assets/nav.js"></script>
+<script src="assets/site.js?v=df9b442e"></script>
+<script src="assets/nav.js?v=3909ef44"></script>
 </body>
 </html>
