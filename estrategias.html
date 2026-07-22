@@ -103,6 +103,7 @@
         <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
         <span class="tab-menu-head">Volume</span>
         <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+        <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
       </div>
     </div>
     <a href="suportes.html">Suportes</a>
@@ -184,8 +185,8 @@
   <!-- ESTRATÉGIA 2 -->
   <div class="panel strategy" id="est2" data-regime="lateral">
     <div class="est-head"><span class="est-num">2</span><h2>Reversão à média na VWAP</h2><span class="regime-tag range">lateral</span></div>
-    <p class="ptext ingredientes">Ingredientes: VWAP intradiária · <a href="rsi.html">RSI(14)</a> · <a href="risco.html">ATR para o stop</a></p>
-    <div class="mini-def">VWAP = preço médio do dia ponderado pelo volume — o "preço justo" que o mercado negociou até agora. Não está no guia porque é intradiária por natureza; pense nela como uma média móvel que pesa cada candle pelo volume.</div>
+    <p class="ptext ingredientes">Ingredientes: <a href="vwap.html">VWAP intradiária</a> · <a href="rsi.html">RSI(14)</a> · <a href="risco.html">ATR para o stop</a></p>
+    <div class="mini-def">VWAP = preço médio do dia ponderado pelo volume — o "preço justo" que o mercado negociou até agora. Pense nela como uma média móvel que pesa cada candle pelo volume — a página de <a href="vwap.html" style="color:var(--strat); font-weight:700;">VWAP</a> destrincha o cálculo e traz a versão ancorada.</div>
     <p class="ptext">Em dias sem tendência forte, o preço estica e tende a <b style="color:var(--ink);">voltar para a VWAP</b>. A estratégia opera o exagero do desvio.</p>
     <ol class="setup">
       <li><b>Contexto:</b> preço bem abaixo da VWAP (esticado) e RSI ≤ 30 (sobrevenda).</li>
