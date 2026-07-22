@@ -25,11 +25,12 @@
 <meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
 <script>
   (function() {
-    var savedTheme = 'light';
-    try {
-      savedTheme = localStorage.getItem('vxd-theme') || savedTheme;
-    } catch (e) {}
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    var t = null;
+    try { t = localStorage.getItem('vxd-theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
 <link rel="stylesheet" href="assets/base.css">
@@ -112,8 +113,6 @@ p + p { margin-top: 12px; }
 #hero .thesis .osc-word { color: var(--osc); }
 #hero .thesis .trend-word { color: var(--trend); }
 
-/* o botão de tema da home flutua no canto do hero (as outras páginas usam .page-tools) */
-#hero .theme-toggle { position: absolute; top: -56px; right: 22px; }
 .section-nav {
   max-width: 880px;
   margin: 0 auto;
@@ -534,6 +533,9 @@ footer {
     <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
+    <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+  </button>
 </nav>
 
 <!-- ================= HERO ================= -->
@@ -541,14 +543,6 @@ footer {
 
 <section id="hero">
   <div class="spine">
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
-      <span class="theme-icon" id="themeIcon" aria-hidden="true">
-        <svg class="lucide-icon" viewBox="0 0 24 24">
-          <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path>
-        </svg>
-      </span>
-      <span id="themeLabel">Tema escuro</span>
-    </button>
     <div class="eyebrow">Guia vivo · análise técnica</div>
     <div class="thesis">
       <h1>Indicadores<br>Um guia para análise técnica</h1>

@@ -25,9 +25,12 @@
 <meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
 <script>
   (function() {
-    var savedTheme = 'light';
-    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    var t = null;
+    try { t = localStorage.getItem('vxd-theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
 <link rel="stylesheet" href="assets/base.css">
@@ -71,15 +74,12 @@
     <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
+    <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+  </button>
 </nav>
 
 <main class="wrap" id="conteudo">
-  <div class="page-tools">
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
-      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
-      <span id="themeLabel">Tema escuro</span>
-    </button>
-  </div>
   <div class="eyebrow trend">
     <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10"></circle>

@@ -151,20 +151,22 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
   outline: 3px solid var(--accent); outline-offset: 2px;
 }
 
-/* ============ TOGGLE DE TEMA ============ */
-.page-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
-.theme-toggle {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid var(--grid); border-radius: 999px;
-  background: var(--card); color: var(--ink);
-  box-shadow: var(--shadow-card); cursor: pointer;
-  font-family: var(--font-display); font-size: 13px; font-weight: 700;
-  padding: 9px 14px;
-  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+/* ============ TOGGLE DE TEMA (ícone no canto da barra) ============ */
+.site-tabs .theme-toggle {
+  position: absolute; top: 0; bottom: 0; margin: auto 0;
+  /* encosta na borda direita do container de 880px; nunca sai da tela */
+  right: max(12px, calc((100% - 880px) / 2 + 14px));
+  width: 34px; height: 34px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--grid); border-radius: 50%;
+  background: var(--paper); color: var(--ink-soft);
+  cursor: pointer; z-index: 2;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
-.theme-toggle:hover { border-color: var(--wire); transform: translateY(-1px); }
-.theme-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.theme-toggle .theme-icon { width: 16px; height: 16px; display: inline-flex; }
+.site-tabs .theme-toggle:hover { color: var(--ink); border-color: var(--wire); background: var(--card); }
+.site-tabs .theme-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.site-tabs .theme-toggle .theme-icon { width: 16px; height: 16px; display: inline-flex; }
 
 /* ============ ABAS DO GUIA ============ */
 .site-tabs {
@@ -174,7 +176,7 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
   border-bottom: 1px solid var(--grid);
 }
 .site-tabs-inner {
-  max-width: 880px; margin: 0 auto; padding: 0 22px;
+  max-width: 880px; margin: 0 auto; padding: 0 56px 0 22px; /* espaço à direita p/ o botão de tema */
   display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
 }
 .site-tabs a {
