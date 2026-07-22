@@ -30,37 +30,12 @@
     document.documentElement.setAttribute('data-theme', savedTheme);
   })();
 </script>
+<link rel="stylesheet" href="assets/base.css">
 <style>
-  :root {
+:root {
   color-scheme: light;
-  --paper: #F7F9FB;
-  --grid: #E3E9F0;
-  --ink: #16212E;
-  --ink-soft: #4A5A6B;
-  --wire: #8CA3B8;
-  --osc: #E8590C;
   --osc-soft: #FDEBE0;
-  --trend: #1B6E53;
   --trend-soft: var(--trend-soft);
-  --card: #FFFFFF;
-  --card-strong: #F7F9FB;
-  --danger: #C0392B;
-  --danger-soft: #FDEDEC;
-  --ok: #1E8449;
-  --ok-soft: #E9F7EF;
-  --ma-fast: #E07B39;
-  --ma-mid: #7B5EA7;
-  --on-accent: #FFFFFF;
-  --surface-glow: transparent;
-  --shadow-chart: 0 1px 0 rgba(22,33,46,0.04), 0 12px 30px -18px rgba(22,33,46,0.18);
-  --shadow-card: 0 1px 0 rgba(22,33,46,0.04), 0 12px 30px -20px rgba(22,33,46,0.15);
-  --shadow-lab: 0 1px 0 rgba(22,33,46,0.04), 0 16px 40px -26px rgba(22,33,46,0.2);
-  --font-display: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-body: Georgia, "Times New Roman", serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
-  --sans: var(--font-display);
-  --mono: var(--font-mono);
-  --accent: var(--osc);
   --up: var(--trend);
   --down: var(--danger);
   --fast: var(--ma-fast);
@@ -68,117 +43,56 @@
   --macd: var(--ink);
   --signal: var(--osc);
 }
-
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #0F141B;
-  --grid: rgba(142, 166, 191, 0.14);
-  --ink: #EEF4F8;
-  --ink-soft: #B3C0CB;
-  --wire: #73869A;
-  --osc: #FF8A3D;
-  --osc-soft: rgba(255, 138, 61, 0.15);
-  --trend: #43D391;
-  --trend-soft: rgba(67, 211, 145, 0.14);
-  --card: #151D27;
-  --card-strong: #1B2531;
-  --danger: #FF6B6B;
-  --danger-soft: rgba(255, 107, 107, 0.14);
-  --ok: #57D68D;
-  --ok-soft: rgba(87, 214, 141, 0.14);
-  --ma-fast: #FFB05F;
-  --ma-mid: #B79CFF;
-  --on-accent: #071016;
-  --surface-glow: rgba(255,255,255,0.035);
-  --shadow-chart: 0 1px 0 rgba(255,255,255,0.04) inset, 0 22px 60px -32px rgba(0,0,0,0.9);
-  --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 48px -34px rgba(0,0,0,0.95);
-  --shadow-lab: 0 1px 0 rgba(255,255,255,0.04) inset, 0 22px 58px -38px rgba(0,0,0,0.95);
 }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: var(--font-body);
-    background:
-      linear-gradient(180deg, var(--surface-glow), transparent 260px),
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-      var(--paper);
-    background-size: auto, 28px 28px, 28px 28px, auto;
-    color: var(--ink);
-    line-height: 1.7; padding: 32px 20px; font-size: 16.5px;
-  }
-  .wrap { max-width: 880px; margin: 0 auto; }
-  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
+.eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
     text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
-  h1 { font-family: var(--sans); font-weight: 800; font-size: clamp(28px, 5vw, 42px);
+h1 { font-family: var(--sans); font-weight: 800; font-size: clamp(28px, 5vw, 42px);
     letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 12px; }
-  p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
-
-  .step { margin-top: 40px; padding-top: 8px; }
-  .step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .badge { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
+.step { margin-top: 40px; padding-top: 8px; }
+.step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.badge { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
     background: var(--ink); color: var(--on-accent); font-family: var(--sans); font-weight: 800;
     font-size: 14px; display: flex; align-items: center; justify-content: center; }
-  .step-head h2 { font-family: var(--sans); font-weight: 800; font-size: 20px;
+.step-head h2 { font-family: var(--sans); font-weight: 800; font-size: 20px;
     letter-spacing: -0.01em; }
-  .step-text { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 14px; }
-  .card { background: var(--card); border: 1px solid var(--grid); border-radius: 14px;
+.step-text { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 14px; }
+.card { background: var(--card); border: 1px solid var(--grid); border-radius: 14px;
     padding: 20px; box-shadow: var(--shadow-card); }
-  svg { width: 100%; height: auto; display: block; }
-  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px;
+svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px;
     color: var(--ink-soft); margin-bottom: 10px; font-family: var(--sans); }
-  .legend span { display: flex; align-items: center; gap: 5px; }
-  .sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
-  .sw.bar { height: 11px; width: 8px; }
-  .sw.dash { background: none; border-top: 2px dashed var(--signal); height: 0; }
-  .formula { font-family: var(--mono); font-size: 13.5px; background: var(--paper);
+.legend span { display: flex; align-items: center; gap: 5px; }
+.sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.sw.bar { height: 11px; width: 8px; }
+.sw.dash { background: none; border-top: 2px dashed var(--signal); height: 0; }
+.formula { font-family: var(--mono); font-size: 13.5px; background: var(--paper);
     border: 1px dashed var(--wire); border-radius: 8px; padding: 10px 14px; margin-top: 12px; }
-  .formula b.f { color: var(--fast); } .formula b.s { color: var(--slow); }
-  .formula b.m { color: var(--macd); } .formula b.sig { color: var(--signal); }
-
-  .cross-ctrl { display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+.formula b.f { color: var(--fast); }
+.formula b.s { color: var(--slow); }
+.formula b.m { color: var(--macd); }
+.formula b.sig { color: var(--signal); }
+.cross-ctrl { display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
     font-family: var(--sans); font-weight: 600; font-size: 14px; margin: 14px 0; }
-  .cross-ctrl button { font: inherit; font-weight: 700; border: 2px solid var(--grid);
+.cross-ctrl button { font: inherit; font-weight: 700; border: 2px solid var(--grid);
     background: var(--card); color: var(--ink); padding: 8px 16px; border-radius: 999px;
     cursor: pointer; transition: all 0.15s; }
-  .cross-ctrl button:hover { border-color: var(--wire); }
-  .cross-ctrl button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .readout { font-family: var(--mono); font-size: 13.5px; background: var(--paper);
+.cross-ctrl button:hover { border-color: var(--wire); }
+.cross-ctrl button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.readout { font-family: var(--mono); font-size: 13.5px; background: var(--paper);
     border: 1px dashed var(--wire); border-radius: 10px; padding: 12px 16px; margin-top: 14px;
     line-height: 1.9; }
-  .readout .up { color: var(--up); font-weight: 700; }
-  .readout .down { color: var(--down); font-weight: 700; }
-  .readout .hi { color: var(--accent); font-weight: 700; }
-  .insight { font-size: 14.5px; color: var(--ink-soft); margin-top: 16px;
+.readout .up { color: var(--up); font-weight: 700; }
+.readout .down { color: var(--down); font-weight: 700; }
+.readout .hi { color: var(--accent); font-weight: 700; }
+.insight { font-size: 14.5px; color: var(--ink-soft); margin-top: 16px;
     background: var(--osc-soft); border-left: 3px solid var(--accent); padding: 12px 16px; }
-  .insight b { color: var(--ink); }
-  .foot { font-family: var(--mono); font-size: 12px; color: var(--wire);
+.insight b { color: var(--ink); }
+.foot { font-family: var(--mono); font-size: 12px; color: var(--wire);
     text-align: center; margin-top: 44px; }
-
-
 /* ===== toggle de tema (padrão do guia) ===== */
-.page-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
-.theme-toggle {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid var(--grid); border-radius: 999px;
-  background: var(--card); color: var(--ink);
-  box-shadow: var(--shadow-card); cursor: pointer;
-  font-family: var(--font-display); font-size: 13px; font-weight: 700;
-  padding: 9px 14px;
-  transition: border-color 0.15s, transform 0.15s, background 0.15s;
-}
-.theme-toggle:hover { border-color: var(--wire); transform: translateY(-1px); }
-.theme-toggle:focus-visible { outline: 3px solid var(--osc); outline-offset: 2px; }
-.theme-toggle .theme-icon { width: 16px; height: 16px; display: inline-flex; }
-.lucide-icon {
-  display: block; width: 100%; height: 100%;
-  fill: none; stroke: currentColor; stroke-width: 2;
-  stroke-linecap: round; stroke-linejoin: round;
-}
-.eyebrow .inline-icon {
-  display: inline-block;
-  width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
-}
-
 /* ===== cores dos gráficos SVG seguem o tema ===== */
 svg [stroke="#16212E"] { stroke: var(--ink); }
 svg [fill="#16212E"] { fill: var(--ink); }
@@ -193,63 +107,8 @@ svg [stroke="#7B5EA7"] { stroke: var(--ma-mid); }
 svg [stroke="#E8590C"] { stroke: var(--osc); }
 svg [fill="#E8590C"] { fill: var(--osc); }
 svg [fill="#fff"] { fill: var(--card); }
-
 /* ===== abas do guia (compartilhadas entre as páginas) ===== */
-.site-tabs {
-  position: sticky; top: 0; z-index: 60;
-  margin: -32px -20px 28px;
-  background: var(--paper, #FFFFFF);
-  border-bottom: 1px solid var(--grid, #E3E9F0);
-}
-.site-tabs-inner {
-  max-width: 880px; margin: 0 auto; padding: 0 22px;
-  display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
-}
-.site-tabs a {
-  font-family: var(--font-mono, ui-monospace, "SF Mono", Consolas, monospace);
-  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--ink-soft, #4A5A6B); text-decoration: none;
-  padding: 14px 12px 11px; border-bottom: 2px solid transparent;
-  white-space: nowrap;
-}
-.site-tabs a:hover { color: var(--ink, #16212E); }
-.site-tabs a[aria-current="page"] {
-  color: var(--ink, #16212E);
-  border-bottom-color: var(--osc, #E8590C);
-}
-
 /* ---- menu suspenso "Indicadores" ---- */
-.site-tabs .tab-dropdown { display: inline-flex; }
-.site-tabs .tab-trigger {
-  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--ink-soft); background: none; border: none;
-  cursor: pointer; padding: 14px 12px 11px; border-bottom: 2px solid transparent;
-  white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
-  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-}
-.site-tabs .tab-trigger:hover { color: var(--ink); }
-.site-tabs .tab-trigger .caret { font-size: 9px; transition: transform 0.15s; }
-.site-tabs .tab-dropdown.open .tab-trigger .caret { transform: rotate(180deg); }
-.site-tabs .tab-trigger.current { color: var(--ink); border-bottom-color: var(--tab-accent, var(--osc)); }
-.site-tabs .tab-menu {
-  position: absolute; top: 100%; left: 12px; z-index: 200;
-  background: var(--card); border: 1px solid var(--grid);
-  border-radius: 12px; box-shadow: var(--shadow-card);
-  padding: 8px; min-width: 250px; max-width: calc(100vw - 24px);
-  max-height: 78vh; overflow-y: auto;
-}
-.site-tabs .tab-menu-head {
-  display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--wire); padding: 10px 10px 4px;
-}
-.site-tabs .tab-menu-head:first-child { padding-top: 4px; }
-.site-tabs .tab-menu a {
-  display: block; font-family: var(--font-display); font-size: 13.5px; color: var(--ink-soft);
-  text-decoration: none; padding: 7px 10px; border-radius: 8px; border-bottom: none;
-  white-space: nowrap; letter-spacing: normal; text-transform: none;
-}
-.site-tabs .tab-menu a:hover { background: var(--card-strong); color: var(--ink); }
-.site-tabs .tab-menu a[aria-current="page"] { color: var(--ink); font-weight: 700; background: var(--card-strong); border-bottom: none; }
 </style>
 </head>
 <body>
@@ -528,28 +387,8 @@ renderCross();
 document.getElementById('insight').innerHTML =
   'A AMD teve <b>' + crosses.length + ' cruzamentos</b> de MACD nesse período. No fechamento mais recente, o histograma está em <b>' + HIST[N-1].toFixed(2) + '</b> (MACD ' + MACD[N-1].toFixed(2) + ' abaixo do sinal ' + SIGNAL[N-1].toFixed(2) + ') — momentum de curtíssimo prazo levemente negativo, o mesmo quadro de "pausa dentro da tendência de alta" que os outros indicadores mostraram.';
 
-/* ===== tema (padrão do guia) ===== */
-var themeIcons = {
-  dark: '<svg class="lucide-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>',
-  light: '<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>'
-};
-function setTheme(theme) {
-  var next = theme === 'dark' ? 'dark' : 'light';
-  document.documentElement.setAttribute('data-theme', next);
-  try { localStorage.setItem('vxd-theme', next); } catch (e) {}
-  var toggle = document.getElementById('themeToggle');
-  var icon = document.getElementById('themeIcon');
-  var label = document.getElementById('themeLabel');
-  if (toggle) toggle.setAttribute('aria-pressed', next === 'dark');
-  if (icon) icon.innerHTML = next === 'dark' ? themeIcons.dark : themeIcons.light;
-  if (label) label.textContent = next === 'dark' ? 'Tema claro' : 'Tema escuro';
-}
-document.getElementById('themeToggle').addEventListener('click', function() {
-  var current = document.documentElement.getAttribute('data-theme') || 'light';
-  setTheme(current === 'dark' ? 'light' : 'dark');
-});
-setTheme(document.documentElement.getAttribute('data-theme') || 'light');
 </script>
+<script src="assets/site.js"></script>
 <script src="assets/nav.js"></script>
 </body>
 </html>
