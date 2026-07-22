@@ -634,6 +634,38 @@ footer {
   color: var(--ink, #16212E);
   border-bottom-color: var(--osc, #E8590C);
 }
+
+/* ---- menu suspenso "Indicadores" ---- */
+.site-tabs .tab-dropdown { display: inline-flex; }
+.site-tabs .tab-trigger {
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft); background: none; border: none;
+  cursor: pointer; padding: 14px 12px 11px; border-bottom: 2px solid transparent;
+  white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
+}
+.site-tabs .tab-trigger:hover { color: var(--ink); }
+.site-tabs .tab-trigger .caret { font-size: 9px; transition: transform 0.15s; }
+.site-tabs .tab-dropdown.open .tab-trigger .caret { transform: rotate(180deg); }
+.site-tabs .tab-trigger.current { color: var(--ink); border-bottom-color: var(--tab-accent, var(--osc)); }
+.site-tabs .tab-menu {
+  position: fixed; top: 47px; left: 12px; z-index: 200;
+  background: var(--card); border: 1px solid var(--grid);
+  border-radius: 12px; box-shadow: var(--shadow-card);
+  padding: 8px; min-width: 250px; max-width: calc(100vw - 24px);
+  max-height: 78vh; overflow-y: auto;
+}
+.site-tabs .tab-menu-head {
+  display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--wire); padding: 10px 10px 4px;
+}
+.site-tabs .tab-menu-head:first-child { padding-top: 4px; }
+.site-tabs .tab-menu a {
+  display: block; font-family: var(--font-display); font-size: 13.5px; color: var(--ink-soft);
+  text-decoration: none; padding: 7px 10px; border-radius: 8px; border-bottom: none;
+  white-space: nowrap; letter-spacing: normal; text-transform: none;
+}
+.site-tabs .tab-menu a:hover { background: var(--card-strong); color: var(--ink); }
+.site-tabs .tab-menu a[aria-current="page"] { color: var(--ink); font-weight: 700; background: var(--card-strong); border-bottom: none; }
 </style>
 </head>
 <body>
@@ -642,12 +674,24 @@ footer {
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html" aria-current="page">Guia</a>
-    <a href="rsi.html">RSI</a>
-    <a href="momentum.html">Momentum</a>
-    <a href="ao.html">AO</a>
-    <a href="macd.html">MACD</a>
+    <div class="tab-dropdown">
+      <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
+      <div class="tab-menu" id="indMenu" role="menu" hidden>
+        <span class="tab-menu-head">Osciladores</span>
+        <a role="menuitem" href="rsi.html">RSI — força relativa</a>
+        <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
+        <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
+        <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+        <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
+        <span class="tab-menu-head">Tendência</span>
+        <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
+        <a role="menuitem" href="adx.html">ADX — força da tendência</a>
+        <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
+        <span class="tab-menu-head">Volume</span>
+        <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+      </div>
+    </div>
     <a href="suportes.html">Suportes</a>
-    <a href="volume.html">Volume</a>
     <a href="risco.html">Risco</a>
     <a href="estrategias.html">Estratégias</a>
   </div>
@@ -1133,5 +1177,6 @@ if ('IntersectionObserver' in window) {
   document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('in'); });
 }
 </script>
+<script src="assets/nav.js"></script>
 </body>
 </html>

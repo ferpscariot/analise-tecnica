@@ -34,12 +34,24 @@
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Guia</a>
-    <a href="rsi.html">RSI</a>
-    <a href="momentum.html">Momentum</a>
-    <a href="ao.html">AO</a>
-    <a href="macd.html">MACD</a>
+    <div class="tab-dropdown">
+      <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
+      <div class="tab-menu" id="indMenu" role="menu" hidden>
+        <span class="tab-menu-head">Osciladores</span>
+        <a role="menuitem" href="rsi.html">RSI — força relativa</a>
+        <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
+        <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
+        <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+        <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
+        <span class="tab-menu-head">Tendência</span>
+        <a role="menuitem" href="medias.html" aria-current="page">Médias móveis — SMA e EMA</a>
+        <a role="menuitem" href="adx.html">ADX — força da tendência</a>
+        <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
+        <span class="tab-menu-head">Volume</span>
+        <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+      </div>
+    </div>
     <a href="suportes.html">Suportes</a>
-    <a href="volume.html">Volume</a>
     <a href="risco.html">Risco</a>
     <a href="estrategias.html">Estratégias</a>
   </div>
@@ -146,5 +158,6 @@ function renderMA() {
 renderMA();
 </script>
 <script src="assets/site.js"></script>
+<script src="assets/nav.js"></script>
 </body>
 </html>
