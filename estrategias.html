@@ -56,6 +56,18 @@
   .me-box b { color: var(--ink); }
   .rr { font-family: var(--mono); font-size: 12.5px; color: var(--wire); margin-top: 12px; }
 
+  /* gráficos animados */
+  .anim-block { margin-top: 16px; }
+  .play-btn {
+    font-family: var(--sans); font-weight: 700; font-size: 13.5px;
+    border: 2px solid var(--strat); background: var(--card); color: var(--strat);
+    padding: 8px 18px; border-radius: 999px; cursor: pointer; transition: all 0.15s;
+    margin-bottom: 12px;
+  }
+  .play-btn:hover { background: var(--strat); color: var(--on-accent); }
+  .play-btn:focus-visible { outline: 3px solid var(--strat); outline-offset: 2px; }
+  .anim-status { margin-top: 12px; }
+
   /* seletor de regime */
   .regime-btns { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
   .rb {
@@ -144,6 +156,11 @@
       <li><b>Stop:</b> abaixo do fundo do pullback (ou 1×ATR abaixo da entrada).</li>
       <li><b>Alvos:</b> Alvo 1 em 1,5R · Alvo 2 na última máxima da perna anterior ou 2,5R.</li>
     </ol>
+    <div class="anim-block">
+      <button class="play-btn" type="button" data-anim="1">▶ Assistir o trade</button>
+      <div id="anim1"></div>
+      <div class="readout anim-status" id="status1" style="display:none;"></div>
+    </div>
     <div class="espelho"><b>Venda (short):</b> espelhado — EMA 9 abaixo da EMA 21, repique até a média, candle de fraqueza, entrada no rompimento da mínima.</div>
     <div class="melhor-evitar">
       <div class="me-box melhor"><b>Melhor cenário:</b> perna direcional clara, médias abertas e inclinadas.</div>
@@ -165,6 +182,11 @@
       <li><b>Stop:</b> abaixo da mínima recente (1×ATR).</li>
       <li><b>Alvos:</b> Alvo 1 na VWAP · Alvo 2 na banda superior do desvio ou +1×ATR acima da VWAP.</li>
     </ol>
+    <div class="anim-block">
+      <button class="play-btn" type="button" data-anim="2">▶ Assistir o trade</button>
+      <div id="anim2"></div>
+      <div class="readout anim-status" id="status2" style="display:none;"></div>
+    </div>
     <div class="espelho"><b>Venda (short):</b> preço esticado acima da VWAP + RSI ≥ 70, candle de topo, RSI cruzando abaixo de 70. Alvo = VWAP.</div>
     <div class="melhor-evitar">
       <div class="me-box melhor"><b>Melhor cenário:</b> mercado lateral, range intradiário definido.</div>
@@ -185,6 +207,11 @@
       <li><b>Stop:</b> abaixo da EMA 20 ou do último fundo (1×ATR).</li>
       <li><b>Alvos:</b> Alvo 1 em 2R · Alvo 2 com trailing pela EMA 20 enquanto o MACD não cruzar para baixo.</li>
     </ol>
+    <div class="anim-block">
+      <button class="play-btn" type="button" data-anim="3">▶ Assistir o trade</button>
+      <div id="anim3"></div>
+      <div class="readout anim-status" id="status3" style="display:none;"></div>
+    </div>
     <div class="espelho"><b>Venda (short):</b> preço abaixo da EMA 20 + MACD cruzando para baixo (de preferência acima/perto do zero). Saída quando o MACD cruzar para cima.</div>
     <div class="melhor-evitar">
       <div class="me-box melhor"><b>Melhor cenário:</b> início de perna direcional após acumulação.</div>
@@ -206,6 +233,11 @@
       <li><b>Stop:</b> abaixo da linha média do Donchian ou do candle de rompimento (1×ATR).</li>
       <li><b>Alvos:</b> Alvo 1 na projeção da altura da consolidação (1× o range) · Alvo 2 em 2× ou trailing pela linha inferior do canal.</li>
     </ol>
+    <div class="anim-block">
+      <button class="play-btn" type="button" data-anim="4">▶ Assistir o trade</button>
+      <div id="anim4"></div>
+      <div class="readout anim-status" id="status4" style="display:none;"></div>
+    </div>
     <div class="espelho"><b>Venda (short):</b> rompimento da mínima dos 20 candles com volume acima da média. Alvo pela projeção da faixa.</div>
     <div class="melhor-evitar">
       <div class="me-box melhor"><b>Melhor cenário:</b> depois de squeeze — consolidação apertada que acumula energia.</div>
@@ -230,7 +262,364 @@
   <div class="foot">Playbook adaptado do material do autor (gráfico de 15 min) · material educativo, não é recomendação de investimento</div>
 </div>
 
+<script src="assets/amd.js"></script>
 <script>
+/* ============================================================
+   GRÁFICOS ANIMADOS — replay candle a candle de cada estratégia
+   Dados sintéticos determinísticos (semente fixa); indicadores
+   calculados pelos mesmos motores do guia (assets/amd.js).
+   ============================================================ */
+function rng(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function buildCloses(start, phases, seed) {
+  var r = rng(seed), closes = [start], v = start;
+  phases.forEach(function(ph) {
+    for (var i = 0; i < ph.n; i++) { v += ph.drift + (r() - 0.5) * 2 * ph.noise; closes.push(v); }
+  });
+  return closes;
+}
+function toCandles(closes, seed) {
+  var r = rng(seed), out = [];
+  for (var i = 0; i < closes.length; i++) {
+    var o = i === 0 ? closes[0] : closes[i - 1], c = closes[i];
+    out.push({ o: o, c: c, h: Math.max(o, c) + r() * 0.45, l: Math.min(o, c) - r() * 0.45 });
+  }
+  return out;
+}
+function candleStr(candles, upto, xm, ym, bw, ringIdx) {
+  var s = '';
+  for (var i = 0; i <= upto; i++) {
+    var cd = candles[i], x = xm(i);
+    var col = cd.c >= cd.o ? 'var(--trend)' : 'var(--danger)';
+    s += '<line x1="' + x.toFixed(1) + '" y1="' + ym(cd.h).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + ym(cd.l).toFixed(1) + '" stroke="' + col + '" stroke-width="1"/>';
+    var yO = ym(cd.o), yC = ym(cd.c);
+    var top = Math.min(yO, yC), h = Math.abs(yO - yC) || 0.8;
+    s += '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + col + '"/>';
+    if (i === ringIdx) {
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + ((ym(cd.h) + ym(cd.l)) / 2).toFixed(1) + '" r="11" fill="none" stroke="var(--lvl)" stroke-width="2" stroke-dasharray="3,2"/>';
+    }
+  }
+  return s;
+}
+function lineStr(vals, upto, xm, ym, color, w, dash) {
+  return poly(ptsOf(vals.slice(0, upto + 1), xm, ym), color, w, dash);
+}
+function annStr(fromI, level, xm, ym, X1, color, dash, label) {
+  var y = ym(level);
+  return '<line x1="' + xm(fromI).toFixed(1) + '" y1="' + y.toFixed(1) + '" x2="' + X1 + '" y2="' + y.toFixed(1) + '" stroke="' + color + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-width="1.3"/>' +
+    '<text x="' + (X1 - 2) + '" y="' + (y - 3).toFixed(1) + '" font-size="9.5" fill="' + color + '" text-anchor="end" font-weight="700">' + label + '</text>';
+}
+var AW = 780, AX0 = 46, AX1 = AW - 14;
+function mkXm(n) { return function(i) { return AX0 + i / (n - 1) * (AX1 - AX0); }; }
+
+var ANIMS = {};
+function setStatus(A, i, el) {
+  var txt = null;
+  A.phases.forEach(function(p) { if (i >= p.at) txt = p.text; });
+  if (txt) el.innerHTML = txt;
+}
+function playAnim(id) {
+  var A = ANIMS[id];
+  if (!A) return;
+  if (A.timer) { clearInterval(A.timer); A.timer = null; }
+  var el = document.getElementById('status' + id);
+  el.style.display = 'block';
+  var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) { A.draw(A.n - 1); setStatus(A, A.n - 1, el); return; }
+  var i = 4;
+  A.draw(i); setStatus(A, i, el);
+  A.timer = setInterval(function() {
+    i++;
+    if (i >= A.n) { clearInterval(A.timer); A.timer = null; return; }
+    A.draw(i); setStatus(A, i, el);
+  }, 80);
+}
+document.querySelectorAll('.play-btn').forEach(function(b) {
+  b.addEventListener('click', function() {
+    playAnim(b.getAttribute('data-anim'));
+    b.textContent = '↻ Rever o trade';
+  });
+});
+
+/* ---------- 1. PULLBACK DE TENDÊNCIA (EMA 9 × 21) ---------- */
+(function() {
+  var closes = buildCloses(100, [
+    { n: 33, drift: 0.55, noise: 0.5 },
+    { n: 6, drift: -0.95, noise: 0.35 },
+    { n: 1, drift: 0.7, noise: 0.05 },
+    { n: 17, drift: 0.8, noise: 0.45 }
+  ], 11);
+  var candles = toCandles(closes, 12);
+  var n = candles.length, REV = 40;
+  var rev = candles[REV];
+  rev.l = Math.min(rev.o, rev.c) - 2.4;
+  rev.h = Math.max(rev.o, rev.c) + 0.25;
+  var e9 = ema(closes, 9), e21 = ema(closes, 21);
+  var entry = rev.h + 0.15, stop = rev.l - 0.3, R = entry - stop;
+  var alvo1 = entry + 1.5 * R, alvo2 = entry + 2.5 * R;
+  var hit1 = n - 1, hit2 = n - 1;
+  for (var i = REV + 1; i < n; i++) { if (candles[i].h >= alvo1) { hit1 = i; break; } }
+  for (var j = hit1; j < n; j++) { if (candles[j].h >= alvo2) { hit2 = j; break; } }
+
+  var H = 260, xm = mkXm(n), bw = (AX1 - AX0) / n * 0.62;
+  var all = [stop, alvo2];
+  candles.forEach(function(c) { all.push(c.h, c.l); });
+  var pm = mapper(all, 0, 0, 14, H - 14, 0.06);
+
+  ANIMS[1] = {
+    n: n,
+    phases: [
+      { at: 4, text: 'Fase 1 — <span class="tr">tendência de alta</span>: EMA 9 (laranja) acima da EMA 21 (roxa), ambas inclinadas para cima. Sem pressa: o trade é no recuo, não aqui.' },
+      { at: 35, text: 'Fase 2 — <b>pullback</b>: o preço recua e encosta na região das médias. Ainda não é sinal — é só o desconto chegando.' },
+      { at: REV, text: 'Fase 3 — <span class="hi">candle de força na média</span> (martelo, no anel): fundo do recuo rejeitado. Gatilho armado.' },
+      { at: REV + 1, text: '<b>Entrada</b> no rompimento da máxima do candle · <span class="r">stop abaixo do fundo</span>. Essa distância é 1R — todo o resto se mede nela.' },
+      { at: hit1, text: '<span class="g">Alvo 1 (1,5R) atingido</span> — realiza 50% e o stop sobe para o break-even. O pior caso agora é lucro.' },
+      { at: hit2, text: '<span class="g">Alvo 2 (2,5R) atingido</span> — saída final. O recuo comprado virou a continuação da tendência.' }
+    ],
+    draw: function(upto) {
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      s += lineStr(e21, upto, xm, pm.y, 'var(--ma-mid)', 1.6);
+      s += lineStr(e9, upto, xm, pm.y, 'var(--ma-fast)', 1.6);
+      s += candleStr(candles, upto, xm, pm.y, bw, upto >= REV ? REV : -1);
+      if (upto >= REV + 1) {
+        s += annStr(REV, entry, xm, pm.y, AX1, 'var(--ink)', '', 'entrada');
+        s += annStr(REV, stop, xm, pm.y, AX1, 'var(--danger)', '4,3', 'stop');
+        s += annStr(REV, alvo1, xm, pm.y, AX1, 'var(--trend)', '4,3', 'alvo 1 · 1,5R');
+        s += annStr(REV, alvo2, xm, pm.y, AX1, 'var(--trend)', '4,3', 'alvo 2 · 2,5R');
+      }
+      s += '</svg>';
+      document.getElementById('anim1').innerHTML = s;
+    }
+  };
+  ANIMS[1].draw(n - 1);
+})();
+
+/* ---------- 2. REVERSÃO À MÉDIA NA VWAP (VWAP + RSI) ---------- */
+(function() {
+  var closes = buildCloses(100, [
+    { n: 19, drift: 0.02, noise: 0.45 },
+    { n: 14, drift: -0.7, noise: 0.3 },
+    { n: 1, drift: 0.65, noise: 0.05 },
+    { n: 21, drift: 0.62, noise: 0.4 }
+  ], 21);
+  var candles = toCandles(closes, 22);
+  var n = candles.length, REV = 34;
+  var rev = candles[REV];
+  rev.l = Math.min(rev.o, rev.c) - 1.6;
+  var vwap = [], sum = 0;
+  for (var i = 0; i < n; i++) { sum += closes[i]; vwap.push(sum / (i + 1)); }
+  var rsi = calcRSI(closes, 14);
+  var entryIdx = REV + 1;
+  for (var k = 28; k < n; k++) { if (rsi[k - 1] !== null && rsi[k - 1] < 30 && rsi[k] >= 30) { entryIdx = k; break; } }
+  var entry = rev.h + 0.15, stop = rev.l - 0.3;
+  var alvo2 = vwap[entryIdx] + 1.4;
+  var hitV = n - 1;
+  for (var m = entryIdx; m < n; m++) { if (candles[m].h >= vwap[m]) { hitV = m; break; } }
+
+  var H = 320, pY1 = 182, rY0 = 208, rY1 = 308;
+  var xm = mkXm(n), bw = (AX1 - AX0) / n * 0.62;
+  var all = [stop, alvo2];
+  candles.forEach(function(c) { all.push(c.h, c.l); });
+  all.push(vwap[0], vwap[n - 1]);
+  var pm = mapper(all, 0, 0, 14, pY1, 0.06);
+  function rym(v) { return rY1 - v / 100 * (rY1 - rY0); }
+
+  ANIMS[2] = {
+    n: n,
+    phases: [
+      { at: 4, text: 'Fase 1 — dia <b>sem tendência</b>: o preço respira em volta da VWAP (azul). É o habitat da reversão à média.' },
+      { at: 22, text: 'Fase 2 — o preço <span class="r">estica para baixo</span>, longe da VWAP. No painel de baixo, o RSI mergulha rumo à sobrevenda.' },
+      { at: REV, text: 'Fase 3 — <span class="hi">RSI abaixo de 30 + candle de reversão no fundo</span> (anel): o elástico está no limite.' },
+      { at: entryIdx, text: '<b>Entrada</b> quando o RSI cruza de volta acima de 30 e a máxima do candle de reversão rompe · <span class="r">stop na mínima</span>.' },
+      { at: hitV, text: '<span class="g">Alvo 1: a própria VWAP</span> — realiza 50% ali. O restante busca o alvo 2 (+1×ATR acima da VWAP).' },
+      { at: n - 1, text: '<span class="g">Alvo 2 atingido</span>. O desvio exagerado voltou ao "preço justo" do dia — e passou um pouco dele.' }
+    ],
+    draw: function(upto) {
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      s += lineStr(vwap, upto, xm, pm.y, 'var(--vol)', 2);
+      s += '<text x="' + AX0 + '" y="12" font-size="10" fill="var(--vol)" font-weight="700">VWAP (simplificada)</text>';
+      s += candleStr(candles, upto, xm, pm.y, bw, upto >= REV ? REV : -1);
+      if (upto >= entryIdx) {
+        s += annStr(REV, entry, xm, pm.y, AX1, 'var(--ink)', '', 'entrada');
+        s += annStr(REV, stop, xm, pm.y, AX1, 'var(--danger)', '4,3', 'stop');
+        s += annStr(REV, alvo2, xm, pm.y, AX1, 'var(--trend)', '4,3', 'alvo 2 · +1×ATR');
+      }
+      // painel RSI
+      s += '<text x="' + AX0 + '" y="' + (rY0 - 6) + '" font-size="10" fill="var(--osc)" font-weight="700">RSI(14)</text>';
+      [[70, 'var(--wire)'], [30, 'var(--osc)']].forEach(function(g) {
+        s += '<line x1="' + AX0 + '" y1="' + rym(g[0]).toFixed(1) + '" x2="' + AX1 + '" y2="' + rym(g[0]).toFixed(1) + '" stroke="' + g[1] + '" stroke-dasharray="4,3" opacity="0.6"/>';
+        s += '<text x="' + (AX0 - 6) + '" y="' + (rym(g[0]) + 4).toFixed(1) + '" font-size="9.5" fill="' + g[1] + '" text-anchor="end">' + g[0] + '</text>';
+      });
+      s += lineStr(rsi, upto, xm, rym, 'var(--osc)', 1.8);
+      if (upto >= entryIdx && rsi[entryIdx] !== null) {
+        s += '<circle cx="' + xm(entryIdx).toFixed(1) + '" cy="' + rym(rsi[entryIdx]).toFixed(1) + '" r="5" fill="none" stroke="var(--lvl)" stroke-width="2"/>';
+      }
+      s += '</svg>';
+      document.getElementById('anim2').innerHTML = s;
+    }
+  };
+  ANIMS[2].draw(n - 1);
+})();
+
+/* ---------- 3. MOMENTUM DE TENDÊNCIA (EMA 20 + MACD) ---------- */
+(function() {
+  var closes = buildCloses(100, [
+    { n: 19, drift: 0.3, noise: 0.4 },
+    { n: 20, drift: -0.06, noise: 0.42 },
+    { n: 20, drift: 0.85, noise: 0.45 }
+  ], 31);
+  var candles = toCandles(closes, 32);
+  var n = candles.length;
+  var e20 = ema(closes, 20);
+  var e12 = ema(closes, 12), e26 = ema(closes, 26);
+  var macd = closes.map(function(_, i) { return (e12[i] !== null && e26[i] !== null) ? e12[i] - e26[i] : null; });
+  var fv = macd.findIndex(function(v) { return v !== null; });
+  var sig9 = ema(macd.slice(fv), 9);
+  var signal = new Array(n).fill(null);
+  for (var i = 0; i < sig9.length; i++) if (sig9[i] !== null) signal[fv + i] = sig9[i];
+  var CROSS = 42;
+  for (var k = 34; k < n; k++) {
+    if (macd[k] !== null && signal[k] !== null && macd[k - 1] !== null && signal[k - 1] !== null &&
+        macd[k] > signal[k] && macd[k - 1] <= signal[k - 1]) { CROSS = k; break; }
+  }
+  var entry = closes[CROSS];
+  var stop = entry; for (var m = CROSS - 6; m <= CROSS; m++) stop = Math.min(stop, candles[m].l);
+  stop -= 0.3;
+  var R = entry - stop, alvo1 = entry + 2 * R;
+  var hit1 = n - 1;
+  for (var h = CROSS + 1; h < n; h++) { if (candles[h].h >= alvo1) { hit1 = h; break; } }
+
+  var H = 320, pY1 = 182, mY0 = 204, mY1 = 308;
+  var xm = mkXm(n), bw = (AX1 - AX0) / n * 0.62;
+  var all = [stop, alvo1];
+  candles.forEach(function(c) { all.push(c.h, c.l); });
+  var pm = mapper(all, 0, 0, 14, pY1, 0.06);
+  var mvals = [];
+  for (var q = 0; q < n; q++) { if (macd[q] !== null) mvals.push(macd[q]); if (signal[q] !== null) mvals.push(signal[q]); }
+  var mm = mapper(mvals, 0, 0, mY0, mY1, 0.1);
+
+  ANIMS[3] = {
+    n: n,
+    phases: [
+      { at: 4, text: 'Fase 1 — <span class="tr">viés de alta</span>: preço acima da EMA 20 (verde). O filtro de lado está definido: só compras.' },
+      { at: 24, text: 'Fase 2 — <b>pausa</b>: o preço anda de lado e o MACD (embaixo) esfria, escorregando em direção ao zero. Momentum descansando, não morto.' },
+      { at: CROSS, text: '<span class="hi">Gatilho: MACD cruza a linha de sinal para cima</span> (anel), ainda perto do zero — entrada cedo no realinhamento do momentum.' },
+      { at: CROSS + 1, text: '<b>Entrada</b> no fechamento do cruzamento · <span class="r">stop abaixo do último fundo</span>, protegido pela EMA 20.' },
+      { at: hit1, text: '<span class="g">Alvo 1 (2R) atingido</span> — realiza 50%. O restante segue com trailing pela EMA 20 enquanto o MACD não cruzar para baixo.' },
+      { at: n - 1, text: 'A perna direcional seguiu — o trailing captura o resto. Saída só quando o MACD cruzar para baixo ou a EMA 20 for perdida.' }
+    ],
+    draw: function(upto) {
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      s += lineStr(e20, upto, xm, pm.y, 'var(--trend)', 2);
+      s += '<text x="' + AX0 + '" y="12" font-size="10" fill="var(--trend)" font-weight="700">EMA 20</text>';
+      s += candleStr(candles, upto, xm, pm.y, bw, -1);
+      if (upto >= CROSS + 1) {
+        s += annStr(CROSS, entry, xm, pm.y, AX1, 'var(--ink)', '', 'entrada');
+        s += annStr(CROSS, stop, xm, pm.y, AX1, 'var(--danger)', '4,3', 'stop');
+        s += annStr(CROSS, alvo1, xm, pm.y, AX1, 'var(--trend)', '4,3', 'alvo 1 · 2R');
+      }
+      // painel MACD
+      s += '<text x="' + AX0 + '" y="' + (mY0 - 6) + '" font-size="10" fill="var(--ink)" font-weight="700">MACD</text>';
+      var zeroY = mm.y(0);
+      s += '<line x1="' + AX0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + AX1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3" opacity="0.7"/>';
+      for (var b = 0; b <= upto; b++) {
+        if (macd[b] === null || signal[b] === null) continue;
+        var hv = macd[b] - signal[b];
+        var hy = mm.y(hv), top = Math.min(hy, zeroY), hh = Math.abs(hy - zeroY) || 0.5;
+        s += '<rect x="' + (xm(b) - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + hh.toFixed(1) + '" fill="' + (hv >= 0 ? 'var(--trend)' : 'var(--danger)') + '" opacity="0.4"/>';
+      }
+      s += lineStr(macd, upto, xm, mm.y, 'var(--ink)', 1.6);
+      s += lineStr(signal, upto, xm, mm.y, 'var(--osc)', 1.4, '5,3');
+      if (upto >= CROSS && macd[CROSS] !== null) {
+        s += '<circle cx="' + xm(CROSS).toFixed(1) + '" cy="' + mm.y(macd[CROSS]).toFixed(1) + '" r="6" fill="none" stroke="var(--lvl)" stroke-width="2"/>';
+      }
+      s += '</svg>';
+      document.getElementById('anim3').innerHTML = s;
+    }
+  };
+  ANIMS[3].draw(n - 1);
+})();
+
+/* ---------- 4. ROMPIMENTO COM VOLUME (DONCHIAN 20 + VOLUME) ---------- */
+(function() {
+  var closes = buildCloses(100, [
+    { n: 15, drift: -0.06, noise: 0.45 },
+    { n: 30, drift: 0.0, noise: 0.2 },
+    { n: 1, drift: 1.6, noise: 0.05 },
+    { n: 11, drift: 0.5, noise: 0.35 }
+  ], 41);
+  var candles = toCandles(closes, 42);
+  var n = candles.length, BRK = 46;
+  var r = rng(43), vol = [];
+  for (var i = 0; i < n; i++) {
+    var base = i < 16 ? 34 : i < BRK ? 30 - (i - 16) * 0.35 : i === BRK ? 96 : 55 - (i - BRK) * 2.5;
+    vol.push(Math.max(12, base + (r() - 0.5) * 8));
+  }
+  var volMed = sma(vol, 20);
+  var dUp = new Array(n).fill(null), dLo = new Array(n).fill(null);
+  for (var d = 20; d < n; d++) {
+    var hh = -Infinity, ll = Infinity;
+    for (var w = d - 20; w < d; w++) { hh = Math.max(hh, candles[w].h); ll = Math.min(ll, candles[w].l); }
+    dUp[d] = hh; dLo[d] = ll;
+  }
+  var entry = dUp[BRK] + 0.1;
+  var range = dUp[BRK] - dLo[BRK];
+  var stop = (dUp[BRK] + dLo[BRK]) / 2 - 0.2;
+  var alvo1 = entry + range, alvo2 = entry + 2 * range;
+  var hit1 = n - 1, hit2 = n - 1;
+  for (var a = BRK + 1; a < n; a++) { if (candles[a].h >= alvo1) { hit1 = a; break; } }
+  for (var b2 = hit1; b2 < n; b2++) { if (candles[b2].h >= alvo2) { hit2 = b2; break; } }
+
+  var H = 320, pY1 = 182, vY0 = 208, vY1 = 308;
+  var xm = mkXm(n), bw = (AX1 - AX0) / n * 0.62;
+  var all = [stop, alvo2];
+  candles.forEach(function(c) { all.push(c.h, c.l); });
+  var pm = mapper(all, 0, 0, 14, pY1, 0.06);
+  var vmax = Math.max.apply(null, vol);
+  function vym(v) { return vY1 - v / vmax * (vY1 - vY0); }
+
+  ANIMS[4] = {
+    n: n,
+    phases: [
+      { at: 4, text: 'Fase 1 — o mercado perde amplitude e entra em <b>consolidação</b>. O canal de Donchian (âmbar) vai se estreitando.' },
+      { at: 30, text: 'Fase 2 — <span class="hi">squeeze</span>: candles pequenos, canal apertado e volume secando (painel de baixo). Energia acumulando.' },
+      { at: BRK, text: '<span class="hi">Rompimento da máxima dos 20 candles COM pico de volume</span> (anel + barra âmbar) — a confirmação que separa rompimento real de fakeout.' },
+      { at: BRK + 1, text: '<b>Entrada</b> no rompimento · <span class="r">stop na linha média do canal</span>. Alvos pela projeção da altura da consolidação.' },
+      { at: hit1, text: '<span class="g">Alvo 1 (1× o range) atingido</span> — realiza 50%. A expansão está em curso.' },
+      { at: hit2, text: '<span class="g">Alvo 2 (2× o range) atingido</span> — a energia comprimida no squeeze pagou a expansão completa.' }
+    ],
+    draw: function(upto) {
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      s += lineStr(dUp, upto, xm, pm.y, 'var(--lvl)', 1.6);
+      s += lineStr(dLo, upto, xm, pm.y, 'var(--lvl)', 1.6);
+      s += '<text x="' + AX0 + '" y="12" font-size="10" fill="var(--lvl)" font-weight="700">Donchian 20 (máx/mín dos últimos 20)</text>';
+      s += candleStr(candles, upto, xm, pm.y, bw, upto >= BRK ? BRK : -1);
+      if (upto >= BRK + 1) {
+        s += annStr(BRK, entry, xm, pm.y, AX1, 'var(--ink)', '', 'entrada');
+        s += annStr(BRK, stop, xm, pm.y, AX1, 'var(--danger)', '4,3', 'stop');
+        s += annStr(BRK, alvo1, xm, pm.y, AX1, 'var(--trend)', '4,3', 'alvo 1 · 1× range');
+        s += annStr(BRK, alvo2, xm, pm.y, AX1, 'var(--trend)', '4,3', 'alvo 2 · 2× range');
+      }
+      // painel volume
+      s += '<text x="' + AX0 + '" y="' + (vY0 - 6) + '" font-size="10" fill="var(--wire)" font-weight="700">Volume</text>';
+      for (var i = 0; i <= upto; i++) {
+        var col = i === BRK ? 'var(--lvl)' : (candles[i].c >= candles[i].o ? 'var(--trend)' : 'var(--danger)');
+        s += '<rect x="' + (xm(i) - bw / 2).toFixed(1) + '" y="' + vym(vol[i]).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (vY1 - vym(vol[i])).toFixed(1) + '" fill="' + col + '" opacity="' + (i === BRK ? 1 : 0.45) + '"/>';
+      }
+      s += lineStr(volMed, upto, xm, vym, 'var(--wire)', 1.3, '4,3');
+      s += '</svg>';
+      document.getElementById('anim4').innerHTML = s;
+    }
+  };
+  ANIMS[4].draw(n - 1);
+})();
+
 /* ===== seletor de regime ===== */
 var REGIME_INFO = {
   tendencia: 'Mercado tendendo → <span class="hi">Estratégias 1 e 3</span>: pullback e momentum operam a favor da corrente. Reversão à média (2) é briga perdida aqui, e o squeeze (4) já passou.',
