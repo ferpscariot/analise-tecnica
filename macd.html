@@ -206,13 +206,14 @@ svg [fill="#fff"] { fill: var(--card); }
   text-transform: uppercase; color: var(--ink-soft); background: none; border: none;
   cursor: pointer; padding: 14px 12px 11px; border-bottom: 2px solid transparent;
   white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
 .site-tabs .tab-trigger:hover { color: var(--ink); }
 .site-tabs .tab-trigger .caret { font-size: 9px; transition: transform 0.15s; }
 .site-tabs .tab-dropdown.open .tab-trigger .caret { transform: rotate(180deg); }
 .site-tabs .tab-trigger.current { color: var(--ink); border-bottom-color: var(--tab-accent, var(--osc)); }
 .site-tabs .tab-menu {
-  position: fixed; top: 47px; left: 12px; z-index: 200;
+  position: absolute; top: 100%; left: 12px; z-index: 200;
   background: var(--card); border: 1px solid var(--grid);
   border-radius: 12px; box-shadow: var(--shadow-card);
   padding: 8px; min-width: 250px; max-width: calc(100vw - 24px);
@@ -239,25 +240,25 @@ svg [fill="#fff"] { fill: var(--card); }
     <a href="index.html">Guia</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
-      <div class="tab-menu" id="indMenu" role="menu" hidden>
-        <span class="tab-menu-head">Osciladores</span>
-        <a role="menuitem" href="rsi.html">RSI — força relativa</a>
-        <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-        <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
-        <a role="menuitem" href="roc.html">ROC — variação percentual</a>
-        <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
-        <span class="tab-menu-head">Tendência</span>
-        <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
-        <a role="menuitem" href="adx.html">ADX — força da tendência</a>
-        <a role="menuitem" href="macd.html" aria-current="page">MACD — tendência com gatilho</a>
-        <span class="tab-menu-head">Volume</span>
-        <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
-        <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
-      </div>
     </div>
     <a href="suportes.html">Suportes</a>
     <a href="risco.html">Risco</a>
     <a href="estrategias.html">Estratégias</a>
+  </div>
+  <div class="tab-menu" id="indMenu" role="menu" hidden>
+    <span class="tab-menu-head">Osciladores</span>
+    <a role="menuitem" href="rsi.html">RSI — força relativa</a>
+    <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
+    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
+    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
+    <span class="tab-menu-head">Tendência</span>
+    <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
+    <a role="menuitem" href="adx.html">ADX — força da tendência</a>
+    <a role="menuitem" href="macd.html" aria-current="page">MACD — tendência com gatilho</a>
+    <span class="tab-menu-head">Volume</span>
+    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
 </nav>
 

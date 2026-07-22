@@ -182,6 +182,7 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
   color: var(--ink-soft); background: none; border: none; cursor: pointer;
   padding: 14px 12px 11px; border-bottom: 2px solid transparent;
   white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
 .site-tabs .tab-trigger:hover { color: var(--ink); }
 .site-tabs .tab-trigger:focus-visible { outline: 3px solid var(--tab-accent); outline-offset: -3px; }
@@ -189,11 +190,12 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
 .site-tabs .tab-dropdown.open .tab-trigger .caret { transform: rotate(180deg); }
 .site-tabs .tab-trigger.current { color: var(--ink); border-bottom-color: var(--tab-accent); }
 .site-tabs .tab-menu {
-  position: fixed; top: 47px; left: 12px; z-index: 200;
+  position: absolute; top: 100%; left: 12px; z-index: 200;
   background: var(--card); border: 1px solid var(--grid);
   border-radius: 12px; box-shadow: var(--shadow-card);
   padding: 8px; min-width: 250px; max-width: calc(100vw - 24px);
   max-height: 78vh; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .site-tabs .tab-menu-head {
   display: block; font-family: var(--font-mono); font-size: 10px;
