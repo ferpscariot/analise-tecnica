@@ -140,6 +140,7 @@ svg.chart { width: 100%; height: auto; display: block; }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -168,7 +169,7 @@ svg.chart { width: 100%; height: auto; display: block; }
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"><svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg></span>
@@ -275,11 +276,11 @@ svg.chart { width: 100%; height: auto; display: block; }
       <span class="value-pill" id="rsiPeriodVal">14</span>
     </div>
     <div id="rsiChart"></div>
-    <div class="readout" id="rsiReadout"></div>
+    <div class="readout" id="rsiReadout" aria-live="polite"></div>
   </div>
 
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ) · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script>
 var days = [
@@ -333,7 +334,7 @@ function renderRSILab() {
   var rsi = calcRSI(CLOSES, p);
   var y0 = 14, y1 = RH - 26;
   function ym(v) { return y1 - v / 100 * (y1 - y0); }
-  var s = '<svg class="chart" viewBox="0 0 ' + RW + ' ' + RH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + RW + ' ' + RH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico do RSI da AMD ao longo de ~280 pregões, com as faixas de sobrecompra (70) e sobrevenda (30). A leitura em texto está logo abaixo.\" font-family="ui-monospace, monospace">';
   s += '<rect x="' + RX0 + '" y="' + y0 + '" width="' + (RX1-RX0) + '" height="' + (ym(70)-y0) + '" fill="var(--osc-soft)"/>';
   s += '<rect x="' + RX0 + '" y="' + ym(30) + '" width="' + (RX1-RX0) + '" height="' + (y1-ym(30)) + '" fill="var(--trend-soft)"/>';
   [[70,'var(--osc)'],[50,'var(--wire)'],[30,'var(--trend)']].forEach(function(g){

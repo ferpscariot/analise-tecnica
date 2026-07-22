@@ -506,6 +506,7 @@ footer {
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <!-- ================= ABAS ================= -->
 <nav class="site-tabs" aria-label="Páginas do guia">
@@ -536,6 +537,8 @@ footer {
 </nav>
 
 <!-- ================= HERO ================= -->
+<main id="conteudo">
+
 <section id="hero">
   <div class="spine">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
@@ -575,7 +578,7 @@ footer {
     <div class="hero-chart-wrap">
       <div id="heroChart"></div>
     </div>
-    <p class="lens-caption" id="lensCaption"></p>
+    <p class="lens-caption" id="lensCaption" aria-live="polite"></p>
   </div>
 </section>
 
@@ -803,6 +806,8 @@ footer {
   </div>
 </section>
 
+</main>
+
 <footer>
   Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação de investimento
 </footer>
@@ -883,7 +888,7 @@ var heroE20 = ema(CLOSES, 20), heroE50 = ema(CLOSES, 50), heroS200 = sma(CLOSES,
 
 function heroSvg(lens) {
   var hh = HH;
-  var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + hh + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + hh + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico do preço da AMD visto pela lente selecionada: velocidade (RSI) ou direção (médias móveis). A legenda explicativa está logo abaixo.\" font-family="ui-monospace, monospace">';
 
   if (lens === 'osc') {
     var ry0 = 40, ry1 = hh - 16;

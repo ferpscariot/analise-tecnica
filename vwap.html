@@ -42,6 +42,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -70,7 +71,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -122,7 +123,7 @@
       <span><span class="sw" style="background:var(--lvl);"></span>âncora</span>
     </div>
     <div id="avwapChart"></div>
-    <div class="readout" id="avwapReadout"></div>
+    <div class="readout" id="avwapReadout" aria-live="polite"></div>
   </div>
 
   <div class="panel">
@@ -158,7 +159,7 @@
   </div>
 
   <div class="foot">Dados: fechamentos e volumes diários reais de AMD (NASDAQ), ~275 pregões · sessão intradiária ilustrativa · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script src="assets/amd.js"></script>
 <script>
@@ -181,7 +182,7 @@ function renderAVWAP() {
   var vwap = anchoredVWAP(anchor);
   var pm = mapper(VCLOSE, VX0, VX1, 14, VH - 20);
 
-  var s = '<svg class="chart" viewBox="0 0 ' + VW + ' ' + VH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + VW + ' ' + VH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD com a linha do VWAP ancorado a partir do pregão escolhido. A leitura em texto está logo abaixo.\" font-family="ui-monospace, monospace">';
   // faixa antes da âncora (fora do cálculo)
   s += '<rect x="' + VX0 + '" y="14" width="' + (vxm(anchor) - VX0).toFixed(1) + '" height="' + (VH - 34) + '" fill="var(--wire)" opacity="0.07"/>';
   s += '<line x1="' + vxm(anchor).toFixed(1) + '" y1="14" x2="' + vxm(anchor).toFixed(1) + '" y2="' + (VH - 20) + '" stroke="var(--lvl)" stroke-width="1.6" stroke-dasharray="4,3"/>';
@@ -244,7 +245,7 @@ renderAVWAP();
   function vym(v) { return vY1 - v / vmax * (vY1 - vY0); }
   var bw = (SX1 - SX0) / n * 0.6;
 
-  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" id="sessSvg">';
+  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Sessão intradiária ilustrativa com a linha do VWAP, bandas de mais e menos um desvio e o volume por candle.\" font-family="ui-monospace, monospace" id="sessSvg">';
   // banda como área preenchida
   var areaPts = [];
   for (var a = 0; a < n; a++) areaPts.push(sxm(a).toFixed(1) + ',' + pm.y(bandUp[a]).toFixed(1));

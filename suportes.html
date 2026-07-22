@@ -43,6 +43,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -71,7 +72,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -130,7 +131,7 @@
       <span><span class="dot" style="background:var(--lvl); border-radius:2px;"></span>zona com 3+ toques</span>
     </div>
     <div id="zoneChart"></div>
-    <div class="readout" id="zoneReadout"></div>
+    <div class="readout" id="zoneReadout" aria-live="polite"></div>
   </div>
 
   <div class="panel">
@@ -164,7 +165,7 @@
   </div>
 
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script src="assets/amd.js"></script>
 <script>
@@ -213,7 +214,7 @@ function renderZones(selectedIdx) {
   currentZones = res.zones;
   var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH - 20);
 
-  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace" id="zoneSvg">';
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD com os pivôs detectados e as zonas de suporte e resistência destacadas em faixas. O resumo está em texto abaixo.\" font-family="ui-monospace, monospace" id="zoneSvg">';
   // faixas primeiro (atrás do preço)
   res.zones.slice(0, 8).forEach(function(z, zi) {
     var yTop = pm.y(z.c * (1 + tol / 100)), yBot = pm.y(z.c * (1 - tol / 100));
@@ -285,7 +286,7 @@ renderZones();
 
   var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH - 20);
   var tol = 1.5;
-  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD destacando a zona que passou de resistência a suporte e a zona que serviu de tampa por meses. A explicação está em texto abaixo.\" font-family="ui-monospace, monospace">';
   [[flip, 'teto → piso'], [lid, 'a tampa']].forEach(function(pair) {
     var z = pair[0];
     if (!z) return;

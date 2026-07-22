@@ -49,6 +49,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -77,7 +78,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -122,7 +123,7 @@
       <button class="ma-toggle c3" id="tgSma200" aria-pressed="true" onclick="toggleMA('sma200', this)">SMA200</button>
     </div>
     <div id="maChart"></div>
-    <div class="readout" id="maReadout"></div>
+    <div class="readout" id="maReadout" aria-live="polite"></div>
   </div>
 
   <div class="panel">
@@ -139,7 +140,7 @@
   </div>
 
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script src="assets/amd.js"></script>
 <script>
@@ -154,7 +155,7 @@ function toggleMA(key, btn) {
 }
 function renderMA() {
   var pm = mapper(CLOSES, MX0, MX1, 14, MH - 20);
-  var s = '<svg class="chart" viewBox="0 0 ' + MW + ' ' + MH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + MW + ' ' + MH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD com as médias EMA20, EMA50 e SMA200 sobrepostas. O veredito do empilhamento está em texto logo abaixo.\" font-family="ui-monospace, monospace">';
   if (maVisible.sma200) s += poly(ptsOf(S200, mxm, pm.y), 'var(--trend)', 2.6);
   if (maVisible.ema50) s += poly(ptsOf(E50, mxm, pm.y), 'var(--ma-mid)', 1.8);
   if (maVisible.ema20) s += poly(ptsOf(E20, mxm, pm.y), 'var(--ma-fast)', 1.8);

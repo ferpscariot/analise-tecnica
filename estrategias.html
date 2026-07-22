@@ -103,6 +103,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -131,7 +132,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -173,7 +174,7 @@
       <button class="rb" data-regime="lateral">Lateral / range</button>
       <button class="rb" data-regime="squeeze">Squeeze (comprimido)</button>
     </div>
-    <div class="readout" id="regimeReadout">Escolha o regime acima e veja quais estratégias pertencem a ele — as outras ficam esmaecidas.</div>
+    <div class="readout" id="regimeReadout" aria-live="polite">Escolha o regime acima e veja quais estratégias pertencem a ele — as outras ficam esmaecidas.</div>
   </div>
 
   <!-- ESTRATÉGIA 1 -->
@@ -292,7 +293,7 @@
   </div>
 
   <div class="foot">Playbook adaptado do material do autor (gráfico de 15 min) · material educativo, não é recomendação de investimento</div>
-</div>
+</main>
 
 <script src="assets/amd.js"></script>
 <script>
@@ -415,7 +416,7 @@ document.querySelectorAll('.play-btn').forEach(function(b) {
       { at: hit2, text: '<span class="g">Alvo 2 (2,5R) atingido</span> — saída final. O recuo comprado virou a continuação da tendência.' }
     ],
     draw: function(upto) {
-      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Replay do trade de pullback de tendência: preço com EMA 9 e EMA 21, candle de reversão na média e as linhas de entrada, stop e alvos. A narração está em texto abaixo.\" font-family="ui-monospace, monospace">';
       s += lineStr(e21, upto, xm, pm.y, 'var(--ma-mid)', 1.6);
       s += lineStr(e9, upto, xm, pm.y, 'var(--ma-fast)', 1.6);
       s += candleStr(candles, upto, xm, pm.y, bw, upto >= REV ? REV : -1);
@@ -473,7 +474,7 @@ document.querySelectorAll('.play-btn').forEach(function(b) {
       { at: n - 1, text: '<span class="g">Alvo 2 atingido</span>. O desvio exagerado voltou ao "preço justo" do dia — e passou um pouco dele.' }
     ],
     draw: function(upto) {
-      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Replay do trade de reversão à média: preço, linha da VWAP e painel do RSI, com entrada, stop e alvos marcados. A narração está em texto abaixo.\" font-family="ui-monospace, monospace">';
       s += lineStr(vwap, upto, xm, pm.y, 'var(--vol)', 2);
       s += '<text x="' + AX0 + '" y="12" font-size="10" fill="var(--vol)" font-weight="700">VWAP (simplificada)</text>';
       s += candleStr(candles, upto, xm, pm.y, bw, upto >= REV ? REV : -1);
@@ -547,7 +548,7 @@ document.querySelectorAll('.play-btn').forEach(function(b) {
       { at: n - 1, text: 'A perna direcional seguiu — o trailing captura o resto. Saída só quando o MACD cruzar para baixo ou a EMA 20 for perdida.' }
     ],
     draw: function(upto) {
-      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Replay do trade de momentum: preço com EMA 20 e painel do MACD, com o cruzamento que dispara a entrada, stop e alvo. A narração está em texto abaixo.\" font-family="ui-monospace, monospace">';
       s += lineStr(e20, upto, xm, pm.y, 'var(--trend)', 2);
       s += '<text x="' + AX0 + '" y="12" font-size="10" fill="var(--trend)" font-weight="700">EMA 20</text>';
       s += candleStr(candles, upto, xm, pm.y, bw, -1);
@@ -627,7 +628,7 @@ document.querySelectorAll('.play-btn').forEach(function(b) {
       { at: hit2, text: '<span class="g">Alvo 2 (2× o range) atingido</span> — a energia comprimida no squeeze pagou a expansão completa.' }
     ],
     draw: function(upto) {
-      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+      var s = '<svg class="chart" viewBox="0 0 ' + AW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Replay do trade de rompimento: preço com canal de Donchian, painel de volume com o pico no rompimento, e entrada, stop e alvos. A narração está em texto abaixo.\" font-family="ui-monospace, monospace">';
       s += lineStr(dUp, upto, xm, pm.y, 'var(--lvl)', 1.6);
       s += lineStr(dLo, upto, xm, pm.y, 'var(--lvl)', 1.6);
       s += '<text x="' + AX0 + '" y="12" font-size="10" fill="var(--lvl)" font-weight="700">Donchian 20 (máx/mín dos últimos 20)</text>';

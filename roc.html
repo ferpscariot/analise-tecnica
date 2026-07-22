@@ -36,6 +36,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -64,7 +65,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -110,7 +111,7 @@
       <span class="value-pill" id="rocPeriodVal">12</span>
     </div>
     <div id="rocChart"></div>
-    <div class="readout" id="rocReadout"></div>
+    <div class="readout" id="rocReadout" aria-live="polite"></div>
   </div>
 
   <div class="panel">
@@ -127,7 +128,7 @@
   </div>
 
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script src="assets/amd.js"></script>
 <script>
@@ -147,7 +148,7 @@ function renderROC() {
   var pm = mapper(roc, ROCX0, ROCX1, 14, ROCH - 20, 0.12);
   var zeroY = pm.y(0);
 
-  var s = '<svg class="chart" viewBox="0 0 ' + ROCW + ' ' + ROCH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + ROCW + ' ' + ROCH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico do ROC da AMD ao longo de ~280 pregões, oscilando acima e abaixo da linha de zero. A leitura em texto está logo abaixo.\" font-family="ui-monospace, monospace">';
   s += '<line x1="' + ROCX0 + '" y1="' + zeroY.toFixed(1) + '" x2="' + ROCX1 + '" y2="' + zeroY.toFixed(1) + '" stroke="var(--wire)" stroke-dasharray="3,3"/>';
   s += '<text x="' + (ROCX0-6) + '" y="' + (zeroY+4).toFixed(1) + '" font-size="10" fill="var(--wire)" text-anchor="end">0%</text>';
   s += poly(ptsOf(roc, rocxm, pm.y), 'var(--osc)', 2);

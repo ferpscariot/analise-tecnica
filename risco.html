@@ -133,6 +133,7 @@ svg [fill="#fff"] { fill: var(--card); }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -161,7 +162,7 @@ svg [fill="#fff"] { fill: var(--card); }
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"><svg class="lucide-icon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg></span>
@@ -190,7 +191,7 @@ svg [fill="#fff"] { fill: var(--card); }
       <input type="range" id="atrVal" min="0.5" max="40" value="36" step="0.5">
       <span class="pill" id="atrValV">$36</span>
     </div>
-    <div class="result" id="atrResult"></div>
+    <div class="result" id="atrResult" aria-live="polite"></div>
   </div>
 
   <!-- PILLAR 2: POSITION SIZING -->
@@ -212,7 +213,7 @@ svg [fill="#fff"] { fill: var(--card); }
       <input type="range" id="atrMult" min="1" max="4" value="2" step="0.5">
       <span class="pill" id="atrMultV">2×</span>
     </div>
-    <div class="result" id="sizeResult"></div>
+    <div class="result" id="sizeResult" aria-live="polite"></div>
     <div class="insight">O segredo: a <b>volatilidade dimensiona a posição</b>. Ativo mais agitado → stop mais largo → menos ações, para arriscar sempre o mesmo em dólares. Cada posição "pesa" igual em risco.</div>
   </div>
 
@@ -226,7 +227,7 @@ svg [fill="#fff"] { fill: var(--card); }
       <span class="pill" id="riskCompareV">1%</span>
     </div>
     <div id="survivalChart"></div>
-    <div class="result" id="survivalResult"></div>
+    <div class="result" id="survivalResult" aria-live="polite"></div>
   </div>
 
   <!-- PILLAR 4: VOL TARGETING -->
@@ -243,7 +244,7 @@ svg [fill="#fff"] { fill: var(--card); }
       <input type="range" id="volCurrent" min="10" max="80" value="45" step="1">
       <span class="pill" id="volCurrentV">45%</span>
     </div>
-    <div class="result" id="volResult"></div>
+    <div class="result" id="volResult" aria-live="polite"></div>
   </div>
 
   <!-- PILLAR 5: CORRELATION (REAL DATA) -->
@@ -258,7 +259,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <p class="ptext" style="margin-top:22px;">Veja na prática: o risco de juntar dois ativos de 20% de volatilidade cada, conforme a correlação entre eles:</p>
     <div class="toggle-corr" id="corrToggle"></div>
     <div id="corrBar"></div>
-    <div class="result" id="corrResult"></div>
+    <div class="result" id="corrResult" aria-live="polite"></div>
   </div>
 
   <!-- PILLAR 6: TARGET / STOP GAIN -->
@@ -272,7 +273,7 @@ svg [fill="#fff"] { fill: var(--card); }
       <span class="pill" id="rrV">2:1</span>
     </div>
     <div id="rrChart"></div>
-    <div class="result" id="rrResult"></div>
+    <div class="result" id="rrResult" aria-live="polite"></div>
     <div class="insight">A conta-chave: <b>taxa de acerto mínima = 1 ÷ (1 + R:R)</b>. Com R:R alto, você pode <b>errar a maioria das vezes</b> e ainda lucrar — desde que os acertos sejam bem maiores que os erros. É a mesma assimetria do dimensionamento, vista pelo lado do ganho.</div>
 
     <p class="ptext" style="margin-top:24px;">Mas o alvo tem uma tensão honesta: ele exige <b>prever até onde o preço vai</b> — a parte mais frágil (magnitude é difícil de acertar). Por isso muitos preferem alternativas que não cravam um destino fixo:</p>
@@ -304,7 +305,7 @@ svg [fill="#fff"] { fill: var(--card); }
 
   <div class="foot">Correlações: dados reais AMD / TSM / INTC, 90 pregões (NASDAQ/NYSE)</div>
   <div class="disc">Material educativo e ilustrativo — não é recomendação de investimento.</div>
-</div>
+</main>
 
 <script>
 function $(id){ return document.getElementById(id); }

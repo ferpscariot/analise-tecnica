@@ -44,6 +44,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -72,7 +73,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -118,7 +119,7 @@
         <input type="range" id="adxSlider" min="0" max="60" value="24" aria-label="Valor do ADX">
         <span class="value-pill" id="adxVal">24</span>
       </div>
-      <div class="readout" id="adxReadout" style="text-align:left;"></div>
+      <div class="readout" id="adxReadout" aria-live="polite" style="text-align:left;"></div>
     </div>
   </div>
 
@@ -136,7 +137,7 @@
   </div>
 
   <div class="foot">Referências: ADX(14) clássico de Wilder · leituras finais reais de AMD e TSM · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script>
 function renderADX() {
@@ -148,7 +149,7 @@ function renderADX() {
   var cx = 160, cy = 150, r = 118;
   var nx = cx + r * Math.cos(rad), ny = cy + r * Math.sin(rad);
   function arcPt(a) { var rr = (a - 90) * Math.PI / 180; return (cx + 130 * Math.cos(rr)).toFixed(1) + ' ' + (cy + 130 * Math.sin(rr)).toFixed(1); }
-  var s = '<svg class="chart" viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Medidor em arco do ADX, de 0 (lateral) a 60 (tendência muito forte), com o ponteiro na posição escolhida. A leitura está em texto abaixo.\" font-family="ui-monospace, monospace">';
   s += '<path d="M ' + arcPt(-90) + ' A 130 130 0 0 1 ' + arcPt(-30) + '" fill="none" stroke="var(--wire)" stroke-width="18" stroke-linecap="round"/>';
   s += '<path d="M ' + arcPt(-30) + ' A 130 130 0 0 1 ' + arcPt(-15) + '" fill="none" stroke="var(--amber)" stroke-width="18"/>';
   s += '<path d="M ' + arcPt(-15) + ' A 130 130 0 0 1 ' + arcPt(90) + '" fill="none" stroke="var(--trend)" stroke-width="18" stroke-linecap="round"/>';

@@ -135,6 +135,22 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
   width: 15px; height: 15px; margin-right: 6px; vertical-align: -3px;
 }
 
+/* ============ PULAR PARA O CONTEÚDO ============ */
+.skip-link {
+  position: fixed; left: 10px; top: -120px; z-index: 300;
+  white-space: nowrap;
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--grid); border-radius: 8px;
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  padding: 10px 16px; text-decoration: none;
+  transition: top 0.15s;
+}
+.skip-link:focus {
+  top: 10px;
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+
 /* ============ TOGGLE DE TEMA ============ */
 .page-tools { display: flex; justify-content: flex-end; margin: 0 0 10px; }
 .theme-toggle {

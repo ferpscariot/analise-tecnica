@@ -62,6 +62,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
@@ -90,7 +91,7 @@
   </div>
 </nav>
 
-<div class="wrap">
+<main class="wrap" id="conteudo">
   <div class="page-tools">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
       <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
@@ -126,7 +127,7 @@
              aria-label="Posição do fechamento no range" aria-valuemin="0" aria-valuemax="100" aria-valuenow="63"></div>
       </div>
     </div>
-    <div class="readout" id="stochReadout" style="margin-top:34px;"></div>
+    <div class="readout" id="stochReadout" aria-live="polite" style="margin-top:34px;"></div>
   </div>
 
   <div class="panel">
@@ -142,7 +143,7 @@
       <span class="value-pill" id="stPeriodVal">14</span>
     </div>
     <div id="stChart"></div>
-    <div class="readout" id="stReadout"></div>
+    <div class="readout" id="stReadout" aria-live="polite"></div>
   </div>
 
   <div class="panel">
@@ -162,7 +163,7 @@
   </div>
 
   <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
-</div>
+</main>
 
 <script src="assets/amd.js"></script>
 <script>
@@ -219,7 +220,7 @@ function renderStochChart() {
   var k = calcStochK(CLOSES, p);
   var y0 = 14, y1 = SH - 26;
   function ym(v) { return y1 - v / 100 * (y1 - y0); }
-  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico do %K estocástico da AMD ao longo de ~280 pregões, com as faixas de 80 e 20. A leitura em texto está logo abaixo.\" font-family="ui-monospace, monospace">';
   s += '<rect x="' + SX0 + '" y="' + y0 + '" width="' + (SX1-SX0) + '" height="' + (ym(80)-y0) + '" fill="var(--osc-soft)"/>';
   s += '<rect x="' + SX0 + '" y="' + ym(20) + '" width="' + (SX1-SX0) + '" height="' + (y1-ym(20)) + '" fill="var(--trend-soft)"/>';
   [[80,'var(--osc)'],[50,'var(--wire)'],[20,'var(--trend)']].forEach(function(g){
