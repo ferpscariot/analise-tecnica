@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estratégias — juntando as peças</title>
+<script>
+  (function() {
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('vxd-theme') || savedTheme; } catch (e) {}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  :root { --accent: var(--strat); --accent-soft: var(--strat-soft); --tab-accent: var(--strat); }
+
+  .est-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .est-num {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--strat); color: var(--on-accent);
+    font-family: var(--sans); font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .est-head h2 { margin: 0; }
+  .regime-tag {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .regime-tag.trend { background: var(--trend-soft); color: var(--trend); }
+  .regime-tag.range { background: var(--osc-soft); color: var(--osc); }
+  .regime-tag.squeeze { background: var(--lvl-soft); color: var(--lvl); }
+
+  .ingredientes { font-family: var(--sans); font-size: 13.5px; font-weight: 600; }
+  .ingredientes a { color: var(--strat); text-decoration: none; border-bottom: 1px solid var(--strat); }
+  .ingredientes a:hover { opacity: 0.75; }
+
+  ol.setup { margin: 10px 0 4px 22px; font-size: 14.5px; color: var(--ink-soft); }
+  ol.setup li { margin: 7px 0; }
+  ol.setup b { color: var(--ink); }
+
+  .espelho { font-size: 13.5px; color: var(--ink-soft); background: var(--card-strong);
+    border: 1px solid var(--grid); border-radius: 10px; padding: 10px 14px; margin-top: 12px; }
+  .espelho b { color: var(--ink); }
+
+  .mini-def { font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft);
+    background: var(--paper); border-left: 3px solid var(--strat);
+    padding: 8px 12px; margin: 12px 0; }
+
+  .melhor-evitar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  @media (max-width: 560px) { .melhor-evitar { grid-template-columns: 1fr; } }
+  .me-box { border-radius: 10px; padding: 10px 14px; font-size: 13.5px; }
+  .me-box.melhor { background: var(--ok-soft); color: var(--ink-soft); }
+  .me-box.evitar { background: var(--danger-soft); color: var(--ink-soft); }
+  .me-box b { color: var(--ink); }
+  .rr { font-family: var(--mono); font-size: 12.5px; color: var(--wire); margin-top: 12px; }
+
+  /* seletor de regime */
+  .regime-btns { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .rb {
+    font-family: var(--sans); font-weight: 700; font-size: 13.5px;
+    border: 2px solid var(--grid); background: var(--card); color: var(--ink);
+    padding: 9px 18px; border-radius: 999px; cursor: pointer; transition: all 0.15s;
+  }
+  .rb:hover { border-color: var(--wire); }
+  .rb:focus-visible { outline: 3px solid var(--strat); outline-offset: 2px; }
+  .rb.active { background: var(--strat); border-color: var(--strat); color: var(--on-accent); }
+  .panel.strategy { transition: opacity 0.25s, border-color 0.25s; scroll-margin-top: 70px; }
+  .panel.strategy.dim { opacity: 0.35; }
+  .panel.strategy.lit { border-color: var(--strat); }
+</style>
+</head>
+<body>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <a href="rsi.html">RSI</a>
+    <a href="momentum.html">Momentum</a>
+    <a href="ao.html">AO</a>
+    <a href="macd.html">MACD</a>
+    <a href="suportes.html">Suportes</a>
+    <a href="volume.html">Volume</a>
+    <a href="risco.html">Risco</a>
+    <a href="estrategias.html" aria-current="page">Estratégias</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-tools">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+      <span id="themeLabel">Tema escuro</span>
+    </button>
+  </div>
+  <div class="eyebrow strat">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+      <line x1="4" x2="4" y1="22" y2="15"></line>
+    </svg>Síntese · da teoria à prática
+  </div>
+  <h1>Estratégias — juntando as peças</h1>
+  <p class="lead">Quatro receitas que combinam os ingredientes deste guia em processos completos: contexto → setup → gatilho → stop → alvo. Nenhuma prevê o futuro; todas controlam o que acontece quando você erra.</p>
+
+  <div class="formula">
+    Adaptadas de um playbook de gráfico de 15 minutos — os <b>princípios</b> valem em qualquer tempo gráfico,
+    mas os <b>parâmetros</b> (períodos, ATR, alvos) precisam ser recalibrados e testados no seu timeframe.
+  </div>
+
+  <div class="panel">
+    <h2>As regras que valem para todas</h2>
+    <ol class="setup">
+      <li><b>Risco por trade: 0,5% a 1% do capital.</b> O tamanho da posição nasce do stop, nunca o contrário — é a conta de <a href="risco.html" style="color:var(--strat); font-weight:700;">dimensionamento de posição</a>.</li>
+      <li><b>ATR(14) como régua.</b> Onde se lê "1×ATR", é a medida de volatilidade do momento dimensionando stop e alvo — o ATR não dá sinal, dá escala.</li>
+      <li><b>Break-even:</b> quando o trade atinge +1R (lucro igual ao risco), o stop sobe para o preço de entrada. A partir dali, o pior caso é zero.</li>
+      <li><b>Saída parcial:</b> realizar 50% no Alvo 1 e deixar o restante correr até o Alvo 2 com trailing stop — a assimetria que a página de <a href="risco.html" style="color:var(--strat); font-weight:700;">risco</a> mostra na conta do R:R.</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h2>Primeiro o regime, depois a ferramenta</h2>
+    <p class="ptext" style="margin-bottom:6px;">
+      A principal fonte de perda não é a estratégia errada — é a estratégia certa no <b style="color:var(--ink);">regime errado</b>.
+      Antes de escolher, leia o contexto num tempo gráfico acima (no playbook original, 30min/1h): o mercado está tendendo, andando de lado, ou comprimido prestes a explodir?
+    </p>
+    <div class="regime-btns" role="group" aria-label="Escolher regime de mercado">
+      <button class="rb" data-regime="tendencia">Em tendência</button>
+      <button class="rb" data-regime="lateral">Lateral / range</button>
+      <button class="rb" data-regime="squeeze">Squeeze (comprimido)</button>
+    </div>
+    <div class="readout" id="regimeReadout">Escolha o regime acima e veja quais estratégias pertencem a ele — as outras ficam esmaecidas.</div>
+  </div>
+
+  <!-- ESTRATÉGIA 1 -->
+  <div class="panel strategy" id="est1" data-regime="tendencia">
+    <div class="est-head"><span class="est-num">1</span><h2>Pullback de tendência</h2><span class="regime-tag trend">tendência</span></div>
+    <p class="ptext ingredientes">Ingredientes: <a href="medias.html">EMA 9 × EMA 21</a> · <a href="risco.html">ATR para o stop</a></p>
+    <p class="ptext">Seguir a tendência comprando os <b style="color:var(--ink);">recuos</b> até a média — não os topos. A tendência dá a direção; o pullback dá o preço.</p>
+    <ol class="setup">
+      <li><b>Contexto:</b> EMA 9 acima da EMA 21, ambas inclinadas para cima (tendência de alta).</li>
+      <li><b>Setup:</b> preço recua, encosta ou perfura de leve a EMA 9 ou 21, e fecha um candle de força (martelo, engolfo de alta) de volta acima da EMA 9.</li>
+      <li><b>Entrada:</b> rompimento da máxima do candle de reversão.</li>
+      <li><b>Stop:</b> abaixo do fundo do pullback (ou 1×ATR abaixo da entrada).</li>
+      <li><b>Alvos:</b> Alvo 1 em 1,5R · Alvo 2 na última máxima da perna anterior ou 2,5R.</li>
+    </ol>
+    <div class="espelho"><b>Venda (short):</b> espelhado — EMA 9 abaixo da EMA 21, repique até a média, candle de fraqueza, entrada no rompimento da mínima.</div>
+    <div class="melhor-evitar">
+      <div class="me-box melhor"><b>Melhor cenário:</b> perna direcional clara, médias abertas e inclinadas.</div>
+      <div class="me-box evitar"><b>Evitar:</b> lateralização — médias coladas e horizontais viram serra.</div>
+    </div>
+    <div class="rr">R:R alvo: 1:1,5 a 1:2,5</div>
+  </div>
+
+  <!-- ESTRATÉGIA 2 -->
+  <div class="panel strategy" id="est2" data-regime="lateral">
+    <div class="est-head"><span class="est-num">2</span><h2>Reversão à média na VWAP</h2><span class="regime-tag range">lateral</span></div>
+    <p class="ptext ingredientes">Ingredientes: VWAP intradiária · <a href="rsi.html">RSI(14)</a> · <a href="risco.html">ATR para o stop</a></p>
+    <div class="mini-def">VWAP = preço médio do dia ponderado pelo volume — o "preço justo" que o mercado negociou até agora. Não está no guia porque é intradiária por natureza; pense nela como uma média móvel que pesa cada candle pelo volume.</div>
+    <p class="ptext">Em dias sem tendência forte, o preço estica e tende a <b style="color:var(--ink);">voltar para a VWAP</b>. A estratégia opera o exagero do desvio.</p>
+    <ol class="setup">
+      <li><b>Contexto:</b> preço bem abaixo da VWAP (esticado) e RSI ≤ 30 (sobrevenda).</li>
+      <li><b>Setup:</b> candle de reversão no fundo + RSI cruzando de volta acima de 30.</li>
+      <li><b>Entrada:</b> rompimento da máxima do candle de reversão.</li>
+      <li><b>Stop:</b> abaixo da mínima recente (1×ATR).</li>
+      <li><b>Alvos:</b> Alvo 1 na VWAP · Alvo 2 na banda superior do desvio ou +1×ATR acima da VWAP.</li>
+    </ol>
+    <div class="espelho"><b>Venda (short):</b> preço esticado acima da VWAP + RSI ≥ 70, candle de topo, RSI cruzando abaixo de 70. Alvo = VWAP.</div>
+    <div class="melhor-evitar">
+      <div class="me-box melhor"><b>Melhor cenário:</b> mercado lateral, range intradiário definido.</div>
+      <div class="me-box evitar"><b>Evitar:</b> dias de tendência forte — o preço "gruda" de um lado da VWAP; não brigue.</div>
+    </div>
+    <div class="rr">R:R alvo: 1:1,5 a 1:2</div>
+  </div>
+
+  <!-- ESTRATÉGIA 3 -->
+  <div class="panel strategy" id="est3" data-regime="tendencia">
+    <div class="est-head"><span class="est-num">3</span><h2>Momentum de tendência</h2><span class="regime-tag trend">tendência</span></div>
+    <p class="ptext ingredientes">Ingredientes: <a href="medias.html">EMA 20</a> · <a href="macd.html">MACD (12, 26, 9)</a> · <a href="risco.html">ATR para o stop</a></p>
+    <p class="ptext">Entrar a favor da tendência quando o <b style="color:var(--ink);">momentum se realinha</b> depois de uma pausa — o cruzamento do MACD é o gatilho, a EMA 20 é o filtro de lado.</p>
+    <ol class="setup">
+      <li><b>Contexto:</b> preço acima da EMA 20 (viés de alta).</li>
+      <li><b>Setup:</b> MACD cruza a linha de sinal para cima — idealmente ainda abaixo ou perto da linha zero (entrada cedo no movimento).</li>
+      <li><b>Entrada:</b> no fechamento do candle do cruzamento, ou no rompimento da sua máxima.</li>
+      <li><b>Stop:</b> abaixo da EMA 20 ou do último fundo (1×ATR).</li>
+      <li><b>Alvos:</b> Alvo 1 em 2R · Alvo 2 com trailing pela EMA 20 enquanto o MACD não cruzar para baixo.</li>
+    </ol>
+    <div class="espelho"><b>Venda (short):</b> preço abaixo da EMA 20 + MACD cruzando para baixo (de preferência acima/perto do zero). Saída quando o MACD cruzar para cima.</div>
+    <div class="melhor-evitar">
+      <div class="me-box melhor"><b>Melhor cenário:</b> início de perna direcional após acumulação.</div>
+      <div class="me-box evitar"><b>Evitar:</b> mercado picotado — o MACD gera cruzamentos falsos em série.</div>
+    </div>
+    <div class="rr">R:R alvo: 1:2 a 1:3</div>
+  </div>
+
+  <!-- ESTRATÉGIA 4 -->
+  <div class="panel strategy" id="est4" data-regime="squeeze">
+    <div class="est-head"><span class="est-num">4</span><h2>Rompimento com volume</h2><span class="regime-tag squeeze">squeeze</span></div>
+    <p class="ptext ingredientes">Ingredientes: Canal de Donchian (20) · <a href="volume.html">Volume</a> · <a href="suportes.html">rompimento de zona</a> · <a href="risco.html">ATR para o stop</a></p>
+    <div class="mini-def">Donchian(20) = a máxima e a mínima dos últimos 20 candles desenhadas como um canal. É a versão mecânica dos suportes e resistências: a linha superior é a resistência recente, a inferior o suporte.</div>
+    <p class="ptext">Capturar a <b style="color:var(--ink);">expansão</b> quando o preço rompe uma consolidação apertada — com o volume confirmando que o rompimento tem gente de verdade por trás.</p>
+    <ol class="setup">
+      <li><b>Contexto:</b> consolidação estreita (baixa volatilidade, canal apertado).</li>
+      <li><b>Setup:</b> preço rompe a máxima dos 20 candles com <b>volume acima da média</b> — sem pico de volume, ignore o rompimento.</li>
+      <li><b>Entrada:</b> no rompimento, ou no reteste da linha rompida (a troca de papel da página de <a href="suportes.html" style="color:var(--strat); font-weight:700;">suportes</a>).</li>
+      <li><b>Stop:</b> abaixo da linha média do Donchian ou do candle de rompimento (1×ATR).</li>
+      <li><b>Alvos:</b> Alvo 1 na projeção da altura da consolidação (1× o range) · Alvo 2 em 2× ou trailing pela linha inferior do canal.</li>
+    </ol>
+    <div class="espelho"><b>Venda (short):</b> rompimento da mínima dos 20 candles com volume acima da média. Alvo pela projeção da faixa.</div>
+    <div class="melhor-evitar">
+      <div class="me-box melhor"><b>Melhor cenário:</b> depois de squeeze — consolidação apertada que acumula energia.</div>
+      <div class="me-box evitar"><b>Evitar:</b> rompimentos sem volume — alta probabilidade de fakeout.</div>
+    </div>
+    <div class="rr">R:R alvo: 1:2 a 1:3 — rompimentos pagam quando acertam a expansão</div>
+  </div>
+
+  <div class="panel">
+    <h2>A ressalva de sempre — e a mais importante aqui</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      Estas estratégias são <b style="color:var(--ink);">exemplos de processo</b>, não sistemas validados: mostram como transformar indicadores soltos em plano completo com entrada, stop e alvo definidos <em>antes</em> do trade.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      Antes de arriscar dinheiro em qualquer uma: <b style="color:var(--ink);">teste no histórico</b> do seu ativo e timeframe, opere em simulado, e só então com o risco mínimo. O que separa quem sobrevive não é a estratégia — é a disciplina do stop e do dimensionamento.
+    </p>
+    <div class="insight">
+      O padrão que une as quatro: nenhuma tenta <b>prever</b> — todas <b>reagem</b> a uma condição objetiva (regime + gatilho) e pré-definem a saída nos dois cenários. É a filosofia da página de <a href="risco.html" style="color:var(--strat); font-weight:700;">risco</a> aplicada: o lucro vem da assimetria, não da taxa de acerto.
+    </div>
+  </div>
+
+  <div class="foot">Playbook adaptado do material do autor (gráfico de 15 min) · material educativo, não é recomendação de investimento</div>
+</div>
+
+<script>
+/* ===== seletor de regime ===== */
+var REGIME_INFO = {
+  tendencia: 'Mercado tendendo → <span class="hi">Estratégias 1 e 3</span>: pullback e momentum operam a favor da corrente. Reversão à média (2) é briga perdida aqui, e o squeeze (4) já passou.',
+  lateral: 'Mercado de lado → <span class="hi">Estratégia 2</span>: o preço respeita o "elástico" da VWAP. Seguir tendência (1 e 3) vira serra de sinais falsos.',
+  squeeze: 'Volatilidade comprimida → <span class="hi">Estratégia 4</span>: prepare-se para a expansão, exigindo volume na confirmação. As outras esperam o novo regime se definir.'
+};
+document.querySelectorAll('.rb').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var reg = btn.getAttribute('data-regime');
+    document.querySelectorAll('.rb').forEach(function(b){ b.classList.toggle('active', b === btn); });
+    document.querySelectorAll('.panel.strategy').forEach(function(card) {
+      var match = card.getAttribute('data-regime') === reg;
+      card.classList.toggle('dim', !match);
+      card.classList.toggle('lit', match);
+    });
+    document.getElementById('regimeReadout').innerHTML = REGIME_INFO[reg];
+  });
+});
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -22,6 +22,8 @@
   --risk-soft: #F0EBF7;
   --lvl: #A67C1B;        /* níveis: memória do preço */
   --lvl-soft: #F7EED9;
+  --strat: #0F766E;      /* estratégias: síntese */
+  --strat-soft: #E3F1EF;
   --card: #FFFFFF;
   --card-strong: #F7F9FB;
   --danger: #C0392B;
@@ -63,6 +65,8 @@
   --risk-soft: rgba(183, 156, 255, 0.14);
   --lvl: #F2C14E;
   --lvl-soft: rgba(242, 193, 78, 0.14);
+  --strat: #4FD1C5;
+  --strat-soft: rgba(79, 209, 197, 0.14);
   --card: #151D27;
   --card-strong: #1B2531;
   --danger: #FF6B6B;
@@ -119,6 +123,7 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
 .eyebrow.vol { color: var(--vol); }
 .eyebrow.risk { color: var(--risk); }
 .eyebrow.lvl { color: var(--lvl); }
+.eyebrow.strat { color: var(--strat); }
 
 .lucide-icon {
   display: block; width: 100%; height: 100%;

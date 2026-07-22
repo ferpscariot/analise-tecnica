@@ -40,6 +40,8 @@
   --risk-soft: #F0EBF7;
   --lvl: #A67C1B;       /* níveis: memória do preço */
   --lvl-soft: #F7EED9;
+  --strat: #0F766E;     /* estratégias: síntese */
+  --strat-soft: #E3F1EF;
   --on-accent: #FFFFFF;
   --surface-glow: transparent;
   --switch-border: var(--ink);
@@ -78,6 +80,8 @@
   --risk-soft: rgba(183, 156, 255, 0.14);
   --lvl: #F2C14E;
   --lvl-soft: rgba(242, 193, 78, 0.14);
+  --strat: #4FD1C5;
+  --strat-soft: rgba(79, 209, 197, 0.14);
   --on-accent: #071016;
   --surface-glow: rgba(255,255,255,0.035);
   --switch-border: rgba(238,244,248,0.76);
@@ -399,6 +403,7 @@ p + p { margin-top: 12px; }
 .t-num.vol { background: var(--vol); color: var(--on-accent); }
 .t-num.risk { background: var(--risk); color: var(--on-accent); }
 .t-num.lvl { background: var(--lvl); color: var(--on-accent); }
+.t-num.strat { background: var(--strat); color: var(--on-accent); }
 .trail h3 { margin-bottom: 4px; }
 .trail > li > div > p { font-size: 14.5px; color: var(--ink-soft); }
 .trail p a { color: inherit; font-weight: 700; text-decoration: none;
@@ -644,6 +649,7 @@ footer {
     <a href="suportes.html">Suportes</a>
     <a href="volume.html">Volume</a>
     <a href="risco.html">Risco</a>
+    <a href="estrategias.html">Estratégias</a>
   </div>
 </nav>
 
@@ -875,7 +881,17 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num">7</span>
+        <span class="t-num strat">7</span>
+        <div>
+          <h3>Estratégias — juntando as peças</h3>
+          <p>Quatro receitas completas que combinam os indicadores por regime de mercado: contexto, gatilho, stop e alvo definidos antes de cada trade.</p>
+          <div class="t-links">
+            <a href="estrategias.html">Estratégias</a>
+          </div>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num">8</span>
         <div>
           <h3>Prova de pista</h3>
           <p>Seis situações para testar se as lentes ficaram calibradas. <a href="#quiz">Fazer o quiz ↓</a></p>
