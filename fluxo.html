@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia do fluxo — book de ofertas e padrões gráficos</title>
+<meta name="description" content="Como ler o book de ofertas, reconhecer um spoof e por que os padrões gráficos clássicos têm evidência muito mais fraca do que os manuais sugerem — um guia cético e interativo sobre leitura de fluxo.">
+<link rel="canonical" href="https://ferpscariot.github.io/analise-tecnica/fluxo.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0a0e14">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Indicadores — um guia para análise técnica">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Anatomia do fluxo — book de ofertas e padrões gráficos">
+<meta property="og:description" content="Como ler o book de ofertas, reconhecer um spoof e por que os padrões gráficos clássicos têm evidência muito mais fraca do que os manuais sugerem — um guia cético e interativo sobre leitura de fluxo.">
+<meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/fluxo.html">
+<meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anatomia do fluxo — book de ofertas e padrões gráficos">
+<meta name="twitter:description" content="Como ler o book de ofertas, reconhecer um spoof e por que os padrões gráficos clássicos têm evidência muito mais fraca do que os manuais sugerem — um guia cético e interativo sobre leitura de fluxo.">
+<meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
+<script>
+  /* esta página é permanentemente escura (estética de terminal) — ignora o tema do sistema/site */
+  document.documentElement.setAttribute('data-theme', 'dark');
+</script>
+<link rel="stylesheet" href="assets/base.css?v=47e852d1">
+<style>
+  :root{
+    --tab-accent: var(--flow);
+    --bg:#0a0e14;
+    --panel:#111721;
+    --panel-2:#0d1420;
+    --line:#1e2733;
+    --line-soft:#161e29;
+    --ink:#e8edf4;
+    --ink-dim:#8a97a8;
+    --ink-faint:#56606f;
+    --bid:#2dd4a7;      /* verde-água comprador */
+    --bid-dim:#12463b;
+    --ask:#f0616d;      /* vermelho vendedor */
+    --ask-dim:#4a1c22;
+    --amber:#e8b13a;    /* alerta / ceticismo */
+    --amber-dim:#3d3115;
+    --accent:#5b9dff;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    padding:0; /* neutraliza o padding padrão do base.css — esta página gerencia seu próprio espaçamento */
+  }
+  ::selection{background:var(--bid);color:#04120e}
+  .site-tabs{ margin:0; } /* sem o padding-de-body do base.css, não há offset a compensar */
+
+  /* ---------- layout scaffolding ---------- */
+  .wrap{max-width:940px;margin:0 auto;padding:0 24px}
+  section{padding:76px 0;border-bottom:1px solid var(--line-soft)}
+  section:last-child{border-bottom:none}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:20px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--ink-faint)}
+
+  h1{font-size:clamp(38px,7vw,68px);font-weight:700;line-height:1.02;letter-spacing:-.02em}
+  h2{font-size:clamp(26px,4vw,38px);font-weight:600;line-height:1.1;letter-spacing:-.015em;margin-bottom:18px}
+  h3{font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:8px}
+  p{color:var(--ink-dim);font-size:16px;max-width:64ch}
+  p.lead{color:var(--ink);font-size:19px;max-width:60ch}
+  strong{color:var(--ink);font-weight:600}
+  .mono{font-family:var(--mono)}
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:92vh;display:flex;flex-direction:column;justify-content:center;
+    position:relative;border-bottom:1px solid var(--line);
+    padding:80px 0;
+  }
+  .hero h1 .g{color:var(--bid)}
+  .hero h1 .r{color:var(--ask)}
+  .hero-sub{margin-top:28px;max-width:56ch}
+  .hero-tape{
+    position:absolute;top:0;left:0;right:0;height:34px;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;overflow:hidden;
+    font-family:var(--mono);font-size:12px;
+    background:var(--panel-2);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  }
+  .tape-track{display:flex;gap:26px;white-space:nowrap;animation:tape 44s linear infinite;padding-left:100%}
+  @keyframes tape{to{transform:translateX(-50%)}}
+  .tick{color:var(--ink-faint)}
+  .tick .up{color:var(--bid)} .tick .dn{color:var(--ask)}
+
+  .scroll-hint{margin-top:52px;font-family:var(--mono);font-size:12px;letter-spacing:.15em;color:var(--ink-faint);display:flex;align-items:center;gap:10px}
+  .scroll-hint span{display:inline-block;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  /* ---------- generic card ---------- */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  }
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:36px}
+  @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+
+  /* ---------- DOM ladder widget ---------- */
+  .dom-shell{margin-top:40px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+  @media(max-width:720px){.dom-shell{grid-template-columns:1fr}}
+
+  .ladder{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    font-family:var(--mono);font-size:13px;overflow:hidden;user-select:none;
+  }
+  .ladder-head{
+    display:grid;grid-template-columns:1fr 1fr 1fr;
+    padding:10px 14px;border-bottom:1px solid var(--line);
+    color:var(--ink-faint);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  }
+  .ladder-head span:nth-child(1){color:var(--ask)}
+  .ladder-head span:nth-child(3){color:var(--bid);text-align:right}
+  .ladder-head span:nth-child(2){text-align:center}
+  .row{
+    display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;
+    padding:0 14px;height:30px;position:relative;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .row:last-child{border-bottom:none}
+  .row .px{text-align:center;color:var(--ink-dim);z-index:2}
+  .row.last .px{color:var(--ink);font-weight:500}
+  .qty{z-index:2;transition:color .2s}
+  .qty.ask{color:var(--ask)}
+  .qty.bid{color:var(--bid);text-align:right}
+  .qty.empty{color:transparent}
+  /* depth bars */
+  .bar{position:absolute;top:3px;bottom:3px;border-radius:3px;z-index:1;transition:width .35s cubic-bezier(.4,0,.2,1),background .3s}
+  .bar.ask{right:50%;margin-right:8px;background:var(--ask-dim)}
+  .bar.bid{left:50%;margin-left:8px;background:var(--bid-dim)}
+  .row.wall .bar{background:var(--amber-dim);box-shadow:inset 0 0 0 1px var(--amber)}
+  .row.wall .qty{color:var(--amber)}
+  .row.spread{background:var(--panel);height:26px}
+  .row.spread .px{font-size:11px;color:var(--ink-faint);letter-spacing:.1em}
+
+  .dom-side{display:flex;flex-direction:column;gap:16px}
+  .scenario-btns{display:flex;flex-direction:column;gap:8px}
+  .sbtn{
+    text-align:left;background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
+    padding:12px 14px;border-radius:8px;cursor:pointer;font-family:var(--sans);font-size:14px;
+    transition:.18s;line-height:1.35;
+  }
+  .sbtn:hover{border-color:var(--ink-faint);color:var(--ink)}
+  .sbtn.active{border-color:var(--bid);background:#0e1a17;color:var(--ink)}
+  .sbtn .k{font-family:var(--mono);font-size:11px;color:var(--ink-faint);display:block;margin-bottom:2px;letter-spacing:.08em}
+  .sbtn.active .k{color:var(--bid)}
+  .readout{
+    background:var(--panel-2);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:8px;padding:16px 18px;min-height:120px;
+  }
+  .readout .tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .readout p{font-size:14.5px;color:var(--ink-dim);max-width:none}
+  .readout.skeptic{border-left-color:var(--amber)}
+  .readout.skeptic .tag{color:var(--amber)}
+
+  /* ---------- pattern cards ---------- */
+  .pat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:36px}
+  @media(max-width:720px){.pat-grid{grid-template-columns:1fr}}
+  .pat{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;
+    cursor:pointer;transition:.2s;position:relative;overflow:hidden;
+  }
+  .pat:hover{border-color:var(--ink-faint);transform:translateY(-2px)}
+  .pat.open{border-color:var(--accent)}
+  .pat svg{width:100%;height:96px;display:block;margin-bottom:12px}
+  .pat h3{font-size:15px}
+  .pat .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase}
+  .pat .body{
+    max-height:0;overflow:hidden;transition:max-height .35s ease;
+  }
+  .pat.open .body{max-height:340px}
+  .pat .body p{font-size:13.5px;margin-top:10px;max-width:none}
+  .pat .fail{
+    margin-top:12px;padding-top:12px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--amber);display:flex;gap:8px;
+  }
+  .pat .fail::before{content:"⚠";flex-shrink:0}
+  .pat .fail span{color:var(--ink-dim)}
+
+  /* ---------- reality toggle ---------- */
+  .reality{margin-top:40px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .reality-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;flex-wrap:wrap;gap:16px}
+  .reality-head h3{margin:0;font-size:17px}
+  .toggle{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:3px;font-family:var(--mono);font-size:12px}
+  .toggle button{background:none;border:none;color:var(--ink-faint);padding:7px 16px;border-radius:6px;cursor:pointer;transition:.18s;font-family:var(--mono)}
+  .toggle button.on{background:var(--amber);color:#1a1405;font-weight:500}
+  .reality-canvas{border-top:1px solid var(--line);padding:24px;background:var(--panel-2)}
+  .reality-canvas svg{width:100%;height:220px;display:block}
+  .reality-note{padding:18px 24px;font-size:14px;color:var(--ink-dim);border-top:1px solid var(--line-soft)}
+
+  /* ---------- flow bar (imbalance demo) ---------- */
+  .flowbar-wrap{margin-top:24px}
+  .flowbar{height:44px;border-radius:8px;overflow:hidden;display:flex;border:1px solid var(--line);font-family:var(--mono);font-size:13px;font-weight:500}
+  .flow-bid{background:var(--bid);color:#04120e;display:flex;align-items:center;justify-content:flex-start;padding-left:14px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .flow-ask{background:var(--ask);color:#1a0508;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+  .flow-ctrl{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .flow-ctrl button{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);padding:8px 14px;border-radius:7px;cursor:pointer;font-family:var(--mono);font-size:12px;transition:.16s}
+  .flow-ctrl button:hover{border-color:var(--ink-faint);color:var(--ink)}
+  .flow-read{margin-top:14px;font-size:14px;color:var(--ink-dim);min-height:44px}
+
+  /* ---------- spoof sequence ---------- */
+  .spoof-shell{margin-top:40px;display:grid;grid-template-columns:.85fr 1.15fr;gap:24px;align-items:start}
+  @media(max-width:720px){.spoof-shell{grid-template-columns:1fr}}
+  .spoof-book{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    font-family:var(--mono);font-size:13px;overflow:hidden;user-select:none;
+  }
+  .sb-head{display:grid;grid-template-columns:1fr 1fr 1fr;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--ink-faint);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+  .sb-head span:nth-child(1){color:var(--ask)}
+  .sb-head span:nth-child(2){text-align:center}
+  .sb-head span:nth-child(3){color:var(--bid);text-align:right}
+  .sb-row{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 14px;height:32px;position:relative;border-bottom:1px solid var(--line-soft)}
+  .sb-row:last-child{border-bottom:none}
+  .sb-row .px{text-align:center;color:var(--ink-dim);z-index:2}
+  .sb-row.mkt{background:var(--panel)}
+  .sb-row.mkt .px{color:var(--ink);font-weight:500}
+  .sb-q{z-index:2;transition:opacity .4s,color .3s}
+  .sb-q.ask{color:var(--ask)} .sb-q.bid{color:var(--bid);text-align:right}
+  .sb-q.empty{color:transparent}
+  .sb-bar{position:absolute;top:4px;bottom:4px;border-radius:3px;z-index:1;transition:width .5s cubic-bezier(.4,0,.2,1),background .3s,opacity .4s}
+  .sb-bar.ask{right:50%;margin-right:8px;background:var(--ask-dim)}
+  .sb-bar.bid{left:50%;margin-left:8px;background:var(--bid-dim)}
+  /* the spoof wall highlight */
+  .sb-row.spoof .sb-bar{background:var(--amber-dim);box-shadow:inset 0 0 0 1px var(--amber)}
+  .sb-row.spoof .sb-q{color:var(--amber);font-weight:500}
+  .sb-row.vanish .sb-bar{opacity:0}
+  .sb-row.vanish .sb-q{opacity:.25;text-decoration:line-through}
+  /* price marker that slides */
+  .sb-row.pricehere::after{content:"◄ preço";position:absolute;right:10px;font-size:10px;color:var(--accent);letter-spacing:.1em;z-index:3}
+
+  .spoof-side{display:flex;flex-direction:column;gap:14px}
+  .spoof-stage{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;min-height:150px}
+  .ss-num{font-size:11px;letter-spacing:.16em;color:var(--ink-faint);margin-bottom:8px}
+  .spoof-stage h3{margin-bottom:8px}
+  .spoof-stage p{font-size:14.5px;max-width:none}
+  .spoof-actor{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);transition:.3s}
+  .sa-dot{width:9px;height:9px;border-radius:50%;background:var(--ink-faint);flex-shrink:0;transition:.3s}
+  .spoof-actor[data-role="place"]{border-color:var(--amber);color:var(--amber)}
+  .spoof-actor[data-role="place"] .sa-dot{background:var(--amber);box-shadow:0 0 0 4px var(--amber-dim)}
+  .spoof-actor[data-role="victim"]{border-color:var(--ask);color:var(--ask)}
+  .spoof-actor[data-role="victim"] .sa-dot{background:var(--ask);box-shadow:0 0 0 4px var(--ask-dim)}
+  .spoof-actor[data-role="win"]{border-color:var(--bid);color:var(--bid)}
+  .spoof-actor[data-role="win"] .sa-dot{background:var(--bid);box-shadow:0 0 0 4px var(--bid-dim)}
+  .spoof-ctrl{display:flex;gap:8px;flex-wrap:wrap}
+  .spoof-ctrl button{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);padding:10px 14px;border-radius:7px;cursor:pointer;font-family:var(--mono);font-size:12px;transition:.16s}
+  .spoof-ctrl button:hover:not(:disabled){border-color:var(--ink-faint);color:var(--ink)}
+  .spoof-ctrl button:disabled{opacity:.35;cursor:not-allowed}
+  .spoof-ctrl button.primary{border-color:var(--accent);color:var(--accent)}
+  .spoof-ctrl button.primary:hover{background:#0e1726}
+  .spoof-ctrl button.running{border-color:var(--amber);color:var(--amber)}
+
+  /* ---------- callout ---------- */
+  .callout{
+    margin-top:36px;background:linear-gradient(180deg,#1a1608,#12100a);
+    border:1px solid var(--amber-dim);border-left:3px solid var(--amber);
+    border-radius:10px;padding:24px 26px;
+  }
+  .callout .k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+  .callout p{color:var(--ink);max-width:66ch}
+  .callout p + p{margin-top:12px;color:var(--ink-dim)}
+
+  /* ---------- footer ---------- */
+  footer{padding:56px 0 72px}
+  .disclaimer{font-size:13px;color:var(--ink-faint);max-width:70ch;line-height:1.7}
+  .disclaimer strong{color:var(--ink-dim)}
+
+  .kbd{font-family:var(--mono);font-size:12px;background:var(--panel-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Guia</a>
+    <div class="tab-dropdown">
+      <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
+    </div>
+    <a href="suportes.html">Suportes</a>
+    <a href="risco.html">Risco</a>
+    <a href="estrategias.html">Estratégias</a>
+    <a href="fluxo.html" aria-current="page">Fluxo</a>
+  </div>
+  <div class="tab-menu" id="indMenu" role="menu" hidden>
+    <span class="tab-menu-head">Osciladores</span>
+    <a role="menuitem" href="rsi.html">RSI — força relativa</a>
+    <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
+    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
+    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
+    <span class="tab-menu-head">Tendência</span>
+    <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
+    <a role="menuitem" href="adx.html">ADX — força da tendência</a>
+    <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
+    <span class="tab-menu-head">Volume</span>
+    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
+  </div>
+</nav>
+
+<main id="conteudo">
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-tape">
+    <div class="tape-track" id="tapeTrack"></div>
+  </div>
+  <div class="wrap">
+    <div class="eyebrow">Guia interativo · leitura de fluxo</div>
+    <h1>Onde o preço<br>é <span class="g">decidido</span>, não<br><span class="r">desenhado</span>.</h1>
+    <p class="lead hero-sub">O gráfico é o registro do que já aconteceu. O book de ofertas é a fila de intenções que ainda não aconteceu. Este guia mostra o que scalpers leem em cada um — e, com o mesmo cuidado, quando essa leitura engana.</p>
+    <div class="scroll-hint">ROLE PARA COMEÇAR <span>↓</span></div>
+  </div>
+</header>
+
+<!-- ============ 1. THE BOOK ============ -->
+<section id="book">
+  <div class="wrap">
+    <div class="eyebrow">01 · o book de ofertas</div>
+    <h2>A escada de intenções</h2>
+    <p class="lead">O DOM (<em>Depth of Market</em>) empilha as ordens pendentes: vendedores em cima, compradores embaixo, o preço no meio. Cada número é alguém disposto a negociar naquele nível — até desistir. Passe pelos cenários e veja como a mesma escada conta histórias diferentes.</p>
+
+    <div class="dom-shell">
+      <div class="ladder" id="ladder" aria-label="Livro de ofertas interativo"></div>
+
+      <div class="dom-side">
+        <div class="scenario-btns" id="scenarios"></div>
+        <div class="readout" id="readout">
+          <div class="tag">Leitura</div>
+          <p>Selecione um cenário para ver o que um operador de fluxo interpretaria.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. FLOW / IMBALANCE ============ -->
+<section id="flow">
+  <div class="wrap">
+    <div class="eyebrow">02 · agressão e desequilíbrio</div>
+    <h2>Quem tem pressa move o preço</h2>
+    <p>As ordens paradas no book são <strong>intenção</strong>. O que efetivamente empurra o preço é a <strong>agressão</strong>: quem cruza o spread e executa a mercado. Quando a agressão de um lado domina de forma consistente por alguns segundos, é isso que scalpers chamam de desequilíbrio de fluxo. Ajuste a pressão e veja.</p>
+
+    <div class="flowbar-wrap">
+      <div class="flowbar">
+        <div class="flow-bid" id="flowBid" style="width:50%">COMPRA <span id="bidPct" style="margin-left:8px">50%</span></div>
+        <div class="flow-ask" id="flowAsk" style="width:50%"><span id="askPct" style="margin-right:8px">50%</span> VENDA</div>
+      </div>
+      <div class="flow-ctrl">
+        <button data-flow="88">Compra domina (88%)</button>
+        <button data-flow="62">Compra leve (62%)</button>
+        <button data-flow="50">Equilíbrio</button>
+        <button data-flow="38">Venda leve (38%)</button>
+        <button data-flow="12">Venda domina (12%)</button>
+      </div>
+      <div class="flow-read" id="flowRead">Equilíbrio: nenhum lado com pressa. Na prática, a maior parte do tempo o fluxo se parece com isto — ruído, não sinal.</div>
+    </div>
+
+    <div class="callout">
+      <div class="k">O detalhe que os cursos pulam</div>
+      <p>Desequilíbrio real e <em>spoofing</em> produzem a mesma imagem. Uma parede grande que "segura" o preço pode ser um comprador legítimo — ou uma ordem falsa, grande de propósito, que some antes de executar, plantada para induzir você a comprar.</p>
+      <p>A diferença entre absorção genuína e engodo só fica óbvia depois que o preço se move. Ao vivo, no momento da decisão, as duas são idênticas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03·5 SPOOFING ============ -->
+<section id="spoof">
+  <div class="wrap">
+    <div class="eyebrow">03 · o blefe do book</div>
+    <h2>Anatomia de um spoof</h2>
+    <p>Spoofing é uma parede <strong>que nunca pretendeu ser executada</strong>. Ela existe só para assustar. Veja a sequência: o mesmo golpe, estágio por estágio. Repare que o momento em que você tomaria a decisão errada é exatamente aquele em que tudo parece mais sólido.</p>
+
+    <div class="spoof-shell">
+      <div class="spoof-book" id="spoofBook" aria-label="Demonstração animada de spoofing"></div>
+
+      <div class="spoof-side">
+        <div class="spoof-stage" id="spoofStage">
+          <div class="ss-num mono" id="ssNum">1 / 4</div>
+          <h3 id="ssTitle">Mercado calmo</h3>
+          <p id="ssText">Book normal, ofertas equilibradas dos dois lados. O spoofer quer comprar barato — mas ainda não fez nada. O preço está em 134.25.</p>
+        </div>
+        <div class="spoof-actor" id="spoofActor" data-role="none">
+          <span class="sa-dot"></span>
+          <span id="saText">Ninguém agindo ainda</span>
+        </div>
+        <div class="spoof-ctrl">
+          <button id="spoofPrev">‹ Voltar</button>
+          <button id="spoofNext" class="primary">Próximo estágio ›</button>
+          <button id="spoofAuto">▶ Rodar tudo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="k">O ponto que fica</div>
+      <p>No estágio 2, o book do spoofer é <strong>idêntico</strong> ao de um vendedor gigante e genuíno. Se você voltar à seção anterior, "Parede de venda" e "A mesma parede — mas falsa" mostram exatamente os mesmos números. A intenção não está no book — e é a intenção que muda tudo.</p>
+      <p>Spoofing é ilegal (proibido nos EUA desde o Dodd-Frank de 2010; a CVM trata manipulação como infração no Brasil). Ser ilegal reduz, mas não elimina — e do seu lado, de quem lê a tela, o efeito prático é o mesmo: parte das paredes é blefe, e você não tem como saber quais no instante da decisão.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. CHART PATTERNS ============ -->
+<section id="patterns">
+  <div class="wrap">
+    <div class="eyebrow">04 · padrões gráficos</div>
+    <h2>Figuras idealizadas</h2>
+    <p>Estes são os padrões clássicos, desenhados como aparecem nos manuais. Clique em cada um para ver a lógica — e, logo abaixo, o modo como ele falha. Essa segunda parte é a que raramente vem no material didático, e é a que mais importa.</p>
+
+    <div class="pat-grid" id="patGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 4. IDEAL vs REAL ============ -->
+<section id="reality">
+  <div class="wrap">
+    <div class="eyebrow">05 · o desenho e o mercado</div>
+    <h2>O mesmo padrão, duas realidades</h2>
+    <p>À esquerda do seu botão está o triângulo como o livro mostra: linhas limpas, rompimento óbvio. À direita está o que o preço realmente faz. A figura só fica nítida <em>depois</em> — e você traça a linha já tendo uma opinião sobre onde ela deveria passar.</p>
+
+    <div class="reality">
+      <div class="reality-head">
+        <h3>Triângulo ascendente</h3>
+        <div class="toggle" id="realToggle">
+          <button data-v="ideal" class="on">Idealizado</button>
+          <button data-v="real">Real</button>
+        </div>
+      </div>
+      <div class="reality-canvas">
+        <svg viewBox="0 0 700 220" id="realSvg" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="reality-note" id="realNote">O manual: uma resistência horizontal, fundos ascendentes, e um rompimento que projeta a altura da figura. Limpo porque foi escolhido depois de dar certo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. HONEST CLOSE ============ -->
+<section id="honest">
+  <div class="wrap">
+    <div class="eyebrow">06 · a leitura honesta</div>
+    <h2>O que sobra depois do ceticismo</h2>
+    <p class="lead">Nada disto é inútil — mas quase nada disto é o que se vende como sendo. O uso defensável dos padrões é estreito, e vale nomeá-lo com precisão.</p>
+
+    <div class="grid-2">
+      <div class="card" style="padding:22px">
+        <div class="lbl mono" style="font-size:10px;letter-spacing:.14em;color:var(--bid);text-transform:uppercase;margin-bottom:10px">Tem base</div>
+        <h3 style="margin-bottom:12px">Onde há algo real</h3>
+        <p style="font-size:14.5px">Liquidez importa porque há gente com ordens em níveis conhecidos. Volume importa. Rompimentos com volume têm alguma persistência. E o custo por operação — no scalping, dominante — é a variável que mais decide o resultado final.</p>
+      </div>
+      <div class="card" style="padding:22px;border-color:var(--amber-dim)">
+        <div class="lbl mono" style="font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-bottom:10px">Sem base</div>
+        <h3 style="margin-bottom:12px">Onde a evidência é fraca</h3>
+        <p style="font-size:14.5px">Testados com regras fixas em amostras grandes, os padrões de candle e as figuras clássicas rendem perto de zero — e negativo após custos. Em gráfico de 1 minuto, um "engolfo" são dois candles: a chance de ser ruído é enorme.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="k">O uso que se sustenta</div>
+      <p>Se você vai usar padrão gráfico em scalping, o papel defensável dele é de <strong>gatilho de execução</strong> dentro de um contexto que você já tinha por outro motivo — um nível relevante, o fluxo, a sessão. Não como a razão de estar na operação.</p>
+      <p>A pergunta mais útil nunca é "qual é o padrão". É "existe alguma razão para eu acreditar que tenho vantagem aqui?". Método aprendido em curso não é vantagem. Informação, velocidade ou um modelo que você testou e conhece o resultado — isso seria.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="disclaimer">
+      <strong>Isto é material educacional, não recomendação de investimento.</strong> Não sou consultor financeiro. Nada aqui deve ser lido como sinal de entrada ou saída em operações reais. A literatura sobre day trade de varejo é consistente: uma fração pequena dos operadores é lucrativa de forma persistente depois de custos, e a persistência ao longo dos anos é baixa mesmo entre esses. Se for praticar, use replay de mercado com dados reais e capital que você pode perder sem mudar sua vida — tratando o valor como o preço de aprender, não como investimento.
+    </p>
+  </div>
+</footer>
+</main>
+
+<script>
+/* =================== TAPE (hero ticker) =================== */
+(function(){
+  const track=document.getElementById('tapeTrack');
+  let px=134.20;const parts=[];
+  for(let i=0;i<40;i++){
+    const dir=Math.random()>.5?1:-1;
+    const sz=[1,1,1,2,3,5,10,25][Math.floor(Math.random()*8)];
+    px=+(px+dir*0.05).toFixed(2);
+    const cls=dir>0?'up':'dn';
+    parts.push(`<span class="tick">${px.toFixed(2)} <span class="${cls}">${dir>0?'▲':'▼'}${sz}</span></span>`);
+  }
+  const html=parts.join('');
+  track.innerHTML=html+html; // duplicate for seamless loop
+})();
+
+/* =================== DOM LADDER =================== */
+const ladder=document.getElementById('ladder');
+const scenariosEl=document.getElementById('scenarios');
+const readoutEl=document.getElementById('readout');
+
+// base price levels
+const PX=[134.50,134.45,134.40,134.35,134.30,'—',134.25,134.20,134.15,134.10,134.05];
+const SPREAD_IDX=5;
+
+const scenarios={
+  balanced:{
+    name:'Book equilibrado',
+    key:'baseline',
+    ask:[42,38,55,40,61],
+    bid:[58,44,50,39,47],
+    wallAsk:-1,wallBid:-1,
+    reading:{skeptic:false,tag:'Leitura',
+      text:'Ofertas distribuídas dos dois lados, sem concentração destoante. Não há pressão evidente. Um operador de fluxo geralmente fica de fora aqui — não há informação suficiente para uma decisão.'}
+  },
+  wall:{
+    name:'Parede de venda',
+    key:'absorção?',
+    ask:[38,44,520,41,50],
+    bid:[55,48,52,40,44],
+    wallAsk:2,wallBid:-1,
+    reading:{skeptic:false,tag:'Leitura clássica',
+      text:'Um volume grande (520) aparece a 134.40 e trava a subida. Se a agressão compradora bater nesse nível e ele NÃO diminuir, é absorção: alguém grande segurando. Quando essa parede cede, o movimento tende a ser rápido.'}
+  },
+  spoof:{
+    name:'A mesma parede — mas falsa',
+    key:'spoofing',
+    ask:[38,44,520,41,50],
+    bid:[55,48,52,40,44],
+    wallAsk:2,wallBid:-1,
+    reading:{skeptic:true,tag:'O que você não vê',
+      text:'Book idêntico ao anterior. Mas esta ordem de 520 vai sumir antes de qualquer execução — foi plantada para te fazer vender. Ao vivo, no instante da decisão, absorção genuína e engodo são visualmente a mesma coisa. A diferença só aparece depois.'}
+  },
+  vacuum:{
+    name:'Esvaziamento do book',
+    key:'breakout',
+    ask:[8,6,4,3,2],
+    bid:[54,49,58,46,50],
+    wallAsk:-1,wallBid:-1,
+    reading:{skeptic:false,tag:'Leitura clássica',
+      text:'O lado vendedor esvaziou — quase não há ofertas de venda. Com pouca resistência acima, qualquer compra agressiva empurra o preço para cima com facilidade. Costuma anteceder um rompimento na direção contrária ao lado que esvaziou.'}
+  }
+};
+
+function renderLadder(sc){
+  let rows='';
+  const maxQ=Math.max(...sc.ask,...sc.bid,60);
+  let askI=0,bidI=0;
+  PX.forEach((p,i)=>{
+    if(i===SPREAD_IDX){
+      rows+=`<div class="row spread"><span></span><span class="px">— spread —</span><span></span></div>`;
+      return;
+    }
+    const isAsk=i<SPREAD_IDX;
+    const last=(i===SPREAD_IDX-1||i===SPREAD_IDX+1);
+    if(isAsk){
+      const q=sc.ask[askI];const isWall=sc.wallAsk===askI;
+      const w=(q/maxQ*100).toFixed(0);
+      rows+=`<div class="row ${last?'last':''} ${isWall?'wall':''}">
+        <div class="bar ask" style="width:${w}%"></div>
+        <span class="qty ask">${q}</span>
+        <span class="px">${p.toFixed(2)}</span>
+        <span class="qty empty">·</span></div>`;
+      askI++;
+    }else{
+      const q=sc.bid[bidI];const isWall=sc.wallBid===bidI;
+      const w=(q/maxQ*100).toFixed(0);
+      rows+=`<div class="row ${last?'last':''} ${isWall?'wall':''}">
+        <span class="qty empty">·</span>
+        <span class="px">${p.toFixed(2)}</span>
+        <div class="bar bid" style="width:${w}%"></div>
+        <span class="qty bid">${q}</span></div>`;
+      bidI++;
+    }
+  });
+  ladder.innerHTML=`<div class="ladder-head"><span>Venda</span><span>Preço</span><span>Compra</span></div>${rows}`;
+}
+
+function renderReadout(sc){
+  const r=sc.reading;
+  readoutEl.className='readout'+(r.skeptic?' skeptic':'');
+  readoutEl.innerHTML=`<div class="tag">${r.tag}</div><p>${r.text}</p>`;
+}
+
+// build scenario buttons
+Object.entries(scenarios).forEach(([id,sc],idx)=>{
+  const b=document.createElement('button');
+  b.className='sbtn'+(idx===0?' active':'');
+  b.dataset.id=id;
+  b.innerHTML=`<span class="k">${sc.key}</span>${sc.name}`;
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.sbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    renderLadder(sc);renderReadout(sc);
+  });
+  scenariosEl.appendChild(b);
+});
+renderLadder(scenarios.balanced);
+renderReadout(scenarios.balanced);
+
+/* =================== FLOW BAR =================== */
+const flowBid=document.getElementById('flowBid');
+const flowAsk=document.getElementById('flowAsk');
+const bidPct=document.getElementById('bidPct');
+const askPct=document.getElementById('askPct');
+const flowRead=document.getElementById('flowRead');
+
+const flowMsgs={
+  88:'Compra domina fortemente. É o desequilíbrio que scalpers buscam — sugere continuação de alta enquanto durar. Mas "enquanto durar" costuma ser segundos, e reagir tarde é o normal.',
+  62:'Leve vantagem compradora. Fraco demais para agir com convicção — poderia inverter no próximo instante. A maioria dos desequilíbrios reais parece com isto, não com o caso extremo.',
+  50:'Equilíbrio: nenhum lado com pressa. Na prática, a maior parte do tempo o fluxo se parece com isto — ruído, não sinal.',
+  38:'Leve vantagem vendedora. Mesma ressalva do lado comprador: ambíguo, e provavelmente ruído de curtíssimo prazo.',
+  12:'Venda domina fortemente. Espelho do caso de compra. E a mesma armadilha: quando o desequilíbrio fica óbvio no gráfico, boa parte do movimento já passou.'
+};
+
+document.querySelectorAll('[data-flow]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const bid=+btn.dataset.flow;const ask=100-bid;
+    flowBid.style.width=bid+'%';flowAsk.style.width=ask+'%';
+    bidPct.textContent=bid+'%';askPct.textContent=ask+'%';
+    flowRead.textContent=flowMsgs[bid];
+  });
+});
+
+/* =================== SPOOF SEQUENCE =================== */
+(function(){
+  const book=document.getElementById('spoofBook');
+  const ssNum=document.getElementById('ssNum');
+  const ssTitle=document.getElementById('ssTitle');
+  const ssText=document.getElementById('ssText');
+  const actor=document.getElementById('spoofActor');
+  const saText=document.getElementById('saText');
+  const prevBtn=document.getElementById('spoofPrev');
+  const nextBtn=document.getElementById('spoofNext');
+  const autoBtn=document.getElementById('spoofAuto');
+
+  // price ladder for the demo (index 3 = spread / market)
+  const rows=[
+    {px:'134.40',side:'ask'},
+    {px:'134.35',side:'ask'},
+    {px:'134.30',side:'ask'},   // <- spoof wall lands here (idx 2)
+    {px:'134.25',side:'mkt'},   // market row (idx 3)
+    {px:'134.20',side:'bid'},
+    {px:'134.15',side:'bid'},
+    {px:'134.10',side:'bid'},
+  ];
+
+  // per-stage state: qty per row, which row has spoof, vanish flag, price row idx
+  const stages=[
+    { // 0 calm
+      num:'1 / 4',title:'Mercado calmo',
+      text:'Book normal, ofertas equilibradas dos dois lados. O spoofer quer comprar barato — mas ainda não fez nada. O preço está em 134.25.',
+      ask:[40,52,44], bid:[48,55,42], spoof:-1, vanish:false, price:3,
+      role:'none', actorText:'Ninguém agindo ainda'
+    },
+    { // 1 place wall
+      num:'2 / 4',title:'A parede aparece',
+      text:'O spoofer coloca 500 contratos de VENDA em 134.30, logo acima do preço. Enorme, intimidante. Neste instante, esse book é idêntico ao de um vendedor gigante de verdade — você não tem como distinguir.',
+      ask:[40,52,500], bid:[48,55,42], spoof:2, vanish:false, price:3,
+      role:'place', actorText:'Spoofer plantou 500 @ 134.30'
+    },
+    { // 2 victims react
+      num:'3 / 4',title:'O mercado se assusta',
+      text:'Quem lê o book pensa: "tem um vendedor gigante travando aí, melhor vender antes que caia". E vende. A pressão vendedora empurra o preço para baixo — para 134.20. A parede fez seu trabalho sem executar um único contrato.',
+      ask:[40,52,500], bid:[70,55,42], spoof:2, vanish:false, price:4,
+      role:'victim', actorText:'Outros vendem → preço cai a 134.20'
+    },
+    { // 3 vanish + buy
+      num:'4 / 4',title:'Some e compra',
+      text:'Um instante antes de o preço subir e tocar a parede, o spoofer a cancela — ela nunca foi executada. E então ele compra barato, no preço que ele mesmo ajudou a derrubar. Blefe completo.',
+      ask:[40,52,500], bid:[70,55,42], spoof:2, vanish:true, price:4,
+      role:'win', actorText:'Parede cancelada · spoofer compra @ 134.20'
+    },
+  ];
+
+  let cur=0, timer=null;
+
+  function maxQ(st){return Math.max(...st.ask,...st.bid,60,st.spoof>=0?520:0)}
+
+  function render(){
+    const st=stages[cur];
+    const mx=maxQ(st);
+    let ai=0, bi=0, html='<div class="sb-head"><span>Venda</span><span>Preço</span><span>Compra</span></div>';
+    rows.forEach((r,i)=>{
+      const isPrice=(i===st.price);
+      if(r.side==='mkt'){
+        html+=`<div class="sb-row mkt ${isPrice?'pricehere':''}"><span class="sb-q empty">·</span><span class="px">${r.px}</span><span class="sb-q empty">·</span></div>`;
+        return;
+      }
+      if(r.side==='ask'){
+        const q=st.ask[ai];const isSpoof=(st.spoof===ai);
+        const w=(q/mx*100).toFixed(0);
+        const vanish=(isSpoof&&st.vanish)?'vanish':'';
+        html+=`<div class="sb-row ${isSpoof?'spoof':''} ${vanish} ${isPrice?'pricehere':''}">
+          <div class="sb-bar ask" style="width:${w}%"></div>
+          <span class="sb-q ask">${q}</span>
+          <span class="px">${r.px}</span>
+          <span class="sb-q empty">·</span></div>`;
+        ai++;
+      }else{
+        const q=st.bid[bi];const w=(q/mx*100).toFixed(0);
+        html+=`<div class="sb-row ${isPrice?'pricehere':''}">
+          <span class="sb-q empty">·</span>
+          <span class="px">${r.px}</span>
+          <div class="sb-bar bid" style="width:${w}%"></div>
+          <span class="sb-q bid">${q}</span></div>`;
+        bi++;
+      }
+    });
+    book.innerHTML=html;
+
+    ssNum.textContent=st.num;
+    ssTitle.textContent=st.title;
+    ssText.textContent=st.text;
+    actor.dataset.role=st.role;
+    saText.textContent=st.actorText;
+
+    prevBtn.disabled=(cur===0);
+    nextBtn.disabled=(cur===stages.length-1)&&!timer;
+  }
+
+  function go(i){cur=Math.max(0,Math.min(stages.length-1,i));render();}
+
+  prevBtn.addEventListener('click',()=>{stopAuto();go(cur-1);});
+  nextBtn.addEventListener('click',()=>{stopAuto();go(cur+1);});
+
+  function stopAuto(){
+    if(timer){clearInterval(timer);timer=null;autoBtn.textContent='▶ Rodar tudo';autoBtn.classList.remove('running');}
+  }
+  autoBtn.addEventListener('click',()=>{
+    if(timer){stopAuto();return;}
+    go(0);
+    autoBtn.textContent='■ Parar';autoBtn.classList.add('running');
+    timer=setInterval(()=>{
+      if(cur>=stages.length-1){stopAuto();return;}
+      go(cur+1);
+    },2100);
+  });
+
+  render();
+})();
+
+/* =================== PATTERN CARDS =================== */
+const patterns=[
+  {
+    name:'Engolfo de alta',lbl:'reversão',
+    svg:`<rect x="30" y="30" width="14" height="46" fill="var(--ask)"/><line x1="37" y1="20" x2="37" y2="82" stroke="var(--ask)" stroke-width="1.5"/>
+         <rect x="70" y="24" width="20" height="58" fill="var(--bid)"/><line x1="80" y1="14" x2="80" y2="88" stroke="var(--bid)" stroke-width="1.5"/>
+         <text x="120" y="55" fill="var(--ink-faint)" font-size="11" font-family="monospace">→ compradores</text>
+         <text x="120" y="70" fill="var(--ink-faint)" font-size="11" font-family="monospace">   assumem</text>`,
+    logic:'Um candle de alta "engole" totalmente o corpo do candle de baixa anterior. A leitura clássica: os compradores absorveram toda a venda e assumiram o controle.',
+    fail:'São literalmente dois candles. Em gráfico de 1 minuto, isso acontece dezenas de vezes por sessão sem significar nada. O padrão aparece muito mais vezes falhando do que nos exemplos dos manuais.'
+  },
+  {
+    name:'Triângulo ascendente',lbl:'continuação',
+    svg:`<line x1="20" y1="25" x2="160" y2="25" stroke="var(--ask)" stroke-width="1.5" stroke-dasharray="4 3"/>
+         <polyline points="20,80 45,58 55,72 80,45 90,58 115,32 125,42 150,26" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"/>
+         <line x1="20" y1="86" x2="150" y2="30" stroke="var(--bid)" stroke-width="1.5" stroke-dasharray="4 3"/>`,
+    logic:'Resistência horizontal no topo, fundos cada vez mais altos embaixo. A compressão sugere que a pressão compradora vai romper a resistência — alvo projetado pela altura da figura.',
+    fail:'Você traça as duas linhas depois de já ter uma opinião. Movendo um pouco onde a linha passa, o "triângulo" vira outra coisa. E rompimentos falsos — que quebram a linha e voltam — são comuns o bastante para anular a vantagem.'
+  },
+  {
+    name:'Ombro-cabeça-ombro',lbl:'reversão',
+    svg:`<polyline points="15,75 35,50 50,60 72,28 95,60 112,48 135,75" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"/>
+         <line x1="35" y1="66" x2="115" y2="66" stroke="var(--amber)" stroke-width="1.3" stroke-dasharray="4 3"/>
+         <text x="150" y="70" fill="var(--ink-faint)" font-size="10" font-family="monospace">linha de</text>
+         <text x="150" y="82" fill="var(--ink-faint)" font-size="10" font-family="monospace">pescoço</text>`,
+    logic:'Três topos: um maior no meio (cabeça) entre dois menores (ombros). Perder a "linha de pescoço" sinalizaria reversão de tendência.',
+    fail:'Precisa de muitas barras para se formar de modo reconhecível — pouco confiável em 1-5 minutos. E o reconhecimento é subjetivo: o mesmo trecho de preço vira ou não um OCO conforme quem olha.'
+  }
+];
+
+const patGrid=document.getElementById('patGrid');
+patterns.forEach(p=>{
+  const el=document.createElement('div');
+  el.className='pat';
+  el.innerHTML=`<svg viewBox="0 0 200 100">${p.svg}</svg>
+    <div class="lbl">${p.lbl}</div>
+    <h3>${p.name}</h3>
+    <div class="body">
+      <p>${p.logic}</p>
+      <div class="fail"><span>${p.fail}</span></div>
+    </div>`;
+  el.addEventListener('click',()=>el.classList.toggle('open'));
+  patGrid.appendChild(el);
+});
+
+/* =================== IDEAL vs REAL SVG =================== */
+const realSvg=document.getElementById('realSvg');
+const realNote=document.getElementById('realNote');
+const realToggle=document.getElementById('realToggle');
+
+function drawIdeal(){
+  return `
+    <line x1="40" y1="60" x2="560" y2="60" stroke="var(--ask)" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <line x1="40" y1="185" x2="540" y2="65" stroke="var(--bid)" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <polyline points="40,180 90,120 120,150 175,95 205,125 260,72 290,98 345,64 380,80 430,62 470,68 500,60"
+      fill="none" stroke="var(--ink)" stroke-width="2"/>
+    <line x1="500" y1="60" x2="560" y2="60" stroke="var(--ink)" stroke-width="2"/>
+    <polyline points="560,60 610,20" fill="none" stroke="var(--bid)" stroke-width="2.5"/>
+    <circle cx="560" cy="60" r="5" fill="var(--bid)"/>
+    <text x="566" y="48" fill="var(--bid)" font-size="12" font-family="monospace">rompeu</text>
+    <line x1="620" y1="20" x2="620" y2="60" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/>
+    <text x="626" y="44" fill="var(--ink-faint)" font-size="10" font-family="monospace">alvo</text>`;
+}
+function drawReal(){
+  // jagged, ambiguous — breakout that fails then maybe works
+  return `
+    <polyline points="40,170 62,140 78,160 98,120 116,150 132,110 150,145 168,100 188,140 210,95 232,130 250,72 272,115 292,64 314,108 332,58 356,120 378,70 400,130 424,66 448,118 470,80 492,58 512,110 534,72 556,95 578,55 600,88 622,50"
+      fill="none" stroke="var(--ink-dim)" stroke-width="1.5"/>
+    <line x1="40" y1="60" x2="620" y2="60" stroke="var(--ask)" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
+    <text x="300" y="205" fill="var(--amber)" font-size="11" font-family="monospace" text-anchor="middle">onde está o triângulo?</text>`;
+}
+
+function setReal(v){
+  if(v==='ideal'){
+    realSvg.innerHTML=drawIdeal();
+    realNote.textContent='O manual: uma resistência horizontal, fundos ascendentes, e um rompimento que projeta a altura da figura. Limpo porque foi escolhido depois de dar certo.';
+  }else{
+    realSvg.innerHTML=drawReal();
+    realNote.textContent='O mesmo ativo, dados reais: rompe a linha, volta, rompe de novo, volta. A resistência "horizontal" foi cruzada quatro vezes. A figura só existe se você decidir de antemão onde traçar — e ignorar as vezes em que a linha não valeu.';
+  }
+}
+setReal('ideal');
+realToggle.querySelectorAll('button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    realToggle.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    setReal(b.dataset.v);
+  });
+});
+</script>
+<script src="assets/nav.js?v=3909ef44"></script>
+</body>
+</html>

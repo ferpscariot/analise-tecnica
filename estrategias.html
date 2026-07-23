@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=7b9b5ae3">
+<link rel="stylesheet" href="assets/base.css?v=47e852d1">
 <style>
   :root { --accent: var(--strat); --accent-soft: var(--strat-soft); --tab-accent: var(--strat); }
 
@@ -78,16 +78,21 @@
   .me-box b { color: var(--ink); }
   .rr { font-family: var(--mono); font-size: 12.5px; color: var(--wire); margin-top: 12px; }
 
-  /* gráficos animados */
+  /* gráficos animados e interativos */
   .anim-block { margin-top: 16px; }
-  .play-btn {
-    font-family: var(--sans); font-weight: 700; font-size: 13.5px;
-    border: 2px solid var(--strat); background: var(--card); color: var(--strat);
-    padding: 8px 18px; border-radius: 999px; cursor: pointer; transition: all 0.15s;
-    margin-bottom: 12px;
+  .anim-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .step-btn {
+    font-family: var(--sans); font-weight: 700; font-size: 13px;
+    border: 2px solid var(--grid); background: var(--card); color: var(--ink);
+    padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: all 0.15s;
   }
-  .play-btn:hover { background: var(--strat); color: var(--on-accent); }
-  .play-btn:focus-visible { outline: 3px solid var(--strat); outline-offset: 2px; }
+  .step-btn:hover:not(:disabled) { border-color: var(--wire); }
+  .step-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .step-btn:focus-visible { outline: 3px solid var(--strat); outline-offset: 2px; }
+  .step-btn.primary { border-color: var(--strat); color: var(--strat); }
+  .step-btn.primary:hover:not(:disabled) { background: var(--strat); color: var(--on-accent); }
+  .step-btn.playing { border-color: var(--lvl); color: var(--lvl); }
+  .stage-count { font-family: var(--mono); font-size: 12px; color: var(--wire); margin-left: 2px; }
   .anim-status { margin-top: 12px; }
 
   /* seletor de regime */
@@ -117,6 +122,7 @@
     <a href="suportes.html">Suportes</a>
     <a href="risco.html">Risco</a>
     <a href="estrategias.html" aria-current="page">Estratégias</a>
+    <a href="fluxo.html">Fluxo</a>
   </div>
   <div class="tab-menu" id="indMenu" role="menu" hidden>
     <span class="tab-menu-head">Osciladores</span>
@@ -190,9 +196,14 @@
       <li><b>Alvos:</b> Alvo 1 em 1,5R · Alvo 2 na última máxima da perna anterior ou 2,5R.</li>
     </ol>
     <div class="anim-block">
-      <button class="play-btn" type="button" data-anim="1">▶ Assistir o trade</button>
+      <div class="anim-ctrl">
+        <button class="step-btn" type="button" data-anim="1" data-dir="prev">‹ Voltar</button>
+        <button class="step-btn primary" type="button" data-anim="1" data-dir="play">▶ Assistir o trade</button>
+        <button class="step-btn" type="button" data-anim="1" data-dir="next">Próximo ›</button>
+        <span class="stage-count" id="stageCount1"></span>
+      </div>
       <div id="anim1"></div>
-      <div class="readout anim-status" id="status1" style="display:none;"></div>
+      <div class="readout anim-status" id="status1" aria-live="polite">Visão geral do trade completo. Use os controles para percorrer estágio a estágio, ou clique em "Assistir" para o replay guiado.</div>
     </div>
     <div class="espelho"><b>Venda (short):</b> espelhado — EMA 9 abaixo da EMA 21, repique até a média, candle de fraqueza, entrada no rompimento da mínima.</div>
     <div class="melhor-evitar">
@@ -216,9 +227,14 @@
       <li><b>Alvos:</b> Alvo 1 na VWAP · Alvo 2 na banda superior do desvio ou +1×ATR acima da VWAP.</li>
     </ol>
     <div class="anim-block">
-      <button class="play-btn" type="button" data-anim="2">▶ Assistir o trade</button>
+      <div class="anim-ctrl">
+        <button class="step-btn" type="button" data-anim="2" data-dir="prev">‹ Voltar</button>
+        <button class="step-btn primary" type="button" data-anim="2" data-dir="play">▶ Assistir o trade</button>
+        <button class="step-btn" type="button" data-anim="2" data-dir="next">Próximo ›</button>
+        <span class="stage-count" id="stageCount2"></span>
+      </div>
       <div id="anim2"></div>
-      <div class="readout anim-status" id="status2" style="display:none;"></div>
+      <div class="readout anim-status" id="status2" aria-live="polite">Visão geral do trade completo. Use os controles para percorrer estágio a estágio, ou clique em "Assistir" para o replay guiado.</div>
     </div>
     <div class="espelho"><b>Venda (short):</b> preço esticado acima da VWAP + RSI ≥ 70, candle de topo, RSI cruzando abaixo de 70. Alvo = VWAP.</div>
     <div class="melhor-evitar">
@@ -241,9 +257,14 @@
       <li><b>Alvos:</b> Alvo 1 em 2R · Alvo 2 com trailing pela EMA 20 enquanto o MACD não cruzar para baixo.</li>
     </ol>
     <div class="anim-block">
-      <button class="play-btn" type="button" data-anim="3">▶ Assistir o trade</button>
+      <div class="anim-ctrl">
+        <button class="step-btn" type="button" data-anim="3" data-dir="prev">‹ Voltar</button>
+        <button class="step-btn primary" type="button" data-anim="3" data-dir="play">▶ Assistir o trade</button>
+        <button class="step-btn" type="button" data-anim="3" data-dir="next">Próximo ›</button>
+        <span class="stage-count" id="stageCount3"></span>
+      </div>
       <div id="anim3"></div>
-      <div class="readout anim-status" id="status3" style="display:none;"></div>
+      <div class="readout anim-status" id="status3" aria-live="polite">Visão geral do trade completo. Use os controles para percorrer estágio a estágio, ou clique em "Assistir" para o replay guiado.</div>
     </div>
     <div class="espelho"><b>Venda (short):</b> preço abaixo da EMA 20 + MACD cruzando para baixo (de preferência acima/perto do zero). Saída quando o MACD cruzar para cima.</div>
     <div class="melhor-evitar">
@@ -267,9 +288,14 @@
       <li><b>Alvos:</b> Alvo 1 na projeção da altura da consolidação (1× o range) · Alvo 2 em 2× ou trailing pela linha inferior do canal.</li>
     </ol>
     <div class="anim-block">
-      <button class="play-btn" type="button" data-anim="4">▶ Assistir o trade</button>
+      <div class="anim-ctrl">
+        <button class="step-btn" type="button" data-anim="4" data-dir="prev">‹ Voltar</button>
+        <button class="step-btn primary" type="button" data-anim="4" data-dir="play">▶ Assistir o trade</button>
+        <button class="step-btn" type="button" data-anim="4" data-dir="next">Próximo ›</button>
+        <span class="stage-count" id="stageCount4"></span>
+      </div>
       <div id="anim4"></div>
-      <div class="readout anim-status" id="status4" style="display:none;"></div>
+      <div class="readout anim-status" id="status4" aria-live="polite">Visão geral do trade completo. Use os controles para percorrer estágio a estágio, ou clique em "Assistir" para o replay guiado.</div>
     </div>
     <div class="espelho"><b>Venda (short):</b> rompimento da mínima dos 20 candles com volume acima da média. Alvo pela projeção da faixa.</div>
     <div class="melhor-evitar">
@@ -357,26 +383,64 @@ function setStatus(A, i, el) {
   A.phases.forEach(function(p) { if (i >= p.at) txt = p.text; });
   if (txt) el.innerHTML = txt;
 }
-function playAnim(id) {
+function stageOfIndex(A, i) {
+  var s = 0;
+  A.phases.forEach(function(p, k) { if (i >= p.at) s = k; });
+  return s;
+}
+function ctrlBtn(id, dir) {
+  return document.querySelector('.step-btn[data-anim="' + id + '"][data-dir="' + dir + '"]');
+}
+function updateCtrl(id) {
   var A = ANIMS[id];
-  if (!A) return;
+  var atRest = (A.cur === -1);
+  ctrlBtn(id, 'prev').disabled = atRest || A.cur === 0;
+  ctrlBtn(id, 'next').disabled = !atRest && A.cur === A.phases.length - 1;
+  document.getElementById('stageCount' + id).textContent =
+    atRest ? 'Visão geral' : ('Estágio ' + (A.cur + 1) + ' de ' + A.phases.length);
+}
+function stopPlay(id) {
+  var A = ANIMS[id];
   if (A.timer) { clearInterval(A.timer); A.timer = null; }
+  var btn = ctrlBtn(id, 'play');
+  btn.textContent = '▶ Assistir o trade';
+  btn.classList.remove('playing');
+}
+function jumpTo(id, stageIdx) {
+  var A = ANIMS[id];
+  stopPlay(id);
+  stageIdx = Math.max(0, Math.min(A.phases.length - 1, stageIdx));
+  A.cur = stageIdx;
+  var at = A.phases[stageIdx].at;
+  A.draw(at);
+  setStatus(A, at, document.getElementById('status' + id));
+  updateCtrl(id);
+}
+function playFrom(id) {
+  var A = ANIMS[id];
+  if (A.timer) { stopPlay(id); return; } // clicar de novo pausa
   var el = document.getElementById('status' + id);
-  el.style.display = 'block';
+  var btn = ctrlBtn(id, 'play');
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) { A.draw(A.n - 1); setStatus(A, A.n - 1, el); return; }
-  var i = 4;
-  A.draw(i); setStatus(A, i, el);
+  if (reduced) {
+    A.draw(A.n - 1); setStatus(A, A.n - 1, el); A.cur = A.phases.length - 1; updateCtrl(id);
+    return;
+  }
+  btn.textContent = '■ Parar'; btn.classList.add('playing');
+  var i = (A.cur === -1) ? 4 : A.phases[A.cur].at;
+  A.draw(i); setStatus(A, i, el); A.cur = stageOfIndex(A, i); updateCtrl(id);
   A.timer = setInterval(function() {
     i++;
-    if (i >= A.n) { clearInterval(A.timer); A.timer = null; return; }
-    A.draw(i); setStatus(A, i, el);
+    if (i >= A.n) { stopPlay(id); A.cur = A.phases.length - 1; updateCtrl(id); return; }
+    A.draw(i); setStatus(A, i, el); A.cur = stageOfIndex(A, i); updateCtrl(id);
   }, 80);
 }
-document.querySelectorAll('.play-btn').forEach(function(b) {
+document.querySelectorAll('.step-btn').forEach(function(b) {
   b.addEventListener('click', function() {
-    playAnim(b.getAttribute('data-anim'));
-    b.textContent = '↻ Rever o trade';
+    var id = b.getAttribute('data-anim'), dir = b.getAttribute('data-dir');
+    if (dir === 'play') playFrom(id);
+    else if (dir === 'prev') jumpTo(id, ANIMS[id].cur === -1 ? 0 : ANIMS[id].cur - 1);
+    else if (dir === 'next') jumpTo(id, ANIMS[id].cur === -1 ? 0 : ANIMS[id].cur + 1);
   });
 });
 
@@ -652,6 +716,11 @@ document.querySelectorAll('.play-btn').forEach(function(b) {
   };
   ANIMS[4].draw(n - 1);
 })();
+
+['1', '2', '3', '4'].forEach(function(id) {
+  ANIMS[id].cur = -1;
+  updateCtrl(id);
+});
 
 /* ===== seletor de regime ===== */
 var REGIME_INFO = {
