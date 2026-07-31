@@ -145,29 +145,31 @@ p + p { margin-top: 12px; }
   outline-offset: 2px;
 }
 .lens-switch {
-  display: inline-flex;
-  border: 1px solid var(--switch-border);
-  border-radius: 999px;
-  overflow: hidden;
+  display: flex; flex-wrap: wrap; gap: 8px;
   margin: 24px 0 18px;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 13.5px;
-  background: var(--switch-bg);
 }
 .lens-switch button {
-  border: none; background: transparent; cursor: pointer;
+  border: 1px solid var(--grid); background: var(--card); cursor: pointer;
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; font: inherit; color: var(--ink);
-  transition: background 0.2s, color 0.2s;
+  padding: 8px 14px; font: inherit; color: var(--ink-soft);
+  border-radius: 999px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
-.lens-switch .inline-icon {
-  width: 14px;
-  height: 14px;
-}
-.lens-switch button:focus-visible { outline: 3px solid var(--osc); outline-offset: -3px; }
-.lens-switch button.active-osc { background: var(--osc); color: var(--on-accent); }
-.lens-switch button.active-trend { background: var(--trend); color: var(--on-accent); }
+.lens-switch button:hover { border-color: var(--wire); color: var(--ink); }
+.lens-switch .inline-icon { width: 14px; height: 14px; }
+.lens-switch button:focus-visible { outline: 3px solid var(--wire); outline-offset: 2px; }
+/* a lente ativa assume a cor da própria família */
+.lens-switch button.on-osc   { background: var(--osc);   border-color: var(--osc);   color: var(--on-accent); }
+.lens-switch button.on-trend { background: var(--trend); border-color: var(--trend); color: var(--on-accent); }
+.lens-switch button.on-lvl   { background: var(--lvl);   border-color: var(--lvl);   color: var(--on-accent); }
+.lens-switch button.on-vol   { background: var(--vol);   border-color: var(--vol);   color: var(--on-accent); }
+.lens-switch button.on-risk  { background: var(--risk);  border-color: var(--risk);  color: var(--on-accent); }
+.lens-caption b.lvl-word  { color: var(--lvl); }
+.lens-caption b.vol-word  { color: var(--vol); }
+.lens-caption b.risk-word { color: var(--risk); }
 .hero-chart-wrap {
   background: var(--card);
   border: 1px solid var(--grid);
@@ -572,7 +574,7 @@ footer {
     </div>
 
     <div class="lens-switch" role="group" aria-label="Escolher lente de análise">
-      <button id="lensOsc" class="active-osc" onclick="setLens('osc')">
+      <button id="lensOsc" class="on-osc" onclick="setLens('osc')">
         <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"></path>
           <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"></path>
@@ -584,6 +586,24 @@ footer {
           <circle cx="12" cy="12" r="10"></circle>
           <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"></path>
         </svg>Direção
+      </button>
+      <button id="lensLvl" onclick="setLens('lvl')">
+        <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 4h18"></path><path d="M3 20h18"></path>
+          <path d="m6 16 3.5-5 2.5 3 3.5-6 2.5 4"></path>
+        </svg>Níveis
+      </button>
+      <button id="lensVol" onclick="setLens('vol')">
+        <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="12" x2="12" y1="20" y2="10"></line>
+          <line x1="18" x2="18" y1="20" y2="4"></line>
+          <line x1="6" x2="6" y1="20" y2="16"></line>
+        </svg>Volume
+      </button>
+      <button id="lensRisk" onclick="setLens('risk')">
+        <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+        </svg>Risco
       </button>
     </div>
 
@@ -872,6 +892,7 @@ footer {
 
 /* ================== DADOS REAIS (AMD, fechamentos diários) ================== */
 var CLOSES = [112.06,110.71,110.31,114.56,112.86,113.03,110.73,114.63,117.31,118.58,115.69,116.19,121.73,123.24,121.14,118.5,116.16,126.39,127.1,126.79,128.24,129.58,138.43,143.4,143.68,143.81,141.9,136.11,138.52,137.91,134.8,137.82,138.41,144.16,146.42,146.24,155.61,160.08,160.41,156.99,157.0,154.72,158.65,162.12,166.47,173.66,177.44,179.51,176.31,171.7,176.78,174.31,163.12,172.4,172.76,172.28,174.95,184.42,180.95,177.51,176.14,166.55,165.2,163.71,167.76,163.36,166.62,167.13,168.58,162.63,162.32,162.13,161.79,151.14,151.41,155.82,159.54,155.67,158.57,161.16,160.46,159.16,157.92,157.39,159.79,160.9,160.88,161.27,159.46,161.36,161.79,164.01,169.73,164.67,203.71,211.51,235.56,232.89,214.9,216.42,218.09,238.6,234.56,233.08,240.56,238.03,230.23,234.99,252.92,259.67,258.01,264.33,254.84,256.12,259.65,250.05,256.33,237.7,233.54,243.98,237.52,258.89,247.96,246.81,240.52,230.29,223.55,206.02,203.78,215.05,206.13,214.24,217.53,219.76,215.24,217.6,215.98,217.97,221.11,221.62,221.42,221.43,210.78,207.58,209.17,198.11,201.06,213.43,214.95,214.9,215.04,214.99,215.61,215.34,214.16,223.47,221.08,214.35,210.02,204.68,203.17,207.69,220.97,223.6,227.92,231.83,231.92,249.8,253.73,259.68,251.31,252.03,252.74,252.18,236.73,246.27,242.11,200.19,192.5,208.44,216.0,213.57,213.58,205.94,207.32,203.08,200.12,203.37,200.15,196.6,213.84,210.86,203.68,200.21,198.62,190.95,202.07,199.45,192.43,202.68,203.23,204.83,197.74,193.39,196.58,196.31,199.46,205.27,201.33,202.68,205.37,220.27,203.77,201.99,196.04,203.43,210.21,217.5,220.18,221.53,231.82,236.64,245.04,246.83,255.07,258.12,278.26,278.39,274.95,284.49,303.46,305.33,347.81,334.63,323.21,337.11,354.49,360.54,341.54,355.26,421.39,408.46,455.19,458.79,448.29,445.5,449.7,424.1,420.99,414.05,447.58,449.59,467.51,503.89,495.54,518.09,516.1,510.13,521.54,542.52,523.2,466.38,490.33,475.505,452.4,488.45,511.57,547.26,507.29,512.48,537.37,551.63,519.85,519.74,532.57,521.58,539.49,580.91,540.88,517.82];
+var VOLUMES = [43594606,29251957,30867274,37885019,27483741,30572131,36088472,34078358,37161484,31024986,34182902,27042083,55437652,41691908,32261863,44718365,39702742,100968478,86623910,49627112,79930980,65152874,78571997,74607219,58180081,61937853,42972468,55257237,39227986,28645993,37395010,36124612,37013130,61101465,50049179,44718554,93370081,59492760,50605117,48859835,39021130,49028017,41510896,48440112,53432260,68267835,108154838,64820291,71765285,75396130,52951044,88808520,133641835,95448310,68866692,70651033,52335746,108305129,66308821,51543136,35937528,64455006,60233226,37880461,43998605,36134684,52138562,37031044,36285192,37516824,38656131,30752786,32103496,78255950,41848995,42802472,52465270,48817715,42232777,36808726,27946478,41823842,84549468,55448076,46505480,39448320,38464120,36809877,30316931,39828794,29669331,39895177,55475228,42699147,248859576,115748143,159983459,94290740,118656636,63104021,71216269,108480962,69726437,55804203,56741695,47122393,59668778,39024429,71221144,65613111,47448669,49335594,45162492,34449205,36351420,56491830,67366572,66049698,52162576,43361641,61336768,108941979,63178592,47655644,37942206,45619850,52093445,66342870,67421145,46749561,69773496,43270240,18657987,30768722,42002462,28545180,24478204,33292396,30943182,25166128,23279366,30694649,37073910,27222196,23467569,31595409,29720136,58445450,24950728,20272288,7956797,15792558,20326855,16409566,17591581,36446169,31941147,40033208,29715483,27505031,24217339,27287274,56894937,40466520,55270210,42545614,44327712,62385578,37945005,47525928,30672461,25691598,27061187,31685168,40035670,36308106,53097051,107173293,62196419,54504470,38810841,25326694,33384744,32180957,26123882,33712081,35664087,25842274,36317256,28187909,81367020,44588059,35020472,31312396,34120155,37785697,40912561,36000660,33913779,38877220,29139162,23076366,28886913,27561889,30285170,22779675,28569135,32245329,37265103,31857752,27258849,48518269,49212976,29206578,41053298,42318748,40835794,38463484,30786420,26483009,35496362,27126209,36477243,22781787,25733227,24695184,64850772,35519852,34833859,38950875,49054237,45619726,81616660,50585307,43002479,44704367,42115325,34279169,42000243,64235117,87732167,44885481,58134868,46085390,39140061,30423354,26113570,29131579,28432130,38756913,36137499,27251983,34758602,38473784,27589331,31438519,30803236,33309248,24293209,29411149,29109999,46900606,25158813,37799812,27777399,30463082,31618462,33482425,28411694,27085340,43805645,25983245,30196780,26548270,27115339,52705137,26671016,34488503,28326776,28228930]; /* volume diário real da AMD, alinhado a CLOSES */
 var N = CLOSES.length;
 
 /* ================== MOTORES DE CÁLCULO ================== */
@@ -935,16 +956,60 @@ function ptsOf(vals, xm, ym) {
   return out;
 }
 
-/* ================== HERO: DUAS LENTES ================== */
+/* ================== HERO: AS SEIS LENTES ================== */
 var HW = 840, HH = 320, HX0 = 46, HX1 = HW - 16;
 function hxm(i) { return HX0 + i / (N - 1) * (HX1 - HX0); }
 
 var heroRSI = calcRSI(CLOSES, 14);
 var heroE20 = ema(CLOSES, 20), heroE50 = ema(CLOSES, 50), heroS200 = sma(CLOSES, 200);
 
+/* --- níveis: pivôs agrupados em zonas (mesmo método da página de suportes) --- */
+function heroZones(k, tolPct, minT) {
+  var piv = [], i, j;
+  for (i = k; i < N - k; i++) {
+    var isH = true, isL = true;
+    for (j = i - k; j <= i + k; j++) {
+      if (CLOSES[j] > CLOSES[i]) isH = false;
+      if (CLOSES[j] < CLOSES[i]) isL = false;
+    }
+    if (isH) piv.push({ i: i, p: CLOSES[i], kind: 'H' });
+    else if (isL) piv.push({ i: i, p: CLOSES[i], kind: 'L' });
+  }
+  var zones = [];
+  piv.slice().sort(function (a, b) { return a.p - b.p; }).forEach(function (pv) {
+    for (var z = 0; z < zones.length; z++) {
+      if (Math.abs(pv.p - zones[z].c) / zones[z].c * 100 <= tolPct) {
+        zones[z].pts.push(pv);
+        var acc = 0; zones[z].pts.forEach(function (x) { acc += x.p; });
+        zones[z].c = acc / zones[z].pts.length;
+        return;
+      }
+    }
+    zones.push({ c: pv.p, pts: [pv] });
+  });
+  zones = zones.filter(function (z) { return z.pts.length >= minT; })
+               .sort(function (a, b) { return b.pts.length - a.pts.length; });
+  return { pivots: piv, zones: zones };
+}
+var heroLvl = heroZones(5, 2.5, 3);
+
+/* --- risco: quedas a partir do topo anterior (drawdown) --- */
+var heroDD = (function () {
+  var peak = CLOSES[0], dd = [], worst = 0, worstI = 0;
+  for (var i = 0; i < N; i++) {
+    if (CLOSES[i] > peak) peak = CLOSES[i];
+    var d = (CLOSES[i] / peak - 1) * 100;
+    dd.push(d);
+    if (d < worst) { worst = d; worstI = i; }
+  }
+  return { dd: dd, worst: worst, worstI: worstI };
+})();
+
 function heroSvg(lens) {
   var hh = HH;
-  var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + hh + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico do preço da AMD visto pela lente selecionada: velocidade (RSI) ou direção (médias móveis). A legenda explicativa está logo abaixo.\" font-family="ui-monospace, monospace">';
+  var rot = { osc: 'velocidade (RSI)', trend: 'direção (médias móveis)', lvl: 'níveis (zonas de suporte e resistência)',
+              vol: 'volume negociado', risk: 'risco (quedas a partir do topo)' };
+  var s = '<svg class="chart" viewBox="0 0 ' + HW + ' ' + hh + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico da AMD pela lente de ' + (rot[lens] || lens) + '. A legenda explicativa está logo abaixo.\" font-family="ui-monospace, monospace">';
 
   if (lens === 'osc') {
     var ry0 = 40, ry1 = hh - 16;
@@ -957,7 +1022,7 @@ function heroSvg(lens) {
     s += '<text x="' + (HX0-6) + '" y="' + (rym(30)+4) + '" font-size="10" fill="var(--osc)" text-anchor="end">30</text>';
     s += poly(ptsOf(heroRSI, hxm, rym), 'var(--osc)', 2);
     s += '<text x="' + HX0 + '" y="16" font-size="11" fill="var(--osc)" font-weight="700">RSI(14) — a leitura de velocidade</text>';
-  } else {
+  } else if (lens === 'trend') {
     var pm = mapper(CLOSES, HX0, HX1, 16, hh - 20);
     s += poly(ptsOf(heroS200, hxm, pm.y), 'var(--trend)', 3);
     s += poly(ptsOf(heroE50, hxm, pm.y), 'var(--ma-mid)', 1.8);
@@ -967,6 +1032,76 @@ function heroSvg(lens) {
     s += '<text x="' + (HX1-4) + '" y="' + (pm.y(heroE20[lastI])-6) + '" font-size="10" fill="var(--ma-fast)" text-anchor="end" font-weight="700">EMA20</text>';
     s += '<text x="' + (HX1-4) + '" y="' + (pm.y(heroE50[lastI])+14) + '" font-size="10" fill="var(--ma-mid)" text-anchor="end" font-weight="700">EMA50</text>';
     s += '<text x="' + (HX1-4) + '" y="' + (pm.y(heroS200[lastI])+16) + '" font-size="10" fill="var(--trend)" text-anchor="end" font-weight="700">SMA200</text>';
+
+  } else if (lens === 'lvl') {
+    var lm = mapper(CLOSES, HX0, HX1, 16, hh - 20);
+    /* as zonas se concentram na faixa densa; alterna o lado do rótulo e
+       empurra para cima quando o anterior do mesmo lado ficaria colado */
+    var usados = { esq: -99, dir: -99 };
+    heroLvl.zones.slice(0, 4).forEach(function (z, zi) {
+      var yT = lm.y(z.c * 1.025), yB = lm.y(z.c * 0.975);
+      s += '<rect x="' + HX0 + '" y="' + yT.toFixed(1) + '" width="' + (HX1 - HX0) +
+           '" height="' + (yB - yT).toFixed(1) + '" fill="var(--lvl)" opacity="0.20" rx="3"/>';
+      var dir = (zi % 2 === 0), lado = dir ? 'dir' : 'esq', ty = yT - 4;
+      if (Math.abs(ty - usados[lado]) < 13) ty = usados[lado] - 13;
+      usados[lado] = ty;
+      s += '<text x="' + (dir ? HX1 - 4 : HX0 + 4) + '" y="' + ty.toFixed(1) +
+           '" font-size="10" fill="var(--lvl)" text-anchor="' + (dir ? 'end' : 'start') +
+           '" font-weight="700">~$' + z.c.toFixed(0) + ' · ' + z.pts.length + ' toques</text>';
+    });
+    s += poly(ptsOf(CLOSES, hxm, lm.y), 'var(--ink)', 1.7);
+    heroLvl.pivots.forEach(function (pv) {
+      s += '<circle cx="' + hxm(pv.i).toFixed(1) + '" cy="' + lm.y(pv.p).toFixed(1) +
+           '" r="2.4" fill="' + (pv.kind === 'H' ? 'var(--danger)' : 'var(--trend)') + '" opacity="0.75"/>';
+    });
+    s += '<text x="' + HX0 + '" y="16" font-size="11" fill="var(--lvl)" font-weight="700">Zonas com 3+ toques — onde o preço já reagiu antes</text>';
+
+  } else if (lens === 'vol') {
+    var vSplit = 214;
+    var vm = mapper(CLOSES, HX0, HX1, 30, vSplit - 14);
+    var vMax = Math.max.apply(null, VOLUMES);
+    var bw = Math.max(1.4, (HX1 - HX0) / N - 0.7);
+    for (var vi = 0; vi < N; vi++) {
+      var vh = VOLUMES[vi] / vMax * (hh - 18 - vSplit);
+      s += '<rect x="' + (hxm(vi) - bw / 2).toFixed(1) + '" y="' + (hh - 18 - vh).toFixed(1) +
+           '" width="' + bw.toFixed(1) + '" height="' + vh.toFixed(1) +
+           '" fill="var(--vol)" opacity="' + (VOLUMES[vi] > vMax * 0.45 ? '0.95' : '0.45') + '"/>';
+    }
+    s += poly(ptsOf(CLOSES, hxm, vm.y), 'var(--ink)', 1.7);
+    var vPeak = VOLUMES.indexOf(vMax);
+    s += '<line x1="' + hxm(vPeak).toFixed(1) + '" y1="30" x2="' + hxm(vPeak).toFixed(1) +
+         '" y2="' + (hh - 18) + '" stroke="var(--vol)" stroke-dasharray="3,3" opacity="0.7"/>';
+    s += '<text x="' + (hxm(vPeak) + 6).toFixed(1) + '" y="44" font-size="10" fill="var(--vol)" font-weight="700">' +
+         (vMax / 1e6).toFixed(0) + ' M de ações num único dia</text>';
+    s += '<text x="' + HX0 + '" y="16" font-size="11" fill="var(--vol)" font-weight="700">Preço acima · volume diário real abaixo</text>';
+
+  } else if (lens === 'risk') {
+    /* 0% no alto, quedas penduradas para baixo — como se lê um drawdown */
+    var dTop = 46, dBot = hh - 20;
+    function ddY(v) { return dTop + (v / heroDD.worst) * (dBot - dTop); }
+    s += '<line x1="' + HX0 + '" y1="' + dTop + '" x2="' + HX1 + '" y2="' + dTop +
+         '" stroke="var(--wire)" opacity="0.7"/>';
+    s += '<text x="' + (HX0 - 6) + '" y="' + (dTop + 4) + '" font-size="10" fill="var(--wire)" text-anchor="end">0%</text>';
+    var area = [];
+    for (var di = 0; di < N; di++) area.push(hxm(di).toFixed(1) + ',' + ddY(heroDD.dd[di]).toFixed(1));
+    s += '<polygon points="' + HX0 + ',' + dTop + ' ' + area.join(' ') + ' ' + HX1 + ',' + dTop +
+         '" fill="var(--risk)" opacity="0.22"/>';
+    s += poly(area, 'var(--risk)', 1.8);
+    [-10, -20].forEach(function (lv) {
+      if (Math.abs(lv) > Math.abs(heroDD.worst)) return;
+      s += '<line x1="' + HX0 + '" y1="' + ddY(lv).toFixed(1) + '" x2="' + HX1 + '" y2="' + ddY(lv).toFixed(1) +
+           '" stroke="var(--risk)" stroke-dasharray="4,3" opacity="0.45"/>';
+      s += '<text x="' + (HX0 - 6) + '" y="' + (ddY(lv) + 4).toFixed(1) +
+           '" font-size="10" fill="var(--risk)" text-anchor="end">' + lv + '%</text>';
+    });
+    s += '<circle cx="' + hxm(heroDD.worstI).toFixed(1) + '" cy="' + ddY(heroDD.worst).toFixed(1) +
+         '" r="4" fill="var(--risk)"/>';
+    var wx = hxm(heroDD.worstI), wRight = wx < HX1 - 170;
+    s += '<text x="' + (wRight ? wx + 9 : wx - 9).toFixed(1) + '" y="' + (ddY(heroDD.worst) - 8).toFixed(1) +
+         '" font-size="10" fill="var(--risk)" font-weight="700" text-anchor="' + (wRight ? 'start' : 'end') +
+         '">pior queda: ' + heroDD.worst.toFixed(1) + '%</text>';
+    s += '<text x="' + HX0 + '" y="16" font-size="11" fill="var(--risk)" font-weight="700">Distância do topo anterior — o tombo que era preciso aguentar</text>';
+
   }
   s += '</svg>';
   return s;
@@ -974,14 +1109,19 @@ function heroSvg(lens) {
 
 var captions = {
   osc: 'A lente da <b class="osc-word">velocidade</b>: o RSI mostra quando o movimento ficou rápido demais (faixas laranja). Repare: mesmo numa alta gigante, o velocímetro raramente ficou no vermelho — sinal de subida sem euforia.',
-  trend: 'A lente da <b class="trend-word">direção</b>: as três médias revelam a rota de fundo. Preço acima da SMA200 (verde) o tempo todo — a bússola nunca deixou de apontar para cima, mesmo nos solavancos.'
+  trend: 'A lente da <b class="trend-word">direção</b>: as três médias revelam a rota de fundo. Preço acima da SMA200 (verde) o tempo todo — a bússola nunca deixou de apontar para cima, mesmo nos solavancos.',
+  lvl: 'A lente dos <b class="lvl-word">níveis</b>: cada ponto é um pivô — um dia em que o preço virou. Onde eles se empilham, forma-se uma <b>faixa</b> que o mercado respeitou várias vezes. Note que é sempre uma faixa, nunca uma linha exata.',
+  vol: 'A lente do <b class="vol-word">volume</b>: as barras contam quantas ações trocaram de mãos. Os picos marcam os dias de decisão — resultado, notícia, reprecificação. Preço sem volume é opinião; com volume, é convicção.',
+  risk: 'A lente do <b class="risk-word">risco</b>: a mesma alta vista por baixo — a distância de cada dia até o topo anterior. Mesmo numa das maiores altas do mercado, era preciso aguentar quedas fortes no meio do caminho. É isso que o dimensionamento de posição existe para tornar suportável.'
 };
+var LENS_IDS = { osc: 'lensOsc', trend: 'lensTrend', lvl: 'lensLvl', vol: 'lensVol', risk: 'lensRisk' };
 function setLens(lens) {
   document.getElementById('heroChart').innerHTML = heroSvg(lens);
   document.getElementById('lensCaption').innerHTML = captions[lens];
-  var bo = document.getElementById('lensOsc'), bt = document.getElementById('lensTrend');
-  bo.className = lens === 'osc' ? 'active-osc' : '';
-  bt.className = lens === 'trend' ? 'active-trend' : '';
+  for (var k in LENS_IDS) {
+    var b = document.getElementById(LENS_IDS[k]);
+    if (b) b.className = (k === lens) ? 'on-' + k : '';
+  }
 }
 setLens('osc');
 
