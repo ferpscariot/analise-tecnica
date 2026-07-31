@@ -277,6 +277,18 @@ p + p { margin-top: 12px; }
 .family-card.lvl li a:hover,
 .family-card.lvl li a:focus-visible { color: var(--lvl); }
 .family-card.lvl li a:focus-visible { outline-color: var(--lvl); }
+.family-card.flow { border-color: var(--flow); }
+.family-card.flow .icon { color: var(--flow); }
+.family-card.flow li::before { color: var(--flow); }
+.family-card.flow li a:hover,
+.family-card.flow li a:focus-visible { color: var(--flow); }
+.family-card.flow li a:focus-visible { outline-color: var(--flow); }
+.family-card.strat { border-color: var(--strat); }
+.family-card.strat .icon { color: var(--strat); }
+.family-card.strat li::before { color: var(--strat); }
+.family-card.strat li a:hover,
+.family-card.strat li a:focus-visible { color: var(--strat); }
+.family-card.strat li a:focus-visible { outline-color: var(--strat); }
 .eyebrow.vol { color: var(--vol); }
 .eyebrow.risk { color: var(--risk); }
 .soon {
@@ -511,7 +523,7 @@ footer {
 <!-- ================= ABAS ================= -->
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
-    <a href="index.html" aria-current="page">Guia</a>
+    <a href="index.html" aria-current="page">Início</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -524,8 +536,7 @@ footer {
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
-    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
     <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
@@ -545,7 +556,7 @@ footer {
 
 <section id="hero">
   <div class="spine">
-    <div class="eyebrow">Guia vivo · análise técnica</div>
+    <div class="eyebrow">Guia básico de análise técnica</div>
     <div class="thesis">
       <h1>Indicadores<br>Um guia para análise técnica</h1>
       <p class="lead" style="margin-top:18px;">
@@ -587,13 +598,13 @@ footer {
 <!-- ================= FAMILIES ================= -->
 <section id="families" style="padding-top:10px;">
   <div class="spine">
-    <div class="divider">Mapa · quatro territórios</div>
+    <div class="divider">Mapa · os territórios</div>
     <div class="eyebrow" style="margin-top:40px;">
       <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"></path>
         <path d="M15 5.764v15"></path>
         <path d="M9 3.236v15"></path>
-      </svg>Mapa dos indicadores
+      </svg>Mapa do guia
     </div>
     <h2>Escolha pela pergunta, não pela sigla</h2>
     <p class="lead">Cada família responde a uma pergunta diferente sobre o mesmo gráfico. Entre pela pergunta que você quer responder — cada link leva à página completa, com laboratório interativo e dados reais.</p>
@@ -611,8 +622,7 @@ footer {
         <ul>
           <li><a href="rsi.html">RSI — força relativa</a></li>
           <li><a href="estocastico.html">Estocástico — posição no range</a></li>
-          <li><a href="momentum.html">Momentum — velocidade bruta</a></li>
-          <li><a href="roc.html">ROC — variação percentual</a></li>
+          <li><a href="momentum.html">Momentum e ROC — velocidade bruta</a></li>
           <li><a href="ao.html">AO — pulso do momentum</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"está esticado?"</em></p>
@@ -666,7 +676,7 @@ footer {
         </ul>
         <p class="asks">Pergunta que respondem: <em>"quanto posso perder?"</em></p>
       </div>
-      <div class="family-card lvl reveal" style="grid-column: 1 / -1;">
+      <div class="family-card lvl reveal">
         <span class="icon" aria-hidden="true">
           <svg class="lucide-icon" viewBox="0 0 24 24">
             <path d="M3 4h18"></path>
@@ -680,6 +690,42 @@ footer {
           <li><a href="suportes.html">Suportes e resistências — zonas, rompimentos e troca de papel</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"onde o preço tende a reagir?"</em></p>
+      </div>
+      <div class="family-card flow reveal">
+        <span class="icon" aria-hidden="true">
+          <svg class="lucide-icon" viewBox="0 0 24 24">
+            <path d="M3 6h7"></path>
+            <path d="M3 12h13"></path>
+            <path d="M3 18h9"></path>
+            <path d="m17 15 3 3-3 3"></path>
+          </svg>
+        </span>
+        <h3 style="color:var(--flow);">Fluxo</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">A camada abaixo do gráfico. O book de ofertas mostra as intenções antes de virarem preço — e também como essa leitura engana, do spoofing aos padrões que só ficam nítidos depois.</p>
+        <ul>
+          <li><a href="fluxo.html">Book de ofertas — a escada de intenções</a></li>
+          <li><a href="fluxo.html">Agressão e desequilíbrio de fluxo</a></li>
+          <li><a href="fluxo.html">Spoofing — anatomia do blefe</a></li>
+          <li><a href="fluxo.html">Padrões gráficos — e por que falham</a></li>
+        </ul>
+        <p class="asks">Pergunta que respondem: <em>"quem está por trás do movimento?"</em></p>
+      </div>
+      <div class="family-card strat reveal" style="grid-column: 1 / -1;">
+        <span class="icon" aria-hidden="true">
+          <svg class="lucide-icon" viewBox="0 0 24 24">
+            <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+            <path d="m19 9-5 5-4-4-3 3"></path>
+          </svg>
+        </span>
+        <h3 style="color:var(--strat);">Estratégias</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">Onde tudo se junta. Quatro receitas completas — contexto → setup → gatilho → stop → alvo — que combinam os indicadores das outras famílias em processos fechados. Nenhuma prevê o futuro; todas definem o que fazer quando você erra.</p>
+        <ul>
+          <li><a href="estrategias.html">Pullback de tendência</a></li>
+          <li><a href="estrategias.html">Reversão à média na VWAP</a></li>
+          <li><a href="estrategias.html">Momentum de tendência</a></li>
+          <li><a href="estrategias.html">Rompimento com volume</a></li>
+        </ul>
+        <p class="asks">Pergunta que respondem: <em>"como transformo isso em um processo?"</em></p>
       </div>
     </div>
   </div>
@@ -720,12 +766,11 @@ footer {
         <span class="t-num osc">3</span>
         <div>
           <h3>Velocidade — os osciladores</h3>
-          <p>Comece pelo RSI (o mais usado), sinta a mecânica no Estocástico e no Momentum, e feche com ROC e AO.</p>
+          <p>Comece pelo RSI (o mais usado), sinta a mecânica no Estocástico e no Momentum, e feche com o AO.</p>
           <div class="t-links">
             <a href="rsi.html">RSI</a>
             <a href="estocastico.html">Estocástico</a>
             <a href="momentum.html">Momentum</a>
-            <a href="roc.html">ROC</a>
             <a href="ao.html">AO</a>
           </div>
         </div>

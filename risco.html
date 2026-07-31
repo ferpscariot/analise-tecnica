@@ -140,7 +140,7 @@ svg [fill="#fff"] { fill: var(--card); }
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
-    <a href="index.html">Guia</a>
+    <a href="index.html">Início</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -153,8 +153,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
-    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
     <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
@@ -181,7 +180,17 @@ svg [fill="#fff"] { fill: var(--card); }
   <!-- PILLAR 1: ATR -->
   <div class="pillar">
     <div class="phead"><span class="pnum">1</span><h2>ATR — o tamanho do passo diário</h2></div>
-    <p class="ptext">O ATR mede quanto o ativo costuma se mexer por dia. Não diz a direção — só a amplitude. É a matéria-prima de todo o resto. Veja como o mesmo movimento em dólares significa coisas diferentes conforme o preço do ativo.</p>
+    <p class="ptext">ATR é <b>Average True Range</b> — a amplitude média diária. Em uma frase: <b>quantos dólares o ativo costuma percorrer num dia normal</b>. Não diz a direção, só o tamanho do passo. É a matéria-prima de todo o resto desta página.</p>
+    <div class="formula" style="margin-top:0;margin-bottom:16px;">
+      <span style="color:var(--wire);">Para cada dia, a "amplitude real" é a <b>maior</b> destas três:</span><br>
+      máxima − mínima &nbsp;<span style="color:var(--wire);">(o range do dia)</span><br>
+      |máxima − fechamento anterior| &nbsp;<span style="color:var(--wire);">(gap de alta)</span><br>
+      |mínima − fechamento anterior| &nbsp;<span style="color:var(--wire);">(gap de baixa)</span><br>
+      <span style="color:var(--wire);">────────────────────────────</span><br>
+      <b>ATR = média dessas amplitudes nos últimos 14 dias</b>
+    </div>
+    <p class="ptext">As duas últimas linhas existem por causa dos <b>gaps</b>: se a ação fecha a $100 e abre a $108, o range do dia sozinho esconderia esse salto. O "true" do nome é justamente isso — contar o movimento que aconteceu <em>entre</em> os pregões também. Você não precisa calcular à mão: todo home broker traz ATR(14) pronto como indicador.</p>
+    <p class="ptext">O número em dólares, sozinho, não diz nada — <b>$5 é muito ou pouco?</b> Depende do preço do ativo. Por isso o que importa é o ATR como <b>% do preço</b>. Mexa nos controles e veja:</p>
     <div class="ctrl">
       <label for="atrPrice">Preço do ativo</label>
       <input type="range" id="atrPrice" min="20" max="600" value="517" step="1">
@@ -193,6 +202,7 @@ svg [fill="#fff"] { fill: var(--card); }
       <span class="pill" id="atrValV">$36</span>
     </div>
     <div class="result" id="atrResult" aria-live="polite"></div>
+    <p class="ptext" style="margin-top:14px;margin-bottom:0;">As faixas são referências práticas, não regras oficiais: <b>até ~2%</b> ao dia costuma ser blue chip tranquila; <b>2% a 5%</b> é o território da maioria das ações líquidas; <b>acima de 5%</b> aparece em small caps, cripto e papéis em notícia. O uso disso vem no próximo bloco: o ATR define <b>onde cabe o stop</b> — e o stop define quantas ações você pode comprar.</p>
   </div>
 
   <!-- PILLAR 2: POSITION SIZING -->

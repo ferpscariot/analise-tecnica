@@ -43,6 +43,11 @@
     color: var(--ink-soft); margin: 10px 0; font-family: var(--sans); }
   .legend span { display: flex; align-items: center; gap: 5px; }
   .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .control-hint { flex-basis: 100%; margin-top: -4px; font-family: var(--sans);
+    font-size: 12.5px; font-weight: 400; color: var(--ink-soft); max-width: 66ch; line-height: 1.55; }
+  .control-hint b { color: var(--ink); font-weight: 600; }
+  .why-note { font-size: 13px; color: var(--ink-soft); font-family: var(--sans);
+    line-height: 1.6; margin: 4px 0 2px; max-width: 66ch; }
 </style>
 </head>
 <body>
@@ -50,7 +55,7 @@
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
-    <a href="index.html">Guia</a>
+    <a href="index.html">Início</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -63,8 +68,7 @@
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
-    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
     <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
@@ -112,25 +116,31 @@
   <div class="panel">
     <h2>Detector de zonas — nos dados reais</h2>
     <p class="ptext">
-      O método: achar <b>pivôs</b> (dias que foram máxima ou mínima local) e agrupar os que caem perto uns dos outros em <b>zonas</b>.
-      Ajuste o rigor do pivô e a largura da zona — e repare que suporte/resistência é sempre uma <b>faixa</b>, nunca uma linha exata.
-      Clique numa faixa para ler os toques.
+      O método por trás de todo suporte e resistência: achar os <b>pivôs</b> — dias em que o preço fez uma máxima ou mínima local e <b>virou</b> — e
+      empilhar os que ficam no mesmo preço. Quando vários pivôs se acumulam na mesma faixa, é ali que o mercado "lembrou" daquele nível
+      repetidas vezes. Os dois controles abaixo mudam <b>o que conta como pivô</b> e <b>o que conta como a mesma faixa</b>.
+      Repare que suporte/resistência é sempre uma <b>faixa</b>, nunca uma linha exata.
     </p>
     <div class="controls-row">
       <label for="pivK">Rigor do pivô</label>
       <input type="range" id="pivK" min="2" max="10" value="4">
       <span class="value-pill" id="pivKVal">±4 dias</span>
+      <span class="control-hint">Quantos dias de cada lado precisam ser mais baixos (para um topo) ou mais altos (para um fundo) para o dia valer como pivô.
+        <b>±4</b> exige que ele seja o extremo dos 4 dias antes e 4 depois. Aumente para pegar só os picos e vales realmente importantes; diminua para incluir também as oscilações menores.</span>
     </div>
     <div class="controls-row">
       <label for="zoneTol">Largura da zona</label>
       <input type="range" id="zoneTol" min="0.5" max="3" value="1.5" step="0.25">
       <span class="value-pill" id="zoneTolVal">±1.5%</span>
+      <span class="control-hint">Quão perto dois pivôs precisam estar, em preço, para contarem como o mesmo nível.
+        <b>±1.5%</b> agrupa tudo dentro de 1,5% um do outro. Alargue e você tem menos zonas, porém mais gordas; estreite e as zonas ficam finas e precisas — mas nem toda junta os 3 toques mínimos.</span>
     </div>
     <div class="legend">
       <span><span class="dot" style="background:var(--danger);"></span>pivô de alta (possível teto)</span>
       <span><span class="dot" style="background:var(--trend);"></span>pivô de baixa (possível piso)</span>
       <span><span class="dot" style="background:var(--lvl); border-radius:2px;"></span>zona com 3+ toques</span>
     </div>
+    <p class="why-note">Por que <b>3 toques</b>? Dois pontos você liga em qualquer lugar — três ou mais é o mínimo para dizer que o mercado respeitou aquele nível de propósito, e não por acaso. Clique numa faixa amarela para ver em que dias ela foi tocada.</p>
     <div id="zoneChart"></div>
     <div class="readout" id="zoneReadout" aria-live="polite"></div>
   </div>

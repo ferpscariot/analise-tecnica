@@ -121,7 +121,7 @@ svg [fill="#fff"] { fill: var(--card); }
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
-    <a href="index.html">Guia</a>
+    <a href="index.html">Início</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -134,8 +134,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html" aria-current="page">Momentum — velocidade bruta</a>
-    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="momentum.html" aria-current="page">Momentum e ROC — velocidade bruta</a>
     <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
@@ -201,6 +200,33 @@ svg [fill="#fff"] { fill: var(--card); }
     <p style="font-size:13.5px; color:var(--ink-soft); margin-top:12px;">
       É por isso que Momentum curto capta <b>viradas recentes</b> e Momentum longo capta a <b>maré de fundo</b> —
       não são contraditórios, são perguntas diferentes.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>E o ROC? É o mesmo indicador, em porcentagem</h2>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:14px;">
+      O <b style="color:var(--ink);">ROC</b> (<i>Rate of Change</i>, ou taxa de variação) aparece na lista de indicadores de qualquer
+      plataforma como se fosse outra coisa. Não é: mede exatamente o que o Momentum mede — a distância entre hoje e N períodos atrás —
+      só que dividida pelo preço de partida, virando <b style="color:var(--ink);">porcentagem</b> em vez de dólares.
+    </p>
+    <div class="formula" style="margin-top:0; text-align:left; line-height:1.9;">
+      <span style="color:var(--wire);">em $ →</span> Momentum(N) = Preço hoje − Preço N atrás<br>
+      <span style="color:var(--wire);">em % →</span> ROC(N) = (Preço hoje ÷ Preço N atrás − 1) × 100
+    </div>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-top:14px; margin-bottom:0;">
+      A diferença prática aparece quando o preço muda de escala. Um Momentum de <b style="color:var(--ink);">+$10</b> na AMD a $112,
+      no começo desta série, era um salto de quase 9%; o mesmo <b style="color:var(--ink);">+$10</b> com a ação a $518, no fim, é menos de 2% —
+      o mesmo número dizendo coisas opostas. Por ser relativo, o ROC <b style="color:var(--ink);">se compara entre ativos e entre épocas</b>;
+      o Momentum, não. Fora isso, o formato do gráfico e as leituras (cruzar o zero, divergências, extremos) são idênticos —
+      e é por isso que este guia trata os dois juntos.
+    </p>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-top:12px; margin-bottom:0;">
+      Duas ressalvas valem para os dois. <b style="color:var(--ink);">Nenhum tem faixa fixa:</b> diferente do RSI, preso entre 0 e 100,
+      aqui não há teto nem chão — o que é "esticado" num ativo calmo é rotina num volátil, então compare sempre com o histórico do
+      próprio ativo, nunca com números mágicos. E o ROC de horizonte longo é a <b style="color:var(--ink);">ponte com a literatura
+      acadêmica</b>: o "fator momentum" dos estudos é literalmente o retorno percentual dos últimos N meses — ou seja, um ROC.
+      É a versão do momentum que sobrevive fora do gráfico.
     </p>
   </div>
 

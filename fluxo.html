@@ -118,9 +118,9 @@
     border-bottom:1px solid var(--grid);
   }
   .row:last-child{border-bottom:none}
-  .row .px{text-align:center;color:var(--ink-soft);z-index:2}
+  .row .px{position:relative;text-align:center;color:var(--ink-soft);z-index:2}
   .row.last .px{color:var(--ink);font-weight:500}
-  .qty{z-index:2;transition:color .2s}
+  .qty{position:relative;z-index:2;transition:color .2s}
   .qty.ask{color:var(--danger)}
   .qty.bid{color:var(--trend);text-align:right}
   .qty.empty{color:transparent}
@@ -211,10 +211,10 @@
   .sb-head span:nth-child(3){color:var(--trend);text-align:right}
   .sb-row{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 14px;height:32px;position:relative;border-bottom:1px solid var(--grid)}
   .sb-row:last-child{border-bottom:none}
-  .sb-row .px{text-align:center;color:var(--ink-soft);z-index:2}
+  .sb-row .px{position:relative;text-align:center;color:var(--ink-soft);z-index:2}
   .sb-row.mkt{background:var(--card)}
   .sb-row.mkt .px{color:var(--ink);font-weight:500}
-  .sb-q{z-index:2;transition:opacity .4s,color .3s}
+  .sb-q{position:relative;z-index:2;transition:opacity .4s,color .3s}
   .sb-q.ask{color:var(--danger)} .sb-q.bid{color:var(--trend);text-align:right}
   .sb-q.empty{color:transparent}
   .sb-bar{position:absolute;top:4px;bottom:4px;border-radius:3px;z-index:1;transition:width .5s cubic-bezier(.4,0,.2,1),background .3s,opacity .4s}
@@ -225,8 +225,12 @@
   .sb-row.spoof .sb-q{color:var(--amber);font-weight:500}
   .sb-row.vanish .sb-bar{opacity:0}
   .sb-row.vanish .sb-q{opacity:.25;text-decoration:line-through}
-  /* price marker that slides */
-  .sb-row.pricehere::after{content:"◄ preço";position:absolute;right:10px;font-size:10px;color:var(--accent);letter-spacing:.1em;z-index:3}
+  /* price marker that slides — absolute so it never reflows the fixed grid cell */
+  .sb-row .px{overflow:visible}
+  .price-mark{position:absolute;left:calc(50% + 40px);top:50%;transform:translateY(-50%);font-size:9px;color:var(--accent);letter-spacing:.06em;white-space:nowrap;pointer-events:none;z-index:3}
+  /* flash when price falls onto a level */
+  @keyframes sbHit{0%{background:var(--trend-soft)}70%{background:var(--trend-soft)}100%{background:transparent}}
+  .sb-row.hit{animation:sbHit 1.3s ease-out}
 
   .spoof-side{display:flex;flex-direction:column;gap:14px}
   .spoof-stage{background:var(--card);border:1px solid var(--grid);border-radius:10px;padding:20px;min-height:150px}
@@ -272,7 +276,7 @@
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
-    <a href="index.html">Guia</a>
+    <a href="index.html">Início</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -285,8 +289,7 @@
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
-    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
     <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
@@ -377,7 +380,7 @@
         <div class="spoof-stage" id="spoofStage">
           <div class="ss-num mono" id="ssNum">1 / 4</div>
           <h3 id="ssTitle">Mercado calmo</h3>
-          <p id="ssText">Book normal, ofertas equilibradas dos dois lados. O spoofer quer comprar barato — mas ainda não fez nada. O preço está em 134.25.</p>
+          <p id="ssText">Book equilibrado, preço em 134.25. Repare na compra real de 70 contratos em 134.20, logo abaixo: é gente que quer mesmo comprar ali — se o preço descer até esse nível, essa ordem executa de verdade. O spoofer também quer comprar barato, mas ainda não fez nada.</p>
         </div>
         <div class="spoof-actor" id="spoofActor" data-role="none">
           <span class="sa-dot"></span>
@@ -623,68 +626,76 @@ document.querySelectorAll('[data-flow]').forEach(btn=>{
   ];
 
   // per-stage state: qty per row, which row has spoof, vanish flag, price row idx
+  // real order lives at bid index 0 (the 134.20 row) throughout
   const stages=[
     { // 0 calm
       num:'1 / 4',title:'Mercado calmo',
-      text:'Book normal, ofertas equilibradas dos dois lados. O spoofer quer comprar barato — mas ainda não fez nada. O preço está em 134.25.',
-      ask:[40,52,44], bid:[48,55,42], spoof:-1, vanish:false, price:3,
+      text:'Book equilibrado, preço em 134.25. Repare na compra real de 70 contratos em 134.20, logo abaixo: é gente que quer mesmo comprar ali — se o preço descer até esse nível, essa ordem executa de verdade. O spoofer também quer comprar barato, mas ainda não fez nada.',
+      ask:[40,52,44], bid:[70,55,42], spoof:-1, vanish:false, price:3, real:4,
       role:'none', actorText:'Ninguém agindo ainda'
     },
     { // 1 place wall
       num:'2 / 4',title:'A parede aparece',
-      text:'O spoofer coloca 500 contratos de VENDA em 134.30, logo acima do preço. Enorme, intimidante. Neste instante, esse book é idêntico ao de um vendedor gigante de verdade — você não tem como distinguir.',
-      ask:[40,52,500], bid:[48,55,42], spoof:2, vanish:false, price:3,
+      text:'O spoofer planta 500 contratos de VENDA em 134.30 (contorno âmbar), logo acima do preço. Agora há duas ordens grandes na tela — a venda de 500 e a compra de 70. Olhando só o book, você não tem como saber qual é real e qual é blefe: as duas parecem igualmente sólidas.',
+      ask:[40,52,500], bid:[70,55,42], spoof:2, vanish:false, price:3, real:4,
       role:'place', actorText:'Spoofer plantou 500 @ 134.30'
     },
-    { // 2 victims react
+    { // 2 victims react — real order executes and shrinks
       num:'3 / 4',title:'O mercado se assusta',
-      text:'Quem lê o book pensa: "tem um vendedor gigante travando aí, melhor vender antes que caia". E vende. A pressão vendedora empurra o preço para baixo — para 134.20. A parede fez seu trabalho sem executar um único contrato.',
-      ask:[40,52,500], bid:[70,55,42], spoof:2, vanish:false, price:4,
-      role:'victim', actorText:'Outros vendem → preço cai a 134.20'
+      text:'Quem lê o book pensa: "tem um vendedor gigante travando, melhor vender antes que caia" — e vende a mercado. Essas vendas descem e são executadas contra a compra real de 134.20, que encolhe de 70 para 20 conforme absorve. O preço cai a 134.20. A parede de 500, no topo, não executou nada: o preço foi para o lado oposto.',
+      ask:[40,52,500], bid:[20,55,42], spoof:2, vanish:false, price:4, real:4,
+      role:'victim', actorText:'Vendas executam contra os 70 reais → preço cai a 134.20'
     },
     { // 3 vanish + buy
       num:'4 / 4',title:'Some e compra',
-      text:'Um instante antes de o preço subir e tocar a parede, o spoofer a cancela — ela nunca foi executada. E então ele compra barato, no preço que ele mesmo ajudou a derrubar. Blefe completo.',
-      ask:[40,52,500], bid:[70,55,42], spoof:2, vanish:true, price:4,
-      role:'win', actorText:'Parede cancelada · spoofer compra @ 134.20'
+      text:'Um instante antes de o preço subir e tocar a parede, o spoofer a cancela — os 500 somem sem executar um único contrato. Essa é a assinatura do blefe: a ordem falsa desaparece inteira, a real teria negociado. E o spoofer compra barato em 134.20, no preço que ele mesmo derrubou.',
+      ask:[40,52,500], bid:[20,55,42], spoof:2, vanish:true, price:4, real:4,
+      role:'win', actorText:'Parede cancelada (0 executado) · spoofer compra @ 134.20'
     },
   ];
 
-  let cur=0, timer=null;
+  let cur=0, timer=null, prevPriceIdx=-1;
 
-  function maxQ(st){return Math.max(...st.ask,...st.bid,60,st.spoof>=0?520:0)}
+  // fixed depth scale so bars don't rescale between stages; the 500 wall maxes out (dominant on purpose)
+  const REF=200;
+  const barW=q=>Math.min(100,q/REF*100).toFixed(0);
 
   function render(){
     const st=stages[cur];
-    const mx=maxQ(st);
+    const priceAtReal=(st.price===st.real);
+    const priceMoved=(st.price!==prevPriceIdx);
     let ai=0, bi=0, html='<div class="sb-head"><span>Venda</span><span>Preço</span><span>Compra</span></div>';
     rows.forEach((r,i)=>{
       const isPrice=(i===st.price);
+      const isRealOrder=(i===st.real);
+      const mark=isPrice?(priceAtReal?'<span class="price-mark">◄ preço cai</span>':'<span class="price-mark">◄ preço</span>'):'';
+      const hit=(isRealOrder&&priceAtReal&&priceMoved)?'hit':'';
       if(r.side==='mkt'){
-        html+=`<div class="sb-row mkt ${isPrice?'pricehere':''}"><span class="sb-q empty">·</span><span class="px">${r.px}</span><span class="sb-q empty">·</span></div>`;
+        html+=`<div class="sb-row mkt"><span class="sb-q empty">·</span><span class="px">${r.px}${mark}</span><span class="sb-q empty">·</span></div>`;
         return;
       }
       if(r.side==='ask'){
         const q=st.ask[ai];const isSpoof=(st.spoof===ai);
-        const w=(q/mx*100).toFixed(0);
+        const w=barW(q);
         const vanish=(isSpoof&&st.vanish)?'vanish':'';
-        html+=`<div class="sb-row ${isSpoof?'spoof':''} ${vanish} ${isPrice?'pricehere':''}">
+        html+=`<div class="sb-row ${isSpoof?'spoof':''} ${vanish} ${hit}">
           <div class="sb-bar ask" style="width:${w}%"></div>
           <span class="sb-q ask">${q}</span>
-          <span class="px">${r.px}</span>
+          <span class="px">${r.px}${mark}</span>
           <span class="sb-q empty">·</span></div>`;
         ai++;
       }else{
-        const q=st.bid[bi];const w=(q/mx*100).toFixed(0);
-        html+=`<div class="sb-row ${isPrice?'pricehere':''}">
+        const q=st.bid[bi];const w=barW(q);
+        html+=`<div class="sb-row ${hit}">
           <span class="sb-q empty">·</span>
-          <span class="px">${r.px}</span>
+          <span class="px">${r.px}${mark}</span>
           <div class="sb-bar bid" style="width:${w}%"></div>
           <span class="sb-q bid">${q}</span></div>`;
         bi++;
       }
     });
     book.innerHTML=html;
+    prevPriceIdx=st.price;
 
     ssNum.textContent=st.num;
     ssTitle.textContent=st.title;
@@ -744,6 +755,35 @@ const patterns=[
          <text x="150" y="82" fill="var(--wire)" font-size="10" font-family="monospace">pescoço</text>`,
     logic:'Três topos: um maior no meio (cabeça) entre dois menores (ombros). Perder a "linha de pescoço" sinalizaria reversão de tendência.',
     fail:'Precisa de muitas barras para se formar de modo reconhecível — pouco confiável em 1-5 minutos. E o reconhecimento é subjetivo: o mesmo trecho de preço vira ou não um OCO conforme quem olha.'
+  },
+  {
+    name:'Topo duplo',lbl:'reversão',
+    svg:`<polyline points="15,82 42,28 62,54 88,28 112,70 138,86 165,88" fill="none" stroke="var(--ink-soft)" stroke-width="1.5"/>
+         <line x1="42" y1="54" x2="138" y2="54" stroke="var(--amber)" stroke-width="1.3" stroke-dasharray="4 3"/>
+         <text x="150" y="46" fill="var(--wire)" font-size="10" font-family="monospace">pescoço</text>`,
+    logic:'Dois topos no mesmo nível com um vale no meio (o "M"). A resistência foi testada duas vezes e segurou; perder a linha de pescoço — o fundo do vale — sinalizaria reversão de baixa, com alvo pela altura da figura.',
+    fail:'"No mesmo nível" é elástico: quase nunca os topos são idênticos, e você decide se a diferença conta. Muitos M\'s nunca completam o rompimento — o preço volta a subir do pescoço tantas vezes quanto reverte.'
+  },
+  {
+    name:'Bandeira de alta',lbl:'continuação',
+    svg:`<polyline points="18,90 46,24 60,38 74,30 88,44 102,36" fill="none" stroke="var(--ink-soft)" stroke-width="1.5"/>
+         <line x1="46" y1="20" x2="102" y2="32" stroke="var(--amber)" stroke-width="1.2" stroke-dasharray="4 3"/>
+         <line x1="46" y1="42" x2="102" y2="54" stroke="var(--amber)" stroke-width="1.2" stroke-dasharray="4 3"/>
+         <polyline points="102,36 130,14" fill="none" stroke="var(--trend)" stroke-width="2"/>
+         <text x="120" y="72" fill="var(--wire)" font-size="10" font-family="monospace">mastro+bandeira</text>`,
+    logic:'Um movimento forte (o mastro) seguido de uma consolidação curta e inclinada contra a tendência (a bandeira). A leitura: pausa para respirar antes de continuar na mesma direção, com alvo igual ao tamanho do mastro.',
+    fail:'Distinguir "pausa saudável" de "início de reversão" só é óbvio depois. A mesma consolidação que você chama de bandeira vira topo quando o rompimento falha — e falha com frequência em prazos curtos.'
+  },
+  {
+    name:'Martelo',lbl:'reversão',
+    svg:`<polyline points="14,18 44,38 70,52" fill="none" stroke="var(--ink-soft)" stroke-width="1.5"/>
+         <line x1="90" y1="22" x2="90" y2="88" stroke="var(--trend)" stroke-width="2"/>
+         <rect x="81" y="26" width="18" height="16" rx="2" fill="var(--trend)"/>
+         <polyline points="110,44 138,28 162,16" fill="none" stroke="var(--ink-soft)" stroke-width="1.5"/>
+         <text x="104" y="80" fill="var(--wire)" font-size="10" font-family="monospace">pavio de</text>
+         <text x="104" y="92" fill="var(--wire)" font-size="10" font-family="monospace">rejeição</text>`,
+    logic:'Um candle de corpo pequeno no topo e pavio inferior longo, depois de uma queda. Mostra que os vendedores empurraram o preço para baixo, mas os compradores recuperaram tudo até o fechamento — rejeição do fundo.',
+    fail:'É um único candle: aparece o tempo todo, inclusive no meio de quedas que seguem caindo. Sem confirmação no candle seguinte, "rejeição" e "pausa antes de cair mais" são indistinguíveis.'
   }
 ];
 

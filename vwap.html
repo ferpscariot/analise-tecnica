@@ -49,7 +49,7 @@
 
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
-    <a href="index.html">Guia</a>
+    <a href="index.html">Início</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -62,8 +62,7 @@
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
-    <a role="menuitem" href="roc.html">ROC — variação percentual</a>
+    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
     <a role="menuitem" href="ao.html">AO — pulso do momentum</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
@@ -91,7 +90,27 @@
 
   <div class="formula">
     VWAP = Σ(preço × volume) ÷ Σ(volume) &nbsp;<span style="color:var(--wire);">— acumulado desde um ponto de referência</span><br>
+    <span style="color:var(--wire);">O <b>Σ</b> (sigma) quer dizer "some tudo". Em português: multiplique cada negócio pelo seu volume, some tudo isso, e divida pelo volume total.</span><br>
     <span style="color:var(--wire);">No uso intradiário, a soma <b>zera na abertura</b> de cada pregão. No VWAP ancorado, você escolhe onde começa.</span>
+  </div>
+
+  <div class="panel">
+    <h2>A fórmula em números</h2>
+    <p class="ptext">Suponha só três negócios num dia. A média simples ignora o tamanho de cada um; o VWAP não:</p>
+    <div class="formula" style="margin-top:0;">
+      <span style="color:var(--wire);">negócio 1 →</span> $10 × <b>100</b> ações = $1.000<br>
+      <span style="color:var(--wire);">negócio 2 →</span> $11 × <b>100</b> ações = $1.100<br>
+      <span style="color:var(--wire);">negócio 3 →</span> $18 × <b>10</b> ações &nbsp;= $180<br>
+      <span style="color:var(--wire);">─────────────────────────</span><br>
+      Σ(preço × volume) = $2.280 &nbsp;·&nbsp; Σ(volume) = 210 ações<br>
+      <b style="color:var(--vol);">VWAP = 2.280 ÷ 210 = $10,86</b><br>
+      <span style="color:var(--wire);">Média simples dos preços = (10 + 11 + 18) ÷ 3 = $13,00</span>
+    </div>
+    <p class="ptext" style="margin-bottom:0;">
+      A diferença de <b style="color:var(--ink);">$2,14</b> é o negócio de $18: ele aparece no gráfico com o mesmo destaque dos outros, mas
+      movimentou só 10 ações — <b style="color:var(--ink);">quase ninguém pagou aquele preço</b>. A média simples se deixa enganar por ele; o VWAP
+      o reduz ao peso real. É por isso que o VWAP responde "qual foi o preço médio pago" e não "por onde a linha passou".
+    </p>
   </div>
 
   <div class="panel">
