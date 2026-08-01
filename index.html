@@ -62,7 +62,9 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .hero-bg polyline { animation: none !important; stroke-dashoffset: 0 !important; }
+  .cd { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .ha-level { animation: none !important; opacity: 0.95 !important; }
+  .ha-l { animation: none !important; opacity: 1 !important; }
 }
 /* ============ LAYOUT SPINE ============ */
 .spine {
@@ -108,23 +110,53 @@ p.lead { font-size: 19px; color: var(--ink-soft); max-width: 620px; }
 p + p { margin-top: 12px; }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 /* ============ HERO ============ */
-#hero { padding: 90px 0 40px; position: relative; overflow: hidden; }
-#hero .spine { position: relative; z-index: 1; }
-.hero-bg {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
+#hero { padding: 90px 0 40px; }
+
+/* faixa animada: os candles se formando e a leitura entrando por cima.
+   Cartao proprio para destacar do fundo quadriculado da pagina. */
+.hero-anim {
+  margin: 34px 0 0;
+  background: var(--card);
+  border: 1px solid var(--grid);
+  border-radius: 14px;
+  padding: 18px 18px 14px;
+  box-shadow: var(--shadow-chart);
 }
-.hero-bg polyline {
-  fill: none; stroke: var(--ink); stroke-width: 1.4;
-  stroke-linecap: round; stroke-linejoin: round;
-  opacity: 0.10;
-  vector-effect: non-scaling-stroke;
-  stroke-dasharray: 1541; stroke-dashoffset: 1541;
-  animation: heroDraw 2.8s cubic-bezier(.4,0,.2,1) 0.2s forwards;
+.hero-anim svg { width: 100%; height: 170px; display: block; }
+
+.cd { opacity: 0; animation: cdIn 0.34s cubic-bezier(.4,0,.2,1) forwards; }
+.cd line { stroke-width: 1.2; }
+.cd rect { stroke-width: 0; }
+.cd.up line, .cd.up rect { stroke: var(--trend); fill: var(--trend); }
+.cd.dn line, .cd.dn rect { stroke: var(--danger); fill: var(--danger); }
+@keyframes cdIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.ha-level {
+  stroke: var(--lvl); stroke-width: 1.6; stroke-dasharray: 5 4;
+  vector-effect: non-scaling-stroke; opacity: 0;
+  animation: haLevel 0.7s ease-out 1.83s forwards;
 }
-/* no tema claro a linha escura sobre fundo claro pesa mais — suaviza */
-:root[data-theme="light"] .hero-bg polyline { opacity: 0.06; }
-@keyframes heroDraw { to { stroke-dashoffset: 0; } }
+@keyframes haLevel { to { opacity: 0.95; } }
+
+.hero-anim-cap {
+  display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.ha-l { opacity: 0; animation: haLabel 0.5s ease-out forwards; }
+.ha-l::before { content: ""; display: inline-block; width: 13px; height: 2px;
+  margin-right: 7px; vertical-align: middle; border-radius: 2px; }
+.ha-l1 { animation-delay: 1.23s; }
+.ha-l1::before { background: var(--trend); }
+.ha-l2 { animation-delay: 2.23s; }
+.ha-l2::before { background: var(--lvl); }
+@keyframes haLabel { to { opacity: 1; } }
+
+@media (max-width: 640px) {
+  .hero-anim { padding: 14px 14px 12px; }
+  .hero-anim svg { height: 132px; }
+  .hero-anim-cap { gap: 14px; font-size: 10.5px; }
+}
 #hero .thesis .osc-word { color: var(--osc); }
 #hero .thesis .trend-word { color: var(--trend); }
 
@@ -502,11 +534,6 @@ footer {
 <main id="conteudo">
 
 <section id="hero">
-  <!-- textura de fundo: a serie real da AMD (280 pregoes), pontos pre-calculados
-       para nao precisar carregar os dados nem JS so para decoracao -->
-  <svg class="hero-bg" viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-    <polyline points="0.0,233.2 3.6,233.8 7.2,234.0 10.8,232.1 14.3,232.9 17.9,232.8 21.5,233.8 25.1,232.1 28.7,230.9 32.3,230.3 35.8,231.6 39.4,231.4 43.0,229.0 46.6,228.3 50.2,229.2 53.8,230.4 57.3,231.4 60.9,226.9 64.5,226.6 68.1,226.7 71.7,226.1 75.3,225.5 78.9,221.6 82.4,219.4 86.0,219.3 89.6,219.2 93.2,220.0 96.8,222.6 100.4,221.5 103.9,221.8 107.5,223.2 111.1,221.8 114.7,221.6 118.3,219.0 121.9,218.0 125.4,218.1 129.0,214.0 132.6,212.0 136.2,211.9 139.8,213.4 143.4,213.4 147.0,214.4 150.5,212.6 154.1,211.1 157.7,209.2 161.3,206.0 164.9,204.3 168.5,203.4 172.0,204.8 175.6,206.9 179.2,204.6 182.8,205.7 186.4,210.7 190.0,206.6 193.5,206.4 197.1,206.6 200.7,205.4 204.3,201.2 207.9,202.8 211.5,204.3 215.1,204.9 218.6,209.1 222.2,209.7 225.8,210.4 229.4,208.6 233.0,210.6 236.6,209.1 240.1,208.9 243.7,208.2 247.3,210.9 250.9,211.0 254.5,211.1 258.1,211.2 261.6,216.0 265.2,215.8 268.8,213.9 272.4,212.2 276.0,214.0 279.6,212.7 283.2,211.5 286.7,211.8 290.3,212.4 293.9,213.0 297.5,213.2 301.1,212.1 304.7,211.6 308.2,211.6 311.8,211.5 315.4,212.3 319.0,211.4 322.6,211.2 326.2,210.3 329.7,207.7 333.3,210.0 336.9,192.7 340.5,189.3 344.1,178.6 347.7,179.8 351.3,187.8 354.8,187.1 358.4,186.4 362.0,177.3 365.6,179.1 369.2,179.7 372.8,176.4 376.3,177.5 379.9,181.0 383.5,178.9 387.1,171.0 390.7,168.0 394.3,168.7 397.8,165.9 401.4,170.1 405.0,169.6 408.6,168.0 412.2,172.2 415.8,169.5 419.4,177.7 422.9,179.5 426.5,174.9 430.1,177.8 433.7,168.3 437.3,173.2 440.9,173.7 444.4,176.4 448.0,181.0 451.6,183.9 455.2,191.7 458.8,192.7 462.4,187.7 465.9,191.6 469.5,188.1 473.1,186.6 476.7,185.6 480.3,187.6 483.9,186.6 487.5,187.3 491.0,186.4 494.6,185.0 498.2,184.8 501.8,184.9 505.4,184.9 509.0,189.6 512.5,191.0 516.1,190.3 519.7,195.2 523.3,193.9 526.9,188.4 530.5,187.8 534.1,187.8 537.6,187.7 541.2,187.7 544.8,187.5 548.4,187.6 552.0,188.1 555.6,184.0 559.1,185.0 562.7,188.0 566.3,189.9 569.9,192.3 573.5,193.0 577.1,191.0 580.6,185.1 584.2,183.9 587.8,182.0 591.4,180.3 595.0,180.2 598.6,172.3 602.2,170.6 605.7,168.0 609.3,171.7 612.9,171.4 616.5,171.0 620.1,171.3 623.7,178.1 627.2,173.9 630.8,175.7 634.4,194.3 638.0,197.7 641.6,190.6 645.2,187.3 648.7,188.4 652.3,188.4 655.9,191.7 659.5,191.1 663.1,193.0 666.7,194.3 670.3,192.9 673.8,194.3 677.4,195.9 681.0,188.2 684.6,189.6 688.2,192.7 691.8,194.3 695.3,195.0 698.9,198.4 702.5,193.4 706.1,194.6 709.7,197.7 713.3,193.2 716.8,192.9 720.4,192.2 724.0,195.4 727.6,197.3 731.2,195.9 734.8,196.0 738.4,194.6 741.9,192.0 745.5,193.8 749.1,193.2 752.7,192.0 756.3,185.4 759.9,192.7 763.4,193.5 767.0,196.1 770.6,192.8 774.2,189.8 777.8,186.6 781.4,185.4 784.9,184.8 788.5,180.3 792.1,178.2 795.7,174.5 799.3,173.7 802.9,170.0 806.5,168.7 810.0,159.8 813.6,159.7 817.2,161.2 820.8,157.0 824.4,148.6 828.0,147.8 831.5,129.0 835.1,134.9 838.7,139.9 842.3,133.8 845.9,126.1 849.5,123.4 853.0,131.8 856.6,125.7 860.2,96.5 863.8,102.2 867.4,81.6 871.0,80.0 874.6,84.6 878.1,85.8 881.7,84.0 885.3,95.3 888.9,96.7 892.5,99.8 896.1,84.9 899.6,84.0 903.2,76.1 906.8,60.0 910.4,63.7 914.0,53.8 917.6,54.6 921.1,57.3 924.7,52.2 928.3,43.0 931.9,51.5 935.5,76.6 939.1,66.0 942.7,72.6 946.2,82.8 949.8,66.9 953.4,56.6 957.0,40.9 960.6,58.5 964.2,56.2 967.7,45.2 971.3,38.9 974.9,53.0 978.5,53.0 982.1,47.4 985.7,52.2 989.2,44.3 992.8,26.0 996.4,43.7 1000.0,53.9"/>
-  </svg>
   <div class="spine">
     <div class="eyebrow">Guia básico de análise técnica</div>
     <div class="thesis">
@@ -516,6 +543,18 @@ footer {
         e, com o mesmo cuidado, com o que ela <em>não</em> consegue responder.
       </p>
     </div>
+
+    <figure class="hero-anim">
+      <svg viewBox="0 0 880 170" preserveAspectRatio="none"
+           role="img" aria-label="Animação: 44 pregões reais da AMD formando-se como candles, e em seguida o nível de 522 dólares que o preço respeitou 28 vezes.">
+        <g class="cd dn" style="animation-delay:0.000s"><line x1="10.0" y1="69.1" x2="10.0" y2="84.8"/><rect x="4.4" y="70.1" width="11.2" height="4.0" rx="1"/></g><g class="cd up" style="animation-delay:0.032s"><line x1="30.0" y1="72.9" x2="30.0" y2="98.9"/><rect x="24.4" y="79.1" width="11.2" height="8.4" rx="1"/></g><g class="cd up" style="animation-delay:0.064s"><line x1="50.0" y1="68.7" x2="50.0" y2="86.7"/><rect x="44.4" y="69.5" width="11.2" height="12.9" rx="1"/></g><g class="cd up" style="animation-delay:0.096s"><line x1="70.0" y1="48.4" x2="70.0" y2="67.1"/><rect x="64.4" y="51.7" width="11.2" height="7.4" rx="1"/></g><g class="cd up" style="animation-delay:0.128s"><line x1="90.0" y1="60.5" x2="90.0" y2="87.8"/><rect x="84.4" y="68.1" width="11.2" height="7.2" rx="1"/></g><g class="cd dn" style="animation-delay:0.160s"><line x1="110.0" y1="83.0" x2="110.0" y2="118.2"/><rect x="104.4" y="88.1" width="11.2" height="28.1" rx="1"/></g><g class="cd up" style="animation-delay:0.192s"><line x1="130.0" y1="92.0" x2="130.0" y2="106.6"/><rect x="124.4" y="95.9" width="11.2" height="4.5" rx="1"/></g><g class="cd dn" style="animation-delay:0.224s"><line x1="150.0" y1="83.5" x2="150.0" y2="140.8"/><rect x="144.4" y="85.4" width="11.2" height="23.1" rx="1"/></g><g class="cd dn" style="animation-delay:0.256s"><line x1="170.0" y1="106.8" x2="170.0" y2="131.4"/><rect x="164.4" y="114.8" width="11.2" height="13.2" rx="1"/></g><g class="cd up" style="animation-delay:0.288s"><line x1="190.0" y1="95.8" x2="190.0" y2="123.2"/><rect x="184.4" y="97.5" width="11.2" height="22.7" rx="1"/></g><g class="cd up" style="animation-delay:0.320s"><line x1="210.0" y1="69.3" x2="210.0" y2="92.8"/><rect x="204.4" y="77.9" width="11.2" height="10.1" rx="1"/></g><g class="cd up" style="animation-delay:0.352s"><line x1="230.0" y1="38.3" x2="230.0" y2="61.9"/><rect x="224.4" y="47.7" width="11.2" height="9.7" rx="1"/></g><g class="cd dn" style="animation-delay:0.384s"><line x1="250.0" y1="46.3" x2="250.0" y2="81.6"/><rect x="244.4" y="48.0" width="11.2" height="33.5" rx="1"/></g><g class="cd dn" style="animation-delay:0.416s"><line x1="270.0" y1="60.2" x2="270.0" y2="81.5"/><rect x="264.4" y="62.6" width="11.2" height="14.5" rx="1"/></g><g class="cd up" style="animation-delay:0.448s"><line x1="290.0" y1="54.1" x2="290.0" y2="65.4"/><rect x="284.4" y="56.1" width="11.2" height="4.9" rx="1"/></g><g class="cd up" style="animation-delay:0.480s"><line x1="310.0" y1="34.4" x2="310.0" y2="57.5"/><rect x="304.4" y="44.0" width="11.2" height="5.2" rx="1"/></g><g class="cd up" style="animation-delay:0.512s"><line x1="330.0" y1="63.6" x2="330.0" y2="81.9"/><rect x="324.4" y="70.9" width="11.2" height="9.1" rx="1"/></g><g class="cd dn" style="animation-delay:0.544s"><line x1="350.0" y1="66.6" x2="350.0" y2="84.7"/><rect x="344.4" y="70.1" width="11.2" height="1.2" rx="1"/></g><g class="cd dn" style="animation-delay:0.576s"><line x1="370.0" y1="44.6" x2="370.0" y2="81.8"/><rect x="364.4" y="50.5" width="11.2" height="9.6" rx="1"/></g><g class="cd up" style="animation-delay:0.608s"><line x1="390.0" y1="66.5" x2="390.0" y2="85.5"/><rect x="384.4" y="69.4" width="11.2" height="1.5" rx="1"/></g><g class="cd up" style="animation-delay:0.640s"><line x1="410.0" y1="52.0" x2="410.0" y2="91.6"/><rect x="404.4" y="54.3" width="11.2" height="14.1" rx="1"/></g><g class="cd up" style="animation-delay:0.672s"><line x1="430.0" y1="16.0" x2="430.0" y2="49.1"/><rect x="424.4" y="19.2" width="11.2" height="29.9" rx="1"/></g><g class="cd dn" style="animation-delay:0.704s"><line x1="450.0" y1="33.5" x2="450.0" y2="54.9"/><rect x="444.4" y="39.0" width="11.2" height="14.1" rx="1"/></g><g class="cd dn" style="animation-delay:0.736s"><line x1="470.0" y1="47.4" x2="470.0" y2="82.6"/><rect x="464.4" y="55.4" width="11.2" height="17.2" rx="1"/></g><g class="cd up" style="animation-delay:0.768s"><line x1="490.0" y1="26.4" x2="490.0" y2="64.9"/><rect x="484.4" y="43.7" width="11.2" height="14.1" rx="1"/></g><g class="cd up" style="animation-delay:0.800s"><line x1="510.0" y1="66.6" x2="510.0" y2="85.1"/><rect x="504.4" y="74.1" width="11.2" height="1.2" rx="1"/></g><g class="cd up" style="animation-delay:0.832s"><line x1="530.0" y1="68.3" x2="530.0" y2="89.3"/><rect x="524.4" y="73.0" width="11.2" height="10.7" rx="1"/></g><g class="cd up" style="animation-delay:0.864s"><line x1="550.0" y1="37.4" x2="550.0" y2="57.9"/><rect x="544.4" y="48.2" width="11.2" height="8.0" rx="1"/></g><g class="cd up" style="animation-delay:0.896s"><line x1="570.0" y1="36.7" x2="570.0" y2="53.8"/><rect x="564.4" y="38.7" width="11.2" height="11.8" rx="1"/></g><g class="cd dn" style="animation-delay:0.928s"><line x1="590.0" y1="43.8" x2="590.0" y2="64.9"/><rect x="584.4" y="56.0" width="11.2" height="2.6" rx="1"/></g><g class="cd dn" style="animation-delay:0.960s"><line x1="610.0" y1="24.9" x2="610.0" y2="48.1"/><rect x="604.4" y="30.8" width="11.2" height="16.2" rx="1"/></g><g class="cd dn" style="animation-delay:0.992s"><line x1="630.0" y1="37.9" x2="630.0" y2="79.6"/><rect x="624.4" y="40.3" width="11.2" height="22.7" rx="1"/></g><g class="cd dn" style="animation-delay:1.024s"><line x1="650.0" y1="71.8" x2="650.0" y2="94.6"/><rect x="644.4" y="79.8" width="11.2" height="7.1" rx="1"/></g><g class="cd up" style="animation-delay:1.056s"><line x1="670.0" y1="82.7" x2="670.0" y2="121.4"/><rect x="664.4" y="91.3" width="11.2" height="16.0" rx="1"/></g><g class="cd dn" style="animation-delay:1.088s"><line x1="690.0" y1="68.7" x2="690.0" y2="85.7"/><rect x="684.4" y="73.3" width="11.2" height="11.4" rx="1"/></g><g class="cd up" style="animation-delay:1.120s"><line x1="710.0" y1="47.0" x2="710.0" y2="68.6"/><rect x="704.4" y="50.1" width="11.2" height="15.6" rx="1"/></g><g class="cd up" style="animation-delay:1.152s"><line x1="730.0" y1="35.7" x2="730.0" y2="65.2"/><rect x="724.4" y="43.4" width="11.2" height="21.5" rx="1"/></g><g class="cd dn" style="animation-delay:1.184s"><line x1="750.0" y1="39.9" x2="750.0" y2="66.5"/><rect x="744.4" y="49.8" width="11.2" height="4.3" rx="1"/></g><g class="cd dn" style="animation-delay:1.216s"><line x1="770.0" y1="46.2" x2="770.0" y2="72.5"/><rect x="764.4" y="48.0" width="11.2" height="21.1" rx="1"/></g><g class="cd dn" style="animation-delay:1.248s"><line x1="790.0" y1="64.0" x2="790.0" y2="107.2"/><rect x="784.4" y="64.4" width="11.2" height="27.6" rx="1"/></g><g class="cd dn" style="animation-delay:1.280s"><line x1="810.0" y1="110.8" x2="810.0" y2="136.6"/><rect x="804.4" y="115.6" width="11.2" height="10.5" rx="1"/></g><g class="cd dn" style="animation-delay:1.312s"><line x1="830.0" y1="123.9" x2="830.0" y2="152.0"/><rect x="824.4" y="127.8" width="11.2" height="19.6" rx="1"/></g><g class="cd up" style="animation-delay:1.344s"><line x1="850.0" y1="89.2" x2="850.0" y2="123.5"/><rect x="844.4" y="100.1" width="11.2" height="21.5" rx="1"/></g><g class="cd dn" style="animation-delay:1.376s"><line x1="870.0" y1="74.5" x2="870.0" y2="108.2"/><rect x="864.4" y="79.0" width="11.2" height="28.9" rx="1"/></g>
+        <line class="ha-level" x1="0" y1="69.3" x2="880" y2="69.3"/>
+      </svg>
+      <figcaption class="hero-anim-cap">
+        <span class="ha-l ha-l1">44 pregões reais</span>
+        <span class="ha-l ha-l2">~$522 · respeitado 28 vezes</span>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
