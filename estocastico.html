@@ -16,13 +16,13 @@
 <meta property="og:title" content="Estocástico — onde o preço parou dentro do range">
 <meta property="og:description" content="O %K explicado com a conta na mão: arraste o fechamento dentro do range e veja o indicador reagir, mais a curva completa nos dados reais da AMD.">
 <meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/estocastico.html">
-<meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
+<meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Estocástico — onde o preço parou dentro do range">
 <meta name="twitter:description" content="O %K explicado com a conta na mão: arraste o fechamento dentro do range e veja o indicador reagir, mais a curva completa nos dados reais da AMD.">
-<meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
+<meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <script>
   (function() {
     var t = null;
@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=47e852d1">
+<link rel="stylesheet" href="assets/base.css?v=509250f9">
 <style>
   :root { --accent: var(--osc); --accent-soft: var(--osc-soft); }
 
@@ -74,6 +74,7 @@
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
     <a href="suportes.html">Suportes</a>
+    <a href="padroes.html">Padrões</a>
     <a href="risco.html">Risco</a>
     <a href="estrategias.html">Estratégias</a>
   </div>
@@ -131,8 +132,11 @@
   <div class="panel">
     <h2>Agora com os dados reais da AMD</h2>
     <p class="ptext">
-      O mesmo cálculo, aplicado aos ~280 pregões reais. Arraste o período e repare como o %K vive nos extremos:
-      ele é o mais "nervoso" dos osciladores — por isso quase sempre é lido junto com a média %D.
+      O mesmo cálculo, aplicado aos dados reais — o gráfico mostra os últimos 120 pregões, com as duas
+      linhas do indicador: o <b style="color:var(--osc);">%K</b> cru, em laranja, e o
+      <b style="color:var(--trend);">%D</b>, em verde, que é a média de 3 dias do próprio %K.
+      Arraste o período e repare como o %K vive nos extremos: é o mais "nervoso" dos osciladores —
+      o %D chega sempre um passo atrás, e é essa defasagem que vira o gatilho de quem opera com ele.
       <em>(Aqui usamos máxima e mínima dos fechamentos do período — aproximação didática.)</em>
     </p>
     <div class="controls-row">
@@ -210,32 +214,68 @@ function calcStochK(closes, period) {
   }
   return out;
 }
-var SW = 780, SH = 250, SX0 = 40, SX1 = SW - 14;
-function sxm(i) { return SX0 + i / (N - 1) * (SX1 - SX0); }
+/* média móvel de 3 dias do %K, pulando o trecho inicial sem valor */
+function calcStochD(k, period) {
+  var out = new Array(k.length).fill(null);
+  for (var i = 0; i < k.length; i++) {
+    if (i < period - 1) continue;
+    var s = 0, ok = true;
+    for (var j = i - period + 1; j <= i; j++) {
+      if (k[j] === null) { ok = false; break; }
+      s += k[j];
+    }
+    if (ok) out[i] = s / period;
+  }
+  return out;
+}
+/* a série tem 280 pregões, mas só os últimos VIEW são plotados: com mais que
+   isso o %K e o %D — separados por só 3 dias — grudam num borrão só */
+var VIEW = 120;
+var SW = 780, SH = 306, SX0 = 46, SX1 = SW - 16;
+var SY0 = 26, SY1 = SH - 52;
+function sxm(i) { return SX0 + i / (VIEW - 1) * (SX1 - SX0); }
+function symK(v) { return SY1 - v / 100 * (SY1 - SY0); }
 function renderStochChart() {
   var p = parseInt(document.getElementById('stPeriod').value, 10);
   document.getElementById('stPeriodVal').textContent = p;
-  var k = calcStochK(CLOSES, p);
-  var y0 = 14, y1 = SH - 26;
-  function ym(v) { return y1 - v / 100 * (y1 - y0); }
-  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Gráfico do %K estocástico da AMD ao longo de ~280 pregões, com as faixas de 80 e 20. A leitura em texto está logo abaixo.\" font-family="ui-monospace, monospace">';
-  s += '<rect x="' + SX0 + '" y="' + y0 + '" width="' + (SX1-SX0) + '" height="' + (ym(80)-y0) + '" fill="var(--osc-soft)"/>';
-  s += '<rect x="' + SX0 + '" y="' + ym(20) + '" width="' + (SX1-SX0) + '" height="' + (y1-ym(20)) + '" fill="var(--trend-soft)"/>';
-  [[80,'var(--osc)'],[50,'var(--wire)'],[20,'var(--trend)']].forEach(function(g){
-    s += '<line x1="' + SX0 + '" y1="' + ym(g[0]) + '" x2="' + SX1 + '" y2="' + ym(g[0]) + '" stroke="' + g[1] + '" stroke-dasharray="4,3" opacity="0.55"/>';
-    s += '<text x="' + (SX0-6) + '" y="' + (ym(g[0])+4) + '" font-size="10" fill="' + g[1] + '" text-anchor="end">' + g[0] + '</text>';
+  var kFull = calcStochK(CLOSES, p);
+  var k = kFull.slice(N - VIEW);
+  var d = calcStochD(kFull, 3).slice(N - VIEW);
+  var ym = symK;
+  var s = '<svg class="chart" viewBox="0 0 ' + SW + ' ' + SH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfico do estocástico da AMD nos últimos ' + VIEW + ' pregões: a linha laranja é o %K e a verde é o %D, com as faixas de 80 e 20 destacadas. A leitura em texto está logo abaixo." font-family="ui-monospace, monospace">';
+  /* faixas de excesso */
+  s += '<rect x="' + SX0 + '" y="' + SY0 + '" width="' + (SX1-SX0) + '" height="' + (ym(80)-SY0) + '" fill="var(--osc-soft)"/>';
+  s += '<rect x="' + SX0 + '" y="' + ym(20) + '" width="' + (SX1-SX0) + '" height="' + (SY1-ym(20)) + '" fill="var(--trend-soft)"/>';
+  /* moldura do plot */
+  s += '<rect x="' + SX0 + '" y="' + SY0 + '" width="' + (SX1-SX0) + '" height="' + (SY1-SY0) + '" fill="none" stroke="var(--grid)"/>';
+  /* réguas neutras: as cores ficam reservadas para as linhas %K e %D */
+  [[100,'var(--wire)',0], [80,'var(--wire)',1], [50,'var(--wire)',1], [20,'var(--wire)',1], [0,'var(--wire)',0]].forEach(function(g){
+    if (g[2]) s += '<line x1="' + SX0 + '" y1="' + ym(g[0]) + '" x2="' + SX1 + '" y2="' + ym(g[0]) + '" stroke="' + g[1] + '" stroke-dasharray="4,4" opacity="0.5"/>';
+    s += '<text x="' + (SX0-8) + '" y="' + (ym(g[0])+3.5) + '" font-size="10" fill="' + g[1] + '" text-anchor="end">' + g[0] + '</text>';
   });
-  s += poly(ptsOf(k, sxm, ym), 'var(--osc)', 1.8);
+  /* as duas linhas do indicador: %K cru e %D suavizado */
+  s += poly(ptsOf(k, sxm, ym), 'var(--osc)', 1.2);
+  s += poly(ptsOf(d, sxm, ym), 'var(--trend)', 1.2);
+  /* eixo do tempo */
+  s += '<text x="' + SX0 + '" y="' + (SY1+16) + '" font-size="10" fill="var(--wire)">' + VIEW + ' pregões atrás</text>';
+  s += '<text x="' + SX1 + '" y="' + (SY1+16) + '" font-size="10" fill="var(--wire)" text-anchor="end">hoje</text>';
+  /* legenda */
+  var ly = SY1 + 36;
+  s += '<line x1="' + SX0 + '" y1="' + (ly-4) + '" x2="' + (SX0+22) + '" y2="' + (ly-4) + '" stroke="var(--osc)" stroke-width="1.2"/>';
+  s += '<text x="' + (SX0+28) + '" y="' + ly + '" font-size="10.5" fill="var(--wire)">%K(' + p + ') — o cru</text>';
+  s += '<line x1="' + (SX0+150) + '" y1="' + (ly-4) + '" x2="' + (SX0+172) + '" y2="' + (ly-4) + '" stroke="var(--trend)" stroke-width="1.2"/>';
+  s += '<text x="' + (SX0+178) + '" y="' + ly + '" font-size="10.5" fill="var(--wire)">%D — média de 3 dias do %K</text>';
   s += '</svg>';
   document.getElementById('stChart').innerHTML = s;
 
-  var last = k[N-1];
+  var last = k[VIEW-1], lastD = d[VIEW-1];
+  /* a estatística usa a série inteira, não só o trecho plotado */
   var above80 = 0, below20 = 0, count = 0;
-  for (var i = 0; i < N; i++) if (k[i] !== null) { count++; if (k[i] > 80) above80++; if (k[i] < 20) below20++; }
+  for (var i = 0; i < N; i++) if (kFull[i] !== null) { count++; if (kFull[i] > 80) above80++; if (kFull[i] < 20) below20++; }
   var zona = last >= 80 ? '<span class="r">sobrecomprado</span>' : last <= 20 ? '<span class="g">sobrevendido</span>' : 'zona neutra';
   document.getElementById('stReadout').innerHTML =
-    '%K(' + p + ') hoje = <span class="hi">' + last.toFixed(1) + '</span> · ' + zona + '<br>' +
-    'Com período ' + p + ', o %K passou <span class="hi">' + (above80/count*100).toFixed(0) + '%</span> do tempo acima de 80 e <span class="hi">' + (below20/count*100).toFixed(0) + '%</span> abaixo de 20 — repare como ele visita os extremos com muito mais frequência que o RSI.';
+    '%K(' + p + ') hoje = <span class="hi">' + last.toFixed(1) + '</span> → ' + zona + ' &nbsp;·&nbsp; %D = <span class="hi">' + lastD.toFixed(1) + '</span><br>' +
+    'Com período ' + p + ', nos <span class="hi">' + count + '</span> pregões da série inteira o %K passou <span class="hi">' + (above80/count*100).toFixed(0) + '%</span> do tempo acima de 80 e <span class="hi">' + (below20/count*100).toFixed(0) + '%</span> abaixo de 20 — repare como ele visita os extremos com muito mais frequência que o RSI.';
 }
 document.getElementById('stPeriod').addEventListener('input', renderStochChart);
 renderStochChart();

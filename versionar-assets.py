@@ -15,7 +15,7 @@ Rodar sempre depois de mexer em assets/ e antes de publicar:
 import hashlib, glob, re, os
 
 ASSETS = ['assets/base.css', 'assets/site.js', 'assets/nav.js', 'assets/amd.js',
-          'favicon.svg', 'apple-touch-icon.png']
+          'favicon.svg', 'apple-touch-icon.png', 'og.png']
 
 def short_hash(path):
     with open(path, 'rb') as f:

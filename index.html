@@ -16,13 +16,13 @@
 <meta property="og:title" content="Guia de Análise Técnica">
 <meta property="og:description" content="Guia interativo de análise técnica: osciladores, tendência, volume, níveis e gestão de risco, explicados com dados reais da AMD e laboratórios que você manipula.">
 <meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/">
-<meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
+<meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Guia de Análise Técnica">
 <meta name="twitter:description" content="Guia interativo de análise técnica: osciladores, tendência, volume, níveis e gestão de risco, explicados com dados reais da AMD e laboratórios que você manipula.">
-<meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png">
+<meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <script>
   (function() {
     var t = null;
@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=47e852d1">
+<link rel="stylesheet" href="assets/base.css?v=509250f9">
 <style>
 /* ============ TOKENS ============ */
 :root {
@@ -206,7 +206,18 @@ p + p { margin-top: 12px; }
   gap: 18px;
   margin-top: 30px;
 }
-@media (max-width: 640px) { .families { grid-template-columns: 1fr; } }
+/* são 7 famílias, número ímpar: a última sobra sozinha na linha final.
+   Centralizada e na largura de uma coluna, lê como fecho — e não como
+   um card esticado embaixo dos outros. */
+.families > .family-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  width: calc(50% - 9px);
+  justify-self: center;
+}
+@media (max-width: 640px) {
+  .families { grid-template-columns: 1fr; }
+  .families > .family-card:last-child:nth-child(odd) { width: auto; }
+}
 .family-card {
   background: var(--card);
   border-radius: 14px;
@@ -298,6 +309,12 @@ p + p { margin-top: 12px; }
 .family-card.strat li a:hover,
 .family-card.strat li a:focus-visible { color: var(--strat); }
 .family-card.strat li a:focus-visible { outline-color: var(--strat); }
+.family-card.flow { border-color: var(--flow); }
+.family-card.flow .icon { color: var(--flow); }
+.family-card.flow li::before { color: var(--flow); }
+.family-card.flow li a:hover,
+.family-card.flow li a:focus-visible { color: var(--flow); }
+.family-card.flow li a:focus-visible { outline-color: var(--flow); }
 .eyebrow.vol { color: var(--vol); }
 .eyebrow.risk { color: var(--risk); }
 .soon {
@@ -326,6 +343,7 @@ p + p { margin-top: 12px; }
 .t-num.risk { background: var(--risk); color: var(--on-accent); }
 .t-num.lvl { background: var(--lvl); color: var(--on-accent); }
 .t-num.strat { background: var(--strat); color: var(--on-accent); }
+.t-num.flow { background: var(--flow); color: var(--on-accent); }
 .trail h3 { margin-bottom: 4px; }
 .trail > li > div > p { font-size: 14.5px; color: var(--ink-soft); }
 .trail p a { color: inherit; font-weight: 700; text-decoration: none;
@@ -509,6 +527,7 @@ footer {
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
     <a href="suportes.html">Suportes</a>
+    <a href="padroes.html">Padrões</a>
     <a href="risco.html">Risco</a>
     <a href="estrategias.html">Estratégias</a>
   </div>
@@ -658,6 +677,21 @@ footer {
         </ul>
         <p class="asks">Pergunta que respondem: <em>"onde o preço tende a reagir?"</em></p>
       </div>
+      <div class="family-card flow reveal">
+        <span class="icon" aria-hidden="true">
+          <svg class="lucide-icon" viewBox="0 0 24 24">
+            <path d="M3 17l5-6 4 4 4-7 5 5"></path>
+          </svg>
+        </span>
+        <h3 style="color:var(--flow);">Padrões</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">A forma que o preço desenha. Ombro-cabeça-ombro, topo duplo, triângulos — as figuras clássicas explicadas uma a uma, com o que cada uma sugere e, com o mesmo espaço, por que elas são a parte mais frágil da análise técnica.</p>
+        <ul>
+          <li><a href="padroes.html">As seis figuras clássicas</a></li>
+          <li><a href="padroes.html">Continuação ou reversão</a></li>
+          <li><a href="padroes.html">Detector de topo duplo nos dados reais</a></li>
+        </ul>
+        <p class="asks">Pergunta que respondem: <em>"que forma é essa?"</em></p>
+      </div>
       <div class="family-card strat reveal">
         <span class="icon" aria-hidden="true">
           <svg class="lucide-icon" viewBox="0 0 24 24">
@@ -704,7 +738,17 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num osc">2</span>
+        <span class="t-num flow">2</span>
+        <div>
+          <h3>Padrões — a forma do preço</h3>
+          <p>Ainda antes dos indicadores: as figuras clássicas que o preço desenha, o que cada uma sugere e por que elas exigem mais ceticismo que o resto do guia.</p>
+          <div class="t-links">
+            <a href="padroes.html">Padrões gráficos</a>
+          </div>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num osc">3</span>
         <div>
           <h3>Velocidade — os osciladores</h3>
           <p>Comece pelo RSI (o mais usado), depois sinta a mecânica no Estocástico e no Momentum.</p>
@@ -716,7 +760,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num trend">3</span>
+        <span class="t-num trend">4</span>
         <div>
           <h3>Direção — a tendência</h3>
           <p>Médias móveis são o alicerce; o ADX mede a força da rota; o MACD junta tendência e gatilho no mesmo instrumento.</p>
@@ -728,7 +772,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num vol">4</span>
+        <span class="t-num vol">5</span>
         <div>
           <h3>Volume — a convicção</h3>
           <p>Preço sem volume é opinião sem voto. OBV e A/D transformam o volume numa linha que confirma (ou desmente) a tendência.</p>
@@ -739,7 +783,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num risk">5</span>
+        <span class="t-num risk">6</span>
         <div>
           <h3>Risco — o que sustenta tudo</h3>
           <p>A parte com melhor evidência: ATR, dimensionamento, correlação e R:R. Se for ler uma página só, que seja esta.</p>
@@ -749,7 +793,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num strat">6</span>
+        <span class="t-num strat">7</span>
         <div>
           <h3>Estratégias — juntando as peças</h3>
           <p>Quatro receitas completas que combinam os indicadores por regime de mercado: contexto, gatilho, stop e alvo definidos antes de cada trade.</p>
