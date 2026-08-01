@@ -96,6 +96,21 @@
   .dir-btn[aria-pressed="true"] { background: var(--flow); color: var(--on-accent); }
   .dir-btn:focus-visible { outline: 3px solid var(--flow); outline-offset: 2px; }
 
+  .fail-btn {
+    font-family: var(--font-display); font-weight: 700; font-size: 13px;
+    color: var(--ink-soft); background: var(--card-strong); border: 1px solid var(--grid);
+    cursor: pointer; padding: 7px 16px; border-radius: 999px;
+    margin: 0 0 16px 8px; transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .fail-btn[aria-pressed="true"] { background: var(--danger); color: var(--on-accent); border-color: var(--danger); }
+  .fail-btn:focus-visible { outline: 3px solid var(--danger); outline-offset: 2px; }
+
+  /* ramo de falha só aparece quando solicitado pelo botão acima */
+  .pat-fail, .pat-fail-candle, .pat-fail-candle-body { transition: opacity 0.2s; }
+  .pat-grid:not(.show-fail) .pat-fail,
+  .pat-grid:not(.show-fail) .pat-fail-candle,
+  .pat-grid:not(.show-fail) .pat-fail-candle-body { opacity: 0; }
+
   .pat svg { transition: transform 0.4s cubic-bezier(.4,0,.2,1); }
   .pat-grid.inv .pat svg { transform: scaleY(-1); }
 
@@ -213,9 +228,9 @@
     <p class="ptext">
       Cada desenho abaixo é esquemático — no gráfico real elas nunca aparecem tão limpas, e é justamente
       aí que mora o problema. Repare que toda figura tem uma <b style="color:var(--ink);">linha de
-      confirmação</b>: enquanto o preço não a rompe, não há padrão nenhum, só uma forma bonita. O ramo
-      <span style="color:var(--danger);">tracejado vermelho</span> em cada desenho é o "Como falha" do
-      texto, saindo do mesmo ponto — a mesma figura, o outro desfecho possível.
+      confirmação</b>: enquanto o preço não a rompe, não há padrão nenhum, só uma forma bonita. O botão
+      "Como falha" abaixo revela, em cada desenho, um ramo <span style="color:var(--danger);">tracejado
+      vermelho</span> saindo do mesmo ponto — a mesma figura, o outro desfecho possível.
     </p>
     <p class="ptext">
       São seis formas, mas doze nomes: cada uma existe também invertida. Use o botão para virar
@@ -226,6 +241,7 @@
       <button type="button" class="dir-btn" id="dirA" aria-pressed="true">Figuras originais</button>
       <button type="button" class="dir-btn" id="dirB" aria-pressed="false">Invertidas</button>
     </div>
+    <button type="button" class="fail-btn" id="failToggle" aria-pressed="false">Mostrar como falha</button>
     <p class="control-hint" style="margin-top:0;">
       Toda figura tem uma inversa, e ela é literalmente <em>a mesma figura de cabeça para baixo</em>:
       o topo duplo vira fundo duplo, o triângulo ascendente vira descendente, o martelo vira estrela
@@ -455,6 +471,14 @@
   }
   a.addEventListener('click', function() { set(false); });
   b.addEventListener('click', function() { set(true); });
+
+  var failBtn = document.getElementById('failToggle');
+  failBtn.addEventListener('click', function() {
+    var show = !grid.classList.contains('show-fail');
+    grid.classList.toggle('show-fail', show);
+    failBtn.setAttribute('aria-pressed', String(show));
+    failBtn.textContent = show ? 'Ocultar como falha' : 'Mostrar como falha';
+  });
 })();
 </script>
 <script src="assets/site.js?v=df9b442e"></script>

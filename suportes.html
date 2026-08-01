@@ -126,21 +126,6 @@
       repetidas vezes. Os dois controles abaixo mudam <b>o que conta como pivô</b> e <b>o que conta como a mesma faixa</b>.
       Repare que suporte/resistência é sempre uma <b>faixa</b>, nunca uma linha exata.
     </p>
-    <div class="controls-row">
-      <label for="pivK">Rigor do pivô</label>
-      <input type="range" id="pivK" min="2" max="10" value="4">
-      <span class="value-pill" id="pivKVal">±4 dias</span>
-      <span class="control-hint">Quantos dias de cada lado precisam ser mais baixos (para um topo) ou mais altos (para um fundo) para o dia valer como pivô.
-        <b>±4</b> exige que ele seja o extremo dos 4 dias antes e 4 depois. Aumente para pegar só os picos e vales realmente importantes; diminua para incluir também as oscilações menores.</span>
-    </div>
-    <div class="controls-row">
-      <label for="zoneTol">Largura da zona</label>
-      <input type="range" id="zoneTol" min="0.5" max="3" value="1.5" step="0.25">
-      <span class="value-pill" id="zoneTolVal">±1.5%</span>
-      <span class="control-hint">Quão perto dois pivôs precisam estar, em preço, para contarem como o mesmo nível.
-        <b>±1.5%</b> agrupa tudo dentro de 1,5% um do outro. Alargue e você tem menos zonas, porém mais gordas; estreite e as zonas ficam finas e precisas — mas nem toda junta os 3 toques mínimos.</span>
-    </div>
-
     <div class="formula">
       <b style="color:var(--ink);">Rigor do pivô, na prática</b> — fechamentos ao redor de um candidato a topo:<br>
       dia −4: $120&nbsp;&nbsp;dia −3: <b>$126</b>&nbsp;&nbsp;dia −2: $119&nbsp;&nbsp;dia −1: $121&nbsp;&nbsp;<b>dia 0: $124</b>&nbsp;&nbsp;dia +1: $122&nbsp;&nbsp;dia +2: $118 ...<br>
@@ -163,6 +148,17 @@
       <span><span class="dot" style="background:var(--lvl); border-radius:2px;"></span>zona com 3+ toques</span>
     </div>
     <p class="why-note">Por que <b>3 toques</b>? Dois pontos você liga em qualquer lugar — três ou mais é o mínimo para dizer que o mercado respeitou aquele nível de propósito, e não por acaso. Clique numa faixa amarela para ver em que dias ela foi tocada.</p>
+
+    <div class="controls-row" style="margin-bottom:10px;">
+      <label for="pivK">Rigor do pivô</label>
+      <input type="range" id="pivK" min="2" max="10" value="4">
+      <span class="value-pill" id="pivKVal">±4 dias</span>
+    </div>
+    <div class="controls-row">
+      <label for="zoneTol">Largura da zona</label>
+      <input type="range" id="zoneTol" min="0.5" max="3" value="1.5" step="0.25">
+      <span class="value-pill" id="zoneTolVal">±1.5%</span>
+    </div>
     <div id="zoneChart"></div>
     <div class="readout" id="zoneReadout" aria-live="polite"></div>
   </div>
@@ -290,6 +286,9 @@ function findZones(closes, k, tolPct, minTouches) {
 /* ===== lab 1: detector interativo ===== */
 var ZW = 780, ZH = 320, ZX0 = 46, ZX1 = ZW - 14;
 function zxm(i) { return ZX0 + i / (N - 1) * (ZX1 - ZX0); }
+/* zoom: gráfico próprio, mais alto e com menos respiro vertical que o padrão —
+   as 5 faixas de zona ficavam espremidas numa faixa fina no meio do gráfico */
+var ZH2 = 460;
 var currentZones = [];
 function renderZones(selectedIdx) {
   var k = parseInt(document.getElementById('pivK').value, 10);
@@ -299,9 +298,9 @@ function renderZones(selectedIdx) {
 
   var res = findZones(CLOSES, k, tol, 3);
   currentZones = res.zones;
-  var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH - 20);
+  var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH2 - 20, 0.04);
 
-  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD com os pivôs detectados e as zonas de suporte e resistência destacadas em faixas. O resumo está em texto abaixo.\" font-family="ui-monospace, monospace" id="zoneSvg">';
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH2 + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD com os pivôs detectados e as zonas de suporte e resistência destacadas em faixas. O resumo está em texto abaixo.\" font-family="ui-monospace, monospace" id="zoneSvg">';
   // faixas primeiro (atrás do preço)
   res.zones.slice(0, 8).forEach(function(z, zi) {
     var yTop = pm.y(z.c * (1 + tol / 100)), yBot = pm.y(z.c * (1 - tol / 100));
