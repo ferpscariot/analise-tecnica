@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guia de Análise Técnica</title>
-<meta name="description" content="A parte da análise com base científica sólida: ATR, dimensionamento de posição, fração fixa, volatility targeting, correlação e relação risco/retorno.">
+<meta name="description" content="A parte da análise com base científica sólida: ATR, dimensionamento de posição, fração fixa, volatility targeting e relação risco/retorno.">
 <link rel="canonical" href="https://ferpscariot.github.io/analise-tecnica/risco.html">
 <link rel="icon" href="favicon.svg?v=8d6ddf6a" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=82493942">
@@ -14,14 +14,14 @@
 <meta property="og:site_name" content="Guia de Análise Técnica">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="Gestão de risco, na prática">
-<meta property="og:description" content="A parte da análise com base científica sólida: ATR, dimensionamento de posição, fração fixa, volatility targeting, correlação e relação risco/retorno.">
+<meta property="og:description" content="A parte da análise com base científica sólida: ATR, dimensionamento de posição, fração fixa, volatility targeting e relação risco/retorno.">
 <meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/risco.html">
 <meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Gestão de risco, na prática">
-<meta name="twitter:description" content="A parte da análise com base científica sólida: ATR, dimensionamento de posição, fração fixa, volatility targeting, correlação e relação risco/retorno.">
+<meta name="twitter:description" content="A parte da análise com base científica sólida: ATR, dimensionamento de posição, fração fixa, volatility targeting e relação risco/retorno.">
 <meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <script>
   (function() {
@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
 :root {
   color-scheme: light;
@@ -45,7 +45,6 @@
   --mode-rev-border: #F0C9A8;
   --mode-tr-bg: #EAF3EF;
   --mode-tr-border: #B4D8C6;
-  --diag-bg: #E8E8E8;
   --accent: var(--risk);
     --tab-accent: var(--risk);
   --up: var(--trend);
@@ -60,7 +59,6 @@
   --mode-rev-border: rgba(255, 138, 61, 0.35);
   --mode-tr-bg: rgba(67, 211, 145, 0.10);
   --mode-tr-border: rgba(67, 211, 145, 0.35);
-  --diag-bg: #232D3A;
 }
 .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em;
     text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
@@ -89,13 +87,6 @@ input[type=range]:focus-visible { outline: 3px solid var(--accent); outline-offs
 .result .down { color: var(--down); font-weight: 700; }
 .result .warn { color: var(--warn); font-weight: 700; }
 svg { width: 100%; height: auto; display: block; }
-.matrix { display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 3px;
-    font-family: var(--mono); font-size: 13px; margin-top: 12px; }
-.mcell { padding: 12px 8px; text-align: center; border-radius: 6px; }
-.mhead { font-weight: 700; background: var(--paper); color: var(--ink-soft); }
-.mlabel { font-weight: 700; background: var(--paper); color: var(--ink-soft);
-    display: flex; align-items: center; justify-content: center; }
-.mdiag { background: var(--diag-bg); color: var(--wire); }
 .insight { font-size: 14px; color: var(--ink-soft); margin-top: 16px;
     background: var(--risk-soft); border-left: 3px solid var(--accent); padding: 12px 16px; }
 .insight b { color: var(--ink); }
@@ -110,11 +101,6 @@ svg { width: 100%; height: auto; display: block; }
 .mode.rev h3 .inline-icon { color: var(--osc); }
 .mode.tr h3 .inline-icon { color: var(--trend); }
 .mode p { font-size: 13.5px; color: var(--ink-soft); }
-.toggle-corr { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
-.tc { font-family: var(--sans); font-weight: 700; font-size: 12.5px; border: 2px solid var(--grid);
-    background: var(--card); color: var(--ink); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
-.tc.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.tc:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .foot { font-family: var(--mono); font-size: 12px; color: var(--wire); text-align: center; margin-top: 40px; }
 .disc { font-size: 12.5px; color: var(--wire); font-style: italic; text-align: center; margin-top: 8px; }
 /* ===== toggle de tema (padrão do guia) ===== */
@@ -141,6 +127,7 @@ svg [fill="#fff"] { fill: var(--card); }
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -159,7 +146,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -257,24 +244,9 @@ svg [fill="#fff"] { fill: var(--card); }
     <div class="result" id="volResult" aria-live="polite"></div>
   </div>
 
-  <!-- PILLAR 5: CORRELATION (REAL DATA) -->
+  <!-- PILLAR 5: TARGET / STOP GAIN -->
   <div class="pillar">
-    <div class="phead"><span class="pnum">5</span><h2>Correlação — a diversificação de verdade</h2></div>
-    <p class="ptext">Dados reais dos últimos 90 pregões da sua watchlist. Três semicondutores <em>parecem</em> diversificados — mas veja o quanto eles realmente se movem juntos:</p>
-    <div class="matrix" id="corrMatrix"></div>
-    <div class="insight" style="margin-top:16px;">
-      Todas as correlações são <b>altas e positivas</b> (0,55 a 0,77). Num dia ruim de semicondutores, as três tendem a cair juntas — o risco combinado quase não diminui. "Três ações" não é o mesmo que "diversificado".
-    </div>
-
-    <p class="ptext" style="margin-top:22px;">Veja na prática: o risco de juntar dois ativos de 20% de volatilidade cada, conforme a correlação entre eles:</p>
-    <div class="toggle-corr" id="corrToggle"></div>
-    <div id="corrBar"></div>
-    <div class="result" id="corrResult" aria-live="polite"></div>
-  </div>
-
-  <!-- PILLAR 6: TARGET / STOP GAIN -->
-  <div class="pillar">
-    <div class="phead"><span class="pnum">6</span><h2>Alvo (stop gain) — a saída no lucro</h2></div>
+    <div class="phead"><span class="pnum">5</span><h2>Alvo (stop gain) — a saída no lucro</h2></div>
     <p class="ptext">Se o stop define onde você aceita perder, o <b>alvo</b> (ou <b>stop gain</b> / take-profit) define onde você realiza o ganho. Juntos, eles formam a relação <b>risco/retorno (R:R)</b> — e essa razão muda quanto você precisa acertar para ser lucrativo.</p>
 
     <div class="ctrl">
@@ -313,8 +285,7 @@ svg [fill="#fff"] { fill: var(--card); }
     </div>
   </div>
 
-  <div class="foot">Correlações: dados reais AMD / TSM / INTC, 90 pregões (NASDAQ/NYSE)</div>
-  <div class="disc">Material educativo e ilustrativo — não é recomendação de investimento.</div>
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
 </main>
 
 <script>
@@ -411,89 +382,7 @@ function renderVol() {
 ['volTarget','volCurrent'].forEach(function(id){ $(id).addEventListener('input', renderVol); });
 renderVol();
 
-/* ---- PILLAR 5: CORRELATION MATRIX (real data) ---- */
-var CM = [[1.0,0.667,0.767],[0.667,1.0,0.552],[0.767,0.552,1.0]];
-var NAMES = ['AMD','TSM','INTC'];
-function corrColor(v){
-  if (v>=0.999) return null;
-  // scale 0.5..0.8 to light..strong warm (high corr = bad for diversification = warm)
-  var t = Math.max(0, Math.min(1, (v-0.4)/0.5));
-  var r = Math.round(255 - t*(255-224));
-  var g = Math.round(245 - t*(245-89));
-  var b = Math.round(235 - t*(235-12));
-  return 'rgb('+r+','+g+','+b+')';
-}
-(function renderMatrix(){
-  var html = '<div class="mcell mhead"></div>';
-  NAMES.forEach(function(n){ html += '<div class="mcell mhead">'+n+'</div>'; });
-  for (var i=0;i<3;i++){
-    html += '<div class="mcell mlabel">'+NAMES[i]+'</div>';
-    for (var j=0;j<3;j++){
-      var v = CM[i][j];
-      if (i===j) {
-        html += '<div class="mcell mdiag">'+v.toFixed(2)+'</div>';
-      } else {
-        // fundos claros fixos exigem texto escuro fixo, independente do tema
-        var txtcol = v>=0.7 ? 'color:#fff;' : 'color:#16212E;';
-        html += '<div class="mcell" style="background:'+corrColor(v)+';'+txtcol+'">'+v.toFixed(2)+'</div>';
-      }
-    }
-  }
-  $('corrMatrix').innerHTML = html;
-})();
-
-/* ---- PILLAR 5b: correlation → combined risk ---- */
-var CORR_OPTS = [
-  { v: 1.0, label: '+1,0 (idênticos)' },
-  { v: 0.7, label: '+0,7 (semis)' },
-  { v: 0.3, label: '+0,3' },
-  { v: 0.0, label: '0,0 (independentes)' },
-  { v: -0.5, label: '−0,5 (opostos)' }
-];
-var corrSel = 0.7;
-(function(){
-  var wrap = $('corrToggle');
-  CORR_OPTS.forEach(function(o){
-    var b = document.createElement('button');
-    b.className = 'tc' + (o.v===corrSel?' active':'');
-    b.textContent = o.label;
-    b.setAttribute('data-v', o.v);
-    b.onclick = function(){ corrSel = o.v; document.querySelectorAll('.tc').forEach(function(x){x.classList.remove('active');}); b.classList.add('active'); renderCorrBar(); };
-    wrap.appendChild(b);
-  });
-})();
-function renderCorrBar() {
-  var sigma = 0.20; // each asset 20% vol
-  // equal-weight two assets: portfolio vol = sqrt(0.25*s^2 + 0.25*s^2 + 2*0.5*0.5*corr*s*s)
-  var w = 0.5;
-  var portVar = w*w*sigma*sigma + w*w*sigma*sigma + 2*w*w*corrSel*sigma*sigma;
-  var portVol = Math.sqrt(portVar)*100;
-  var noDiv = 20; // if corr=1
-
-  var W=700,H=120,X0=40,X1=W-140,Y=60,barH=34;
-  var maxV = 20;
-  function wmap(v){ return v/maxV*(X1-X0); }
-  var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Risco combinado da carteira conforme a correlação">';
-  // reference bar (corr=1, no diversification)
-  s+='<rect x="'+X0+'" y="'+(Y-barH-6)+'" width="'+wmap(noDiv).toFixed(1)+'" height="'+barH+'" fill="#E3E9F0" rx="4"/>';
-  s+='<text x="'+(X0+wmap(noDiv)+8).toFixed(1)+'" y="'+(Y-barH-6+barH/2+4)+'" font-size="12" fill="#8CA3B8" font-family="ui-monospace,monospace">20% (sem diversificação)</text>';
-  // actual bar
-  var col = portVol >= 18 ? '#C0392B' : portVol >= 13 ? '#E8590C' : '#1B6E53';
-  s+='<rect x="'+X0+'" y="'+(Y+6)+'" width="'+wmap(portVol).toFixed(1)+'" height="'+barH+'" fill="'+col+'" rx="4"/>';
-  s+='<text x="'+(X0+wmap(portVol)+8).toFixed(1)+'" y="'+(Y+6+barH/2+4)+'" font-size="13" font-weight="700" fill="'+col+'" font-family="ui-monospace,monospace">'+portVol.toFixed(1)+'%</text>';
-  s+='</svg>';
-  $('corrBar').innerHTML=s;
-
-  var saved = (noDiv - portVol)/noDiv*100;
-  $('corrResult').innerHTML =
-    'Dois ativos de 20% de volatilidade, pesos iguais, correlação '+corrSel.toFixed(1).replace('.',',')+':<br>'+
-    'Risco combinado = <span class="big">'+portVol.toFixed(1)+'%</span> '+
-    (saved>1 ? '(<span class="up">'+saved.toFixed(0)+'% menor</span> que sem diversificação)' : '(sem redução — movem-se idênticos)')+
-    '<br>'+(corrSel>=0.7 ? 'Correlação alta como a dos semicondutores → diversificação fraca.' : corrSel<=0 ? 'Correlação baixa/negativa → diversificação poderosa.' : 'Correlação intermediária → alguma proteção.');
-}
-renderCorrBar();
-
-/* ---- PILLAR 6: R:R and required win rate ---- */
+/* ---- PILLAR 5: R:R and required win rate ---- */
 function renderRR() {
   var rr = +$('rr').value;
   $('rrV').textContent = rr.toFixed(1).replace('.0','')+':1';

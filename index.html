@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
 /* ============ TOKENS ============ */
 :root {
@@ -63,6 +63,7 @@ html { scroll-behavior: smooth; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .cd { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .ha-trend { animation: none !important; stroke-dashoffset: 0 !important; }
   .ha-level { animation: none !important; opacity: 0.95 !important; }
   .ha-l { animation: none !important; opacity: 1 !important; }
 }
@@ -124,17 +125,28 @@ p + p { margin-top: 12px; }
 }
 .hero-anim svg { width: 100%; height: 170px; display: block; }
 
+/* candles em preto e branco (convenção clássica): alta = corpo oco, baixa = corpo cheio.
+   Fica neutro de propósito — as cores ficam reservadas para o que a análise acrescenta por cima. */
 .cd { opacity: 0; animation: cdIn 0.34s cubic-bezier(.4,0,.2,1) forwards; }
-.cd line { stroke-width: 1.2; }
-.cd rect { stroke-width: 0; }
-.cd.up line, .cd.up rect { stroke: var(--trend); fill: var(--trend); }
-.cd.dn line, .cd.dn rect { stroke: var(--danger); fill: var(--danger); }
+.cd line { stroke-width: 1.2; stroke: var(--ink); }
+.cd rect { stroke-width: 1.2; stroke: var(--ink); }
+.cd.up rect { fill: var(--card); }
+.cd.dn rect { fill: var(--ink); }
 @keyframes cdIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* linha de tendência: uma EMA real, traçada por cima dos candles depois que eles terminam de aparecer */
+.ha-trend {
+  fill: none; stroke: var(--vol); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 746; stroke-dashoffset: 746;
+  animation: haTrend 0.9s cubic-bezier(.4,0,.2,1) 1.55s forwards;
+}
+@keyframes haTrend { to { stroke-dashoffset: 0; } }
 
 .ha-level {
   stroke: var(--lvl); stroke-width: 1.6; stroke-dasharray: 5 4;
   vector-effect: non-scaling-stroke; opacity: 0;
-  animation: haLevel 0.7s ease-out 1.83s forwards;
+  animation: haLevel 0.7s ease-out 2.55s forwards;
 }
 @keyframes haLevel { to { opacity: 0.95; } }
 
@@ -147,9 +159,11 @@ p + p { margin-top: 12px; }
 .ha-l::before { content: ""; display: inline-block; width: 13px; height: 2px;
   margin-right: 7px; vertical-align: middle; border-radius: 2px; }
 .ha-l1 { animation-delay: 1.23s; }
-.ha-l1::before { background: var(--trend); }
-.ha-l2 { animation-delay: 2.23s; }
-.ha-l2::before { background: var(--lvl); }
+.ha-l1::before { background: var(--ink); }
+.ha-l2 { animation-delay: 2.45s; }
+.ha-l2::before { background: var(--vol); }
+.ha-l3 { animation-delay: 3.25s; }
+.ha-l3::before { background: var(--lvl); }
 @keyframes haLabel { to { opacity: 1; } }
 
 @media (max-width: 640px) {
@@ -315,6 +329,12 @@ p + p { margin-top: 12px; }
 .family-card.flow li a:hover,
 .family-card.flow li a:focus-visible { color: var(--flow); }
 .family-card.flow li a:focus-visible { outline-color: var(--flow); }
+.family-card.dow { border-color: var(--dow); }
+.family-card.dow .icon { color: var(--dow); }
+.family-card.dow li::before { color: var(--dow); }
+.family-card.dow li a:hover,
+.family-card.dow li a:focus-visible { color: var(--dow); }
+.family-card.dow li a:focus-visible { outline-color: var(--dow); }
 .eyebrow.vol { color: var(--vol); }
 .eyebrow.risk { color: var(--risk); }
 .soon {
@@ -344,6 +364,7 @@ p + p { margin-top: 12px; }
 .t-num.lvl { background: var(--lvl); color: var(--on-accent); }
 .t-num.strat { background: var(--strat); color: var(--on-accent); }
 .t-num.flow { background: var(--flow); color: var(--on-accent); }
+.t-num.dow { background: var(--dow); color: var(--on-accent); }
 .trail h3 { margin-bottom: 4px; }
 .trail > li > div > p { font-size: 14.5px; color: var(--ink-soft); }
 .trail p a { color: inherit; font-weight: 700; text-decoration: none;
@@ -523,6 +544,7 @@ footer {
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html" aria-current="page">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -541,7 +563,7 @@ footer {
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -565,13 +587,15 @@ footer {
 
     <figure class="hero-anim">
       <svg viewBox="0 0 880 170" preserveAspectRatio="none"
-           role="img" aria-label="Animação: 44 pregões reais da AMD formando-se como candles, e em seguida o nível de 522 dólares que o preço respeitou 28 vezes.">
+           role="img" aria-label="Animação: 44 pregões reais da AMD formando-se como candles; em seguida uma média móvel traça a tendência por cima deles; e por fim o nível de 522 dólares que o preço respeitou 28 vezes.">
         <g class="cd dn" style="animation-delay:0.000s"><line x1="10.0" y1="69.1" x2="10.0" y2="84.8"/><rect x="4.4" y="70.1" width="11.2" height="4.0" rx="1"/></g><g class="cd up" style="animation-delay:0.032s"><line x1="30.0" y1="72.9" x2="30.0" y2="98.9"/><rect x="24.4" y="79.1" width="11.2" height="8.4" rx="1"/></g><g class="cd up" style="animation-delay:0.064s"><line x1="50.0" y1="68.7" x2="50.0" y2="86.7"/><rect x="44.4" y="69.5" width="11.2" height="12.9" rx="1"/></g><g class="cd up" style="animation-delay:0.096s"><line x1="70.0" y1="48.4" x2="70.0" y2="67.1"/><rect x="64.4" y="51.7" width="11.2" height="7.4" rx="1"/></g><g class="cd up" style="animation-delay:0.128s"><line x1="90.0" y1="60.5" x2="90.0" y2="87.8"/><rect x="84.4" y="68.1" width="11.2" height="7.2" rx="1"/></g><g class="cd dn" style="animation-delay:0.160s"><line x1="110.0" y1="83.0" x2="110.0" y2="118.2"/><rect x="104.4" y="88.1" width="11.2" height="28.1" rx="1"/></g><g class="cd up" style="animation-delay:0.192s"><line x1="130.0" y1="92.0" x2="130.0" y2="106.6"/><rect x="124.4" y="95.9" width="11.2" height="4.5" rx="1"/></g><g class="cd dn" style="animation-delay:0.224s"><line x1="150.0" y1="83.5" x2="150.0" y2="140.8"/><rect x="144.4" y="85.4" width="11.2" height="23.1" rx="1"/></g><g class="cd dn" style="animation-delay:0.256s"><line x1="170.0" y1="106.8" x2="170.0" y2="131.4"/><rect x="164.4" y="114.8" width="11.2" height="13.2" rx="1"/></g><g class="cd up" style="animation-delay:0.288s"><line x1="190.0" y1="95.8" x2="190.0" y2="123.2"/><rect x="184.4" y="97.5" width="11.2" height="22.7" rx="1"/></g><g class="cd up" style="animation-delay:0.320s"><line x1="210.0" y1="69.3" x2="210.0" y2="92.8"/><rect x="204.4" y="77.9" width="11.2" height="10.1" rx="1"/></g><g class="cd up" style="animation-delay:0.352s"><line x1="230.0" y1="38.3" x2="230.0" y2="61.9"/><rect x="224.4" y="47.7" width="11.2" height="9.7" rx="1"/></g><g class="cd dn" style="animation-delay:0.384s"><line x1="250.0" y1="46.3" x2="250.0" y2="81.6"/><rect x="244.4" y="48.0" width="11.2" height="33.5" rx="1"/></g><g class="cd dn" style="animation-delay:0.416s"><line x1="270.0" y1="60.2" x2="270.0" y2="81.5"/><rect x="264.4" y="62.6" width="11.2" height="14.5" rx="1"/></g><g class="cd up" style="animation-delay:0.448s"><line x1="290.0" y1="54.1" x2="290.0" y2="65.4"/><rect x="284.4" y="56.1" width="11.2" height="4.9" rx="1"/></g><g class="cd up" style="animation-delay:0.480s"><line x1="310.0" y1="34.4" x2="310.0" y2="57.5"/><rect x="304.4" y="44.0" width="11.2" height="5.2" rx="1"/></g><g class="cd up" style="animation-delay:0.512s"><line x1="330.0" y1="63.6" x2="330.0" y2="81.9"/><rect x="324.4" y="70.9" width="11.2" height="9.1" rx="1"/></g><g class="cd dn" style="animation-delay:0.544s"><line x1="350.0" y1="66.6" x2="350.0" y2="84.7"/><rect x="344.4" y="70.1" width="11.2" height="1.2" rx="1"/></g><g class="cd dn" style="animation-delay:0.576s"><line x1="370.0" y1="44.6" x2="370.0" y2="81.8"/><rect x="364.4" y="50.5" width="11.2" height="9.6" rx="1"/></g><g class="cd up" style="animation-delay:0.608s"><line x1="390.0" y1="66.5" x2="390.0" y2="85.5"/><rect x="384.4" y="69.4" width="11.2" height="1.5" rx="1"/></g><g class="cd up" style="animation-delay:0.640s"><line x1="410.0" y1="52.0" x2="410.0" y2="91.6"/><rect x="404.4" y="54.3" width="11.2" height="14.1" rx="1"/></g><g class="cd up" style="animation-delay:0.672s"><line x1="430.0" y1="16.0" x2="430.0" y2="49.1"/><rect x="424.4" y="19.2" width="11.2" height="29.9" rx="1"/></g><g class="cd dn" style="animation-delay:0.704s"><line x1="450.0" y1="33.5" x2="450.0" y2="54.9"/><rect x="444.4" y="39.0" width="11.2" height="14.1" rx="1"/></g><g class="cd dn" style="animation-delay:0.736s"><line x1="470.0" y1="47.4" x2="470.0" y2="82.6"/><rect x="464.4" y="55.4" width="11.2" height="17.2" rx="1"/></g><g class="cd up" style="animation-delay:0.768s"><line x1="490.0" y1="26.4" x2="490.0" y2="64.9"/><rect x="484.4" y="43.7" width="11.2" height="14.1" rx="1"/></g><g class="cd up" style="animation-delay:0.800s"><line x1="510.0" y1="66.6" x2="510.0" y2="85.1"/><rect x="504.4" y="74.1" width="11.2" height="1.2" rx="1"/></g><g class="cd up" style="animation-delay:0.832s"><line x1="530.0" y1="68.3" x2="530.0" y2="89.3"/><rect x="524.4" y="73.0" width="11.2" height="10.7" rx="1"/></g><g class="cd up" style="animation-delay:0.864s"><line x1="550.0" y1="37.4" x2="550.0" y2="57.9"/><rect x="544.4" y="48.2" width="11.2" height="8.0" rx="1"/></g><g class="cd up" style="animation-delay:0.896s"><line x1="570.0" y1="36.7" x2="570.0" y2="53.8"/><rect x="564.4" y="38.7" width="11.2" height="11.8" rx="1"/></g><g class="cd dn" style="animation-delay:0.928s"><line x1="590.0" y1="43.8" x2="590.0" y2="64.9"/><rect x="584.4" y="56.0" width="11.2" height="2.6" rx="1"/></g><g class="cd dn" style="animation-delay:0.960s"><line x1="610.0" y1="24.9" x2="610.0" y2="48.1"/><rect x="604.4" y="30.8" width="11.2" height="16.2" rx="1"/></g><g class="cd dn" style="animation-delay:0.992s"><line x1="630.0" y1="37.9" x2="630.0" y2="79.6"/><rect x="624.4" y="40.3" width="11.2" height="22.7" rx="1"/></g><g class="cd dn" style="animation-delay:1.024s"><line x1="650.0" y1="71.8" x2="650.0" y2="94.6"/><rect x="644.4" y="79.8" width="11.2" height="7.1" rx="1"/></g><g class="cd up" style="animation-delay:1.056s"><line x1="670.0" y1="82.7" x2="670.0" y2="121.4"/><rect x="664.4" y="91.3" width="11.2" height="16.0" rx="1"/></g><g class="cd dn" style="animation-delay:1.088s"><line x1="690.0" y1="68.7" x2="690.0" y2="85.7"/><rect x="684.4" y="73.3" width="11.2" height="11.4" rx="1"/></g><g class="cd up" style="animation-delay:1.120s"><line x1="710.0" y1="47.0" x2="710.0" y2="68.6"/><rect x="704.4" y="50.1" width="11.2" height="15.6" rx="1"/></g><g class="cd up" style="animation-delay:1.152s"><line x1="730.0" y1="35.7" x2="730.0" y2="65.2"/><rect x="724.4" y="43.4" width="11.2" height="21.5" rx="1"/></g><g class="cd dn" style="animation-delay:1.184s"><line x1="750.0" y1="39.9" x2="750.0" y2="66.5"/><rect x="744.4" y="49.8" width="11.2" height="4.3" rx="1"/></g><g class="cd dn" style="animation-delay:1.216s"><line x1="770.0" y1="46.2" x2="770.0" y2="72.5"/><rect x="764.4" y="48.0" width="11.2" height="21.1" rx="1"/></g><g class="cd dn" style="animation-delay:1.248s"><line x1="790.0" y1="64.0" x2="790.0" y2="107.2"/><rect x="784.4" y="64.4" width="11.2" height="27.6" rx="1"/></g><g class="cd dn" style="animation-delay:1.280s"><line x1="810.0" y1="110.8" x2="810.0" y2="136.6"/><rect x="804.4" y="115.6" width="11.2" height="10.5" rx="1"/></g><g class="cd dn" style="animation-delay:1.312s"><line x1="830.0" y1="123.9" x2="830.0" y2="152.0"/><rect x="824.4" y="127.8" width="11.2" height="19.6" rx="1"/></g><g class="cd up" style="animation-delay:1.344s"><line x1="850.0" y1="89.2" x2="850.0" y2="123.5"/><rect x="844.4" y="100.1" width="11.2" height="21.5" rx="1"/></g><g class="cd dn" style="animation-delay:1.376s"><line x1="870.0" y1="74.5" x2="870.0" y2="108.2"/><rect x="864.4" y="79.0" width="11.2" height="28.9" rx="1"/></g>
+        <polyline class="ha-trend" points="150.0,82.89 170.0,92.91 190.0,93.93 210.0,90.37 230.0,80.89 250.0,81.02 270.0,80.15 290.0,74.81 310.0,67.96 330.0,68.61 350.0,69.21 370.0,67.19 390.0,67.68 410.0,64.71 430.0,54.59 450.0,54.26 470.0,58.34 490.0,55.08 510.0,59.31 530.0,62.35 550.0,59.21 570.0,54.65 590.0,55.53 610.0,53.63 630.0,55.71 650.0,62.64 670.0,69.01 690.0,72.50 710.0,67.52 730.0,62.16 750.0,60.37 770.0,62.31 790.0,68.91 810.0,81.62 830.0,96.24 850.0,97.09 870.0,99.50"/>
         <line class="ha-level" x1="0" y1="69.3" x2="880" y2="69.3"/>
       </svg>
       <figcaption class="hero-anim-cap">
         <span class="ha-l ha-l1">44 pregões reais</span>
-        <span class="ha-l ha-l2">~$522 · respeitado 28 vezes</span>
+        <span class="ha-l ha-l2">tendência (EMA)</span>
+        <span class="ha-l ha-l3">~$522 · respeitado 28 vezes</span>
       </figcaption>
     </figure>
   </div>
@@ -596,6 +620,27 @@ footer {
     <h2>Escolha pela pergunta, não pela sigla</h2>
     <p class="lead">Cada família responde a uma pergunta diferente sobre o mesmo gráfico. Entre pela pergunta que você quer responder — cada link leva à página completa, com laboratório interativo e dados reais.</p>
     <div class="families">
+      <div class="family-card dow reveal">
+        <span class="icon" aria-hidden="true">
+          <svg class="lucide-icon" viewBox="0 0 24 24">
+            <path d="M12 2v4"></path>
+            <path d="m6.8 15-3.5 2"></path>
+            <path d="m20.7 17-3.5-2"></path>
+            <path d="M6.8 9 3.3 7"></path>
+            <path d="m20.7 7-3.5 2"></path>
+            <path d="M9 22h6"></path>
+            <circle cx="12" cy="11" r="6"></circle>
+          </svg>
+        </span>
+        <h3 style="color:var(--dow);">Teoria</h3>
+        <p style="font-size:14.5px; color:var(--ink-soft);">A origem, de 1900. Três tendências em três escalas de tempo, as fases da alta e as confirmações que viraram indicador — o esqueleto por trás de todo o resto deste guia.</p>
+        <ul>
+          <li><a href="dow.html">Três tendências, três prazos</a></li>
+          <li><a href="dow.html">As três fases da tendência primária</a></li>
+          <li><a href="dow.html">O que sobrevive 120 anos depois</a></li>
+        </ul>
+        <p class="asks">Pergunta que respondem: <em>"de onde vem tudo isso?"</em></p>
+      </div>
       <div class="family-card osc reveal">
         <span class="icon" aria-hidden="true">
           <svg class="lucide-icon" viewBox="0 0 24 24">
@@ -641,7 +686,7 @@ footer {
         <p style="font-size:14.5px; color:var(--ink-soft);">O detector de convicção. Preço diz o que aconteceu; volume diz quanta gente sustentou o movimento — e se a tendência tem combustível.</p>
         <ul>
           <li><a href="volume.html">OBV — volume com direção</a></li>
-          <li><a href="volume.html">A/D — ponderado pelo range do dia</a></li>
+          <li><a href="volume.html">Divergências entre preço e volume</a></li>
           <li><a href="vwap.html">VWAP — o preço justo do dia</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"tem convicção por trás?"</em></p>
@@ -657,7 +702,7 @@ footer {
         <ul>
           <li><a href="risco.html">ATR e stops — o tamanho do passo</a></li>
           <li><a href="risco.html">Dimensionamento de posição</a></li>
-          <li><a href="risco.html">Correlação e diversificação</a></li>
+          <li><a href="risco.html">Volatility targeting</a></li>
           <li><a href="risco.html">Alvos e relação risco/retorno</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"quanto posso perder?"</em></p>
@@ -688,7 +733,7 @@ footer {
         <ul>
           <li><a href="padroes.html">As seis figuras clássicas</a></li>
           <li><a href="padroes.html">Continuação ou reversão</a></li>
-          <li><a href="padroes.html">Detector de topo duplo nos dados reais</a></li>
+          <li><a href="padroes.html">Cada figura, também invertida</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"que forma é essa?"</em></p>
       </div>
@@ -728,7 +773,17 @@ footer {
     <p class="lead">Dá para explorar em qualquer ordem — mas se você está começando, esta sequência constrói cada conceito sobre o anterior.</p>
     <ol class="trail">
       <li class="reveal">
-        <span class="t-num lvl">1</span>
+        <span class="t-num dow">1</span>
+        <div>
+          <h3>Teoria de Dow — a origem</h3>
+          <p>Antes de qualquer indicador: três tendências em três escalas de tempo, e a ideia de que o volume precisa confirmar o preço.</p>
+          <div class="t-links">
+            <a href="dow.html">Teoria</a>
+          </div>
+        </div>
+      </li>
+      <li class="reveal">
+        <span class="t-num lvl">2</span>
         <div>
           <h3>Níveis — o mapa do território</h3>
           <p>Antes dos indicadores, aprenda a ler onde o preço já reagiu: suportes, resistências, rompimentos e a troca de papel.</p>
@@ -738,7 +793,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num flow">2</span>
+        <span class="t-num flow">3</span>
         <div>
           <h3>Padrões — a forma do preço</h3>
           <p>Ainda antes dos indicadores: as figuras clássicas que o preço desenha, o que cada uma sugere e por que elas exigem mais ceticismo que o resto do guia.</p>
@@ -748,7 +803,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num osc">3</span>
+        <span class="t-num osc">4</span>
         <div>
           <h3>Velocidade — os osciladores</h3>
           <p>Comece pelo RSI (o mais usado), depois sinta a mecânica no Estocástico e no Momentum.</p>
@@ -760,7 +815,7 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num trend">4</span>
+        <span class="t-num trend">5</span>
         <div>
           <h3>Direção — a tendência</h3>
           <p>Médias móveis são o alicerce; o ADX mede a força da rota; o MACD junta tendência e gatilho no mesmo instrumento.</p>
@@ -772,28 +827,28 @@ footer {
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num vol">5</span>
+        <span class="t-num vol">6</span>
         <div>
           <h3>Volume — a convicção</h3>
-          <p>Preço sem volume é opinião sem voto. OBV e A/D transformam o volume numa linha que confirma (ou desmente) a tendência.</p>
+          <p>Preço sem volume é opinião sem voto. O OBV transforma o volume numa linha que confirma (ou desmente) a tendência.</p>
           <div class="t-links">
-            <a href="volume.html">OBV e A/D</a>
+            <a href="volume.html">OBV</a>
             <a href="vwap.html">VWAP</a>
           </div>
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num risk">6</span>
+        <span class="t-num risk">7</span>
         <div>
           <h3>Risco — o que sustenta tudo</h3>
-          <p>A parte com melhor evidência: ATR, dimensionamento, correlação e R:R. Se for ler uma página só, que seja esta.</p>
+          <p>A parte com melhor evidência: ATR, dimensionamento, volatility targeting e R:R. Se for ler uma página só, que seja esta.</p>
           <div class="t-links">
             <a href="risco.html">Gestão de risco</a>
           </div>
         </div>
       </li>
       <li class="reveal">
-        <span class="t-num strat">7</span>
+        <span class="t-num strat">8</span>
         <div>
           <h3>Estratégias — juntando as peças</h3>
           <p>Quatro receitas completas que combinam os indicadores por regime de mercado: contexto, gatilho, stop e alvo definidos antes de cada trade.</p>
@@ -810,7 +865,7 @@ footer {
 </main>
 
 <footer>
-  Material educativo, não é recomendação de investimento
+  Material educativo e ilustrativo — não é recomendação de investimento.
 </footer>
 
 <script>

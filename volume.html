@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guia de Análise Técnica</title>
-<meta name="description" content="Como o volume acumulado revela acumulação ou distribuição por trás do preço, e o que separa o OBV do seu primo refinado, o A/D.">
+<meta name="description" content="Como o volume acumulado vira uma linha que confirma ou contradiz o preço — a mecânica do OBV, na prática, com divergências reais da AMD.">
 <link rel="canonical" href="https://ferpscariot.github.io/analise-tecnica/volume.html">
 <link rel="icon" href="favicon.svg?v=8d6ddf6a" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=82493942">
@@ -13,15 +13,15 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Guia de Análise Técnica">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="OBV e A/D — o volume vira uma linha">
-<meta property="og:description" content="Como o volume acumulado revela acumulação ou distribuição por trás do preço, e o que separa o OBV do seu primo refinado, o A/D.">
+<meta property="og:title" content="OBV — o volume vira uma linha">
+<meta property="og:description" content="Como o volume acumulado vira uma linha que confirma ou contradiz o preço — a mecânica do OBV, na prática, com divergências reais da AMD.">
 <meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/volume.html">
 <meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OBV e A/D — o volume vira uma linha">
-<meta name="twitter:description" content="Como o volume acumulado revela acumulação ou distribuição por trás do preço, e o que separa o OBV do seu primo refinado, o A/D.">
+<meta name="twitter:title" content="OBV — o volume vira uma linha">
+<meta name="twitter:description" content="Como o volume acumulado vira uma linha que confirma ou contradiz o preço — a mecânica do OBV, na prática, com divergências reais da AMD.">
 <meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <script>
   (function() {
@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
 :root {
   color-scheme: light;
@@ -41,8 +41,6 @@
   --trend-soft: #E2F1EB;
   --obv: #2A6BB0;
   --obv-soft: #EAF1F8;
-  --ad: #B0632A;
-  --price-soft: #D5DCE4;
   --warn-bg: #FBF3E8;
   --warn-border: #E8C99A;
   --warn-head: #8A5A16;
@@ -56,8 +54,6 @@
   color-scheme: dark;
   --obv: #6FB3FF;
   --obv-soft: rgba(111, 179, 255, 0.14);
-  --ad: #E0995A;
-  --price-soft: rgba(238, 244, 248, 0.25);
   --warn-bg: rgba(242, 193, 78, 0.10);
   --warn-border: rgba(242, 193, 78, 0.35);
   --warn-head: #F2C14E;
@@ -76,10 +72,6 @@ p.lead { font-size: 18px; color: var(--ink-soft); margin-bottom: 8px; }
 .panel { background: var(--card); border: 1px solid var(--grid); border-radius: 16px;
     padding: 24px; margin-top: 22px; box-shadow: var(--shadow-card); }
 svg { width: 100%; height: auto; display: block; }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--ink-soft);
-    margin-bottom: 10px; font-family: var(--sans); }
-.legend span { display: flex; align-items: center; gap: 5px; }
-.sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
 .toggle-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
 .tg { font-family: var(--sans); font-weight: 700; font-size: 13px; border: 2px solid var(--grid);
     background: var(--card); color: var(--ink); padding: 7px 14px; border-radius: 999px; cursor: pointer; }
@@ -117,9 +109,6 @@ svg [stroke="#8CA3B8"] { stroke: var(--wire); }
 svg [fill="#8CA3B8"] { fill: var(--wire); }
 svg [stroke="#2A6BB0"] { stroke: var(--obv); }
 svg [fill="#2A6BB0"] { fill: var(--obv); }
-svg [stroke="#B0632A"] { stroke: var(--ad); }
-svg [fill="#B0632A"] { fill: var(--ad); }
-svg [stroke="#D5DCE4"] { stroke: var(--price-soft); }
 svg [fill="#fff"] { fill: var(--card); }
 /* ===== abas do guia (compartilhadas entre as páginas) ===== */
 /* ---- menu suspenso "Indicadores" ---- */
@@ -131,6 +120,7 @@ svg [fill="#fff"] { fill: var(--card); }
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -149,7 +139,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html" aria-current="page">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html" aria-current="page">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -165,8 +155,8 @@ svg [fill="#fff"] { fill: var(--card); }
       <line x1="6" x2="6" y1="20" y2="16"></line>
     </svg>Indicador de volume
   </div>
-  <h1>OBV e A/D — o volume vira uma linha</h1>
-  <p class="lead">Dois indicadores que acumulam o volume de forma direcional para inferir acumulação (compra) ou distribuição (venda) por trás do preço. Começamos pelo OBV (Granville, 1963) e depois comparamos com seu primo refinado, o A/D.</p>
+  <h1>OBV — o volume vira uma linha</h1>
+  <p class="lead">O On-Balance Volume (Granville, 1963) acumula o volume de forma direcional para inferir acumulação (compra) ou distribuição (venda) por trás do preço — uma regra simples, aplicada dia após dia.</p>
 
   <div class="formula">
     Se fecha <b style="color:var(--up)">acima</b> de ontem: &nbsp; OBV = OBV anterior <b style="color:var(--up)">+</b> volume do dia<br>
@@ -202,36 +192,6 @@ svg [fill="#fff"] { fill: var(--card); }
     </p>
   </div>
 
-  <div class="panel">
-    <h2>OBV vs Acumulação/Distribuição (A/D)</h2>
-    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:8px;">
-      O A/D é o "primo refinado" do OBV. Os dois acumulam volume de forma direcional — mas resolvem de forma diferente
-      a maior crítica ao OBV: <b>como pesar o volume de cada dia</b>.
-    </p>
-    <div class="formula" style="margin:14px 0;">
-      OBV: usa o <b>volume inteiro</b>, com sinal dado só pela direção do fechamento (subiu vs ontem → +tudo; caiu → −tudo)<br><br>
-      A/D: pesa o volume pela <b>posição do fechamento dentro do range do dia</b>:<br>
-      Multiplicador = ((C − Mín) − (Máx − C)) ÷ (Máx − Mín) &nbsp;→&nbsp; varia de −1 a +1<br>
-      A/D = soma corrente de (Multiplicador × Volume)
-    </div>
-    <p style="font-size:14px; color:var(--ink-soft); margin-bottom:14px;">
-      A diferença-chave: se o preço fecha <b>no meio</b> do range de um dia, o A/D quase ignora esse volume
-      (multiplicador ≈ 0), enquanto o OBV soma o volume <b>inteiro</b>. O A/D pergunta "<em>onde</em> dentro do dia o preço
-      fechou?"; o OBV só pergunta "subiu ou caiu?".
-    </p>
-    <div class="legend">
-      <span><span class="sw" style="background:var(--obv);"></span>OBV (normalizado)</span>
-      <span><span class="sw" style="background:var(--ad);"></span>A/D (normalizado)</span>
-    </div>
-    <div id="adChart"></div>
-    <div class="readout" id="adReadout">Passe o cursor para comparar OBV e A/D no mesmo dia.</div>
-    <div class="insight" style="margin-top:16px;">
-      Ambos <b>subiram junto com o preço</b> na alta da AMD — as duas versões concordam que houve acumulação de fundo.
-      Mas repare que as linhas <b>não são idênticas</b>: onde elas divergem, é porque muitos fechamentos ficaram longe
-      dos extremos do dia — informação que o A/D capta e o OBV descarta.
-    </div>
-  </div>
-
   <div class="caveat">
     <h3>
       <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -244,7 +204,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <p>O que a literatura apoia melhor é o <b>conceito geral</b> de que volume carrega informação sobre a convicção de um movimento — não este indicador específico como gerador de sinais. Use-o como <b>contexto e confirmação</b>, não como gatilho isolado de compra/venda.</p>
   </div>
 
-  <div class="foot">Dados: OHLCV diário real de AMD (NASDAQ), ~275 pregões · material educativo, não é recomendação</div>
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
 </main>
 
 <script>
@@ -338,53 +298,6 @@ function toggle(key, btn) {
   render();
 }
 render();
-
-/* ===== OBV vs A/D comparison (precomputed, normalized) ===== */
-var OBV_RAW=[0.0,-0.0361,-0.0022,0.0347,0.0655,0.0324,0.0587,0.1139,0.1556,0.1244,0.0793,0.0388,0.1398,0.2265,0.1769,0.2566,0.3229,0.4009,0.4757,0.5342,0.5959,0.5531,0.4979,0.5372,0.5079,0.4712,0.5073,0.5436,0.6047,0.6547,0.6099,0.7036,0.763,0.8137,0.7648,0.8039,0.7548,0.7962,0.8447,0.8981,0.967,1.0752,1.1401,1.0684,0.9925,1.0455,0.957,0.8234,0.9184,0.9873,0.9166,0.9689,1.0772,1.011,0.9594,0.9234,0.8589,0.7987,0.7607,0.8047,0.7686,0.8207,0.8577,0.894,0.8567,0.8181,0.7873,0.7553,0.677,0.7188,0.7616,0.8141,0.7653,0.8071,0.8439,0.816,0.7742,0.6896,0.6342,0.6812,0.7205,0.682,0.7188,0.6883,0.7281,0.7578,0.7975,0.8532,0.8106,1.0595,1.1752,1.3352,1.2409,1.1222,1.185,1.2567,1.3652,1.2955,1.2397,1.2964,1.2493,1.1896,1.2286,1.3,1.3656,1.3182,1.3675,1.3223,1.3567,1.3931,1.3357,1.4041,1.338,1.2858,1.3292,1.2679,1.3768,1.3136,1.2659,1.228,1.1824,1.1301,1.0637,0.9963,1.0431,0.9727,1.0159,1.0354,1.0663,1.024,1.0516,1.0279,1.0611,1.0918,1.117,1.0938,1.1252,1.0881,1.061,1.0842,1.052,1.0817,1.1411,1.1653,1.145,1.1531,1.1373,1.158,1.1406,1.1237,1.1601,1.1282,1.0882,1.0585,1.031,1.0068,1.0341,1.091,1.1315,1.1868,1.2293,1.2736,1.336,1.3739,1.4214,1.3907,1.4164,1.4435,1.4116,1.3717,1.4085,1.3556,1.2484,1.1862,1.2406,1.2794,1.2541,1.2874,1.2552,1.2809,1.2472,1.2115,1.2373,1.2011,1.1729,1.2543,1.2097,1.1747,1.1434,1.1092,1.0714,1.1123,1.0763,1.0424,1.0812,1.1103,1.1334,1.1047,1.0766,1.1071,1.0854,1.1136,1.1454,1.1077,1.1401,1.1671,1.216,1.1668,1.1365,1.0955,1.1389,1.1793,1.2178,1.2486,1.2748,1.3105,1.3376,1.3741,1.3969,1.4226,1.4473,1.5121,1.5476,1.5128,1.5518,1.6008,1.6464,1.728,1.6774,1.6344,1.6791,1.7212,1.7555,1.7135,1.7777,1.8654,1.8205,1.8788,1.9247,1.886,1.8552,1.8813,1.8517,1.8236,1.7848,1.8205,1.8485,1.8825,1.9216,1.8937,1.9256,1.8944,1.8623,1.8859,1.9151,1.8863,1.8392,1.865,1.8272,1.799,1.8292,1.8609,1.894,1.8658,1.893,1.9367,1.963,1.9331,1.9063,1.9335,1.8811,1.9073,1.9425,1.9127,1.8852];
-var AD_RAW=[0.0141,-0.0221,-0.0002,0.0169,0.0348,0.0159,0.0338,0.0454,0.0561,0.0413,0.0271,0.0126,0.0367,0.0473,0.0369,0.0468,0.0538,0.0561,0.0561,0.0563,0.0583,0.0463,0.0344,0.0433,0.036,0.0286,0.0334,0.0387,0.0454,0.0505,0.0389,0.0517,0.0587,0.0637,0.0533,0.0587,0.0499,0.0561,0.0611,0.0662,0.0724,0.0771,0.0736,0.0625,0.0507,0.056,0.0454,0.028,0.0397,0.0479,0.0389,0.0459,0.0555,0.0491,0.0425,0.0379,0.0284,0.0202,0.0186,0.0251,0.0179,0.0248,0.0296,0.0343,0.0298,0.0247,0.0206,0.016,0.0072,0.0137,0.0206,0.0272,0.0186,0.0253,0.0311,0.0265,0.0201,0.0071,-0.0016,0.0067,0.0135,0.0072,0.0134,0.0083,0.0155,0.0208,0.0272,0.0367,0.0287,0.0563,0.0656,0.0791,0.0625,0.0466,0.0552,0.0651,0.0777,0.0685,0.0596,0.0684,0.062,0.0533,0.0596,0.0692,0.0783,0.0715,0.0783,0.0715,0.0768,0.0824,0.0731,0.0836,0.0729,0.0644,0.0714,0.0611,0.0779,0.0678,0.0596,0.052,0.0439,0.0356,0.0245,0.0146,0.0219,0.0107,0.0181,0.0217,0.0272,0.0203,0.025,0.0208,0.0268,0.0324,0.0369,0.0327,0.0383,0.0311,0.0257,0.0301,0.0238,0.0296,0.041,0.0459,0.0417,0.0438,0.0405,0.0446,0.0405,0.0362,0.0437,0.0362,0.0278,0.0216,0.0158,0.0106,0.0163,0.028,0.0364,0.0479,0.0568,0.066,0.079,0.0872,0.0973,0.0908,0.0963,0.1023,0.0955,0.0871,0.0949,0.0836,0.0603,0.0466,0.0585,0.0672,0.0616,0.0691,0.0619,0.0677,0.06,0.052,0.0578,0.0496,0.0431,0.0615,0.0512,0.0429,0.0355,0.0273,0.0181,0.0281,0.0193,0.0108,0.0203,0.0275,0.0333,0.0261,0.0191,0.0269,0.0214,0.0286,0.0369,0.027,0.0355,0.0426,0.0555,0.0424,0.0343,0.0233,0.0351,0.0461,0.0568,0.0654,0.0728,0.0829,0.0906,0.101,0.1076,0.1151,0.1224,0.1417,0.1524,0.1419,0.1538,0.169,0.1833,0.2095,0.1929,0.1786,0.1938,0.2083,0.2203,0.2058,0.2285,0.2607,0.2438,0.2664,0.2847,0.269,0.2566,0.2672,0.2549,0.2434,0.2274,0.2426,0.2547,0.2695,0.2869,0.2743,0.2891,0.2746,0.2594,0.2708,0.2847,0.2708,0.2478,0.2606,0.2416,0.2272,0.2429,0.2597,0.2775,0.262,0.2769,0.3018,0.3176,0.2997,0.283,0.3002,0.2674,0.2841,0.3068,0.2872,0.7111];
-var CMP_N = CLOSE.length;
-(function(){
-  // trim AD to same length/alignment as CLOSE (both 275)
-  var obv = OBV_RAW.slice(0, CMP_N);
-  var ad = AD_RAW.slice(0, CMP_N);
-  function norm(arr){
-    var mn=Math.min.apply(null,arr), mx=Math.max.apply(null,arr);
-    return arr.map(function(v){ return (v-mn)/(mx-mn); });
-  }
-  var obvN=norm(obv), adN=norm(ad), closeN=norm(CLOSE);
-
-  var W=760,H=260,X0=44,X1=W-14,Y0=16,Y1=H-24;
-  function xm(i){ return X0 + i/(CMP_N-1)*(X1-X0); }
-  function ym(v){ return Y1 - v*(Y1-Y0); }
-  function pl(arr,col,w,dash){
-    var pts=[]; for(var i=0;i<CMP_N;i++) pts.push(xm(i).toFixed(1)+','+ym(arr[i]).toFixed(1));
-    return '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+w+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+' stroke-linejoin="round"/>';
-  }
-  var s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" id="adSvg" role="img" aria-label="Comparação normalizada entre OBV e linha de Acumulação/Distribuição da AMD">';
-  s+=pl(closeN,'#D5DCE4',1.4);           // price faint reference
-  s+=pl(obvN,'#2A6BB0',2);                // OBV
-  s+=pl(adN,'#B0632A',2);                 // A/D
-  s+='<text x="'+X0+'" y="12" font-size="10" fill="#8CA3B8" font-family="ui-monospace,monospace">linhas normalizadas (0–1) para comparar formato · preço ao fundo em cinza</text>';
-  s+='<line id="adcross" x1="0" y1="'+Y0+'" x2="0" y2="'+Y1+'" stroke="#8CA3B8" stroke-width="1" style="display:none;"/>';
-  s+='</svg>';
-  document.getElementById('adChart').innerHTML=s;
-
-  var svg=document.getElementById('adSvg');
-  var cr=document.getElementById('adcross');
-  svg.addEventListener('pointermove', function(e){
-    var r=svg.getBoundingClientRect(); var sc=r.width/W;
-    var i=Math.round(((e.clientX-r.left)/sc - X0)/(X1-X0)*(CMP_N-1));
-    if(i<0)i=0; if(i>=CMP_N)i=CMP_N-1;
-    cr.setAttribute('x1',xm(i).toFixed(1)); cr.setAttribute('x2',xm(i).toFixed(1)); cr.style.display='block';
-    document.getElementById('adReadout').innerHTML=
-      'Dia '+(i+1)+' de '+CMP_N+' · Preço $'+CLOSE[i].toFixed(2)+'<br>'+
-      'OBV = <span style="color:#2A6BB0;font-weight:700;">'+obv[i].toFixed(3)+' bi</span> · '+
-      'A/D = <span style="color:#B0632A;font-weight:700;">'+ad[i].toFixed(3)+' bi</span><br>'+
-      'Ambos acumulam volume, mas o A/D pondera pela posição do fechamento no range do dia.';
-  });
-  svg.addEventListener('pointerleave', function(){ cr.style.display='none'; });
-})();
-
 </script>
 <script src="assets/site.js?v=df9b442e"></script>
 <script src="assets/nav.js?v=3909ef44"></script>

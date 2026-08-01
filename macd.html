@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
 :root {
   color-scheme: light;
@@ -120,6 +120,7 @@ svg [fill="#fff"] { fill: var(--card); }
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -138,7 +139,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html" aria-current="page">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -161,7 +162,24 @@ svg [fill="#fff"] { fill: var(--card); }
     <div class="step-head"><span class="badge">1</span><h2>Duas EMAs do preço</h2></div>
     <p class="step-text">Tudo começa com duas médias exponenciais do fechamento: uma rápida de 12 períodos e uma lenta de 26. A rápida (laranja) gruda no preço; a lenta (roxa) se move devagar.</p>
     <div class="card">
-      <div class="legend">
+      <p class="step-text" style="margin-bottom:10px;">
+        "Exponencial" só quer dizer que o preço de hoje pesa mais que o de ontem, que pesa mais que o de
+        anteontem — numa proporção fixa. Com N=3 (para caber num exemplo pequeno) e os preços $10, $12,
+        $11, $14, $13:
+      </p>
+      <div class="formula">
+        multiplicador = 2 ÷ (N + 1) = 2 ÷ 4 = <b style="color:var(--ink);">0,5</b><br>
+        EMA de hoje = (preço de hoje × multiplicador) + (EMA de ontem × (1 − multiplicador))<br><br>
+        dia 3 (semente, sem "EMA de ontem" ainda) = média simples de $10, $12, $11 = <b style="color:var(--ink);">11,00</b><br>
+        dia 4 = 14 × 0,5 + 11,00 × 0,5 = 7,00 + 5,50 = <b style="color:var(--ink);">12,50</b><br>
+        dia 5 = 13 × 0,5 + 12,50 × 0,5 = 6,50 + 6,25 = <b style="color:var(--ink);">12,75</b>
+      </div>
+      <p class="step-text" style="margin:10px 0 0;">
+        Repare que o preço de hoje nunca apaga o passado — ele só puxa a média na sua direção, com peso fixo.
+        Quanto menor o N, maior o multiplicador e mais rápido a média reage: a <b class="f">EMA12</b> usa
+        multiplicador ≈0,154; a <b class="s">EMA26</b>, ≈0,074 — <b>o dobro do prazo, metade da reação</b>.
+      </p>
+      <div class="legend" style="margin-top:14px;">
         <span><span class="sw" style="background:var(--fast);"></span>EMA12 (rápida)</span>
         <span><span class="sw" style="background:var(--slow);"></span>EMA26 (lenta)</span>
         <span><span class="sw" style="background:var(--wire);"></span>preço</span>
@@ -187,7 +205,7 @@ svg [fill="#fff"] { fill: var(--card); }
   <!-- STEP 3 -->
   <div class="step">
     <div class="step-head"><span class="badge">3</span><h2>A linha de sinal suaviza a MACD</h2></div>
-    <p class="step-text">Agora aplicamos uma EMA de 9 períodos <em>sobre a própria linha MACD</em>. Essa linha de sinal (laranja tracejada) é mais lenta — e os cruzamentos entre as duas é que geram os alertas.</p>
+    <p class="step-text">Agora aplicamos uma EMA de 9 períodos <em>sobre a própria linha MACD</em> — o mesmo mecanismo do passo 1 (multiplicador = 2 ÷ 10 = 0,2), só que a "série de preços" que ela suaviza não é mais o fechamento, é a linha MACD. Essa linha de sinal (laranja tracejada) é mais lenta — e os cruzamentos entre as duas é que geram os alertas.</p>
     <div class="card">
       <div class="formula">Linha de sinal = <b class="sig">EMA9</b> da <b class="m">linha MACD</b></div>
       <div class="legend" style="margin-top:12px;">
@@ -228,7 +246,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <div class="insight" id="insight"></div>
   </div>
 
-  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
 </main>
 
 <script>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Análise Técnica</title>
+<meta name="description" content="A teoria de Dow, de 1900: três tendências em três escalas de tempo, as fases da tendência primária, e por que quase tudo neste guia — suporte, volume, tendência — nasceu dela.">
+<link rel="canonical" href="https://ferpscariot.github.io/analise-tecnica/dow.html">
+<link rel="icon" href="favicon.svg?v=8d6ddf6a" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=82493942">
+<meta name="theme-color" content="#F7F9FB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141B" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Guia de Análise Técnica">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Teoria de Dow — a origem de tudo isso">
+<meta property="og:description" content="A teoria de Dow, de 1900: três tendências em três escalas de tempo, as fases da tendência primária, e por que quase tudo neste guia — suporte, volume, tendência — nasceu dela.">
+<meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/dow.html">
+<meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Teoria de Dow — a origem de tudo isso">
+<meta name="twitter:description" content="A teoria de Dow, de 1900: três tendências em três escalas de tempo, as fases da tendência primária, e por que quase tudo neste guia — suporte, volume, tendência — nasceu dela.">
+<meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
+<script>
+  (function() {
+    var t = null;
+    try { t = localStorage.getItem('vxd-theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
+<style>
+  :root { --accent: var(--dow); --accent-soft: var(--dow-soft); }
+
+  .tri {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 4px;
+  }
+  @media (max-width: 700px) { .tri { grid-template-columns: 1fr; } }
+  .tri-item {
+    background: var(--card-strong); border: 1px solid var(--grid); border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .tri-item h3 { font-family: var(--sans); font-weight: 800; font-size: 14.5px; margin: 0 0 6px; }
+  .tri-item .tri-scale {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--wire); display: block; margin-bottom: 6px;
+  }
+  .tri-item p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.6; }
+
+  .phases { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .phase {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--card-strong); border: 1px solid var(--grid); border-left: 3px solid var(--dow);
+    border-radius: 0 10px 10px 0; padding: 12px 16px;
+  }
+  .phase-num {
+    flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--dow); color: var(--on-accent);
+    font-family: var(--mono); font-weight: 700; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .phase div p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.6; }
+  .phase b { color: var(--ink); }
+
+  .ew-line { fill: none; stroke: var(--dow); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+  .ew-corr { fill: none; stroke: var(--danger); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+  .ew-guide { fill: none; stroke: var(--wire); stroke-width: 1.2; stroke-dasharray: 4 3; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<nav class="site-tabs" aria-label="Páginas do guia">
+  <div class="site-tabs-inner">
+    <a href="index.html">Início</a>
+    <a href="dow.html" aria-current="page">Teoria</a>
+    <div class="tab-dropdown">
+      <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
+    </div>
+    <a href="suportes.html">Suportes</a>
+    <a href="padroes.html">Padrões</a>
+    <a href="risco.html">Risco</a>
+    <a href="estrategias.html">Estratégias</a>
+  </div>
+  <div class="tab-menu" id="indMenu" role="menu" hidden>
+    <span class="tab-menu-head">Osciladores</span>
+    <a role="menuitem" href="rsi.html">RSI — força relativa</a>
+    <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
+    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
+    <span class="tab-menu-head">Tendência</span>
+    <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
+    <a role="menuitem" href="adx.html">ADX — força da tendência</a>
+    <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
+    <span class="tab-menu-head">Volume</span>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
+    <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
+  </div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
+    <span class="theme-icon" id="themeIcon" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<main class="wrap" id="conteudo">
+  <div class="eyebrow dow">
+    <svg class="lucide-icon inline-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2v4"></path>
+      <path d="m6.8 15-3.5 2"></path>
+      <path d="m20.7 17-3.5-2"></path>
+      <path d="M6.8 9 3.3 7"></path>
+      <path d="m20.7 7-3.5 2"></path>
+      <path d="M9 22h6"></path>
+      <circle cx="12" cy="11" r="6"></circle>
+    </svg>Teoria clássica · a origem
+  </div>
+  <h1>Teoria de Dow — de onde tudo isso vem</h1>
+  <p class="lead">
+    Charles Dow nunca escreveu um livro sobre isso — a teoria foi montada, depois da sua morte em 1902, a partir
+    de editoriais que ele escreveu no <em>Wall Street Journal</em>. Mesmo assim, é a raiz de quase tudo neste guia:
+    tendência, suporte, volume como confirmação — os nomes mudaram, a lógica não.
+  </p>
+
+  <div class="formula">
+    1) O mercado desconta tudo &nbsp;·&nbsp; 2) Três tendências, três prazos &nbsp;·&nbsp; 3) A primária tem três fases<br>
+    4) Os índices precisam se confirmar &nbsp;·&nbsp; 5) O volume confirma a tendência &nbsp;·&nbsp; 6) A tendência vale até prova em contrário
+  </div>
+
+  <div class="panel">
+    <h2>Três tendências, três escalas de tempo</h2>
+    <p class="ptext">
+      A ideia central: o mesmo gráfico contém três movimentos sobrepostos, um dentro do outro — como marés,
+      ondas e ondulações na superfície da água.
+    </p>
+    <div class="tri">
+      <div class="tri-item">
+        <span class="tri-scale" style="color:var(--dow);">Primária · anos</span>
+        <h3>A maré</h3>
+        <p>A direção de fundo — meses a anos. É a única das três que Dow considerava "a" tendência; as outras duas são ruído em cima dela.</p>
+      </div>
+      <div class="tri-item">
+        <span class="tri-scale" style="color:var(--danger);">Secundária · semanas a meses</span>
+        <h3>A onda</h3>
+        <p>Correções contra a maré — tipicamente devolvem de um a dois terços do avanço anterior antes da primária retomar.</p>
+      </div>
+      <div class="tri-item">
+        <span class="tri-scale" style="color:var(--wire);">Terciária · dias</span>
+        <h3>A ondulação</h3>
+        <p>O ruído do dia a dia. Dow considerava essa escala, na prática, <b style="color:var(--ink);">não operável</b> — e a maioria dos traders de curto prazo ignora esse aviso até hoje.</p>
+      </div>
+    </div>
+    <div id="triChart"></div>
+    <div class="insight" style="margin-top:16px;">
+      Na AMD real: a linha tracejada é a tendência primária (uma sequência de fundos cada vez mais altos, de
+      $110 a $191). As duas faixas sombreadas são correções secundárias dentro dela — quedas de 18% e 23%
+      que pareciam o fim da alta na hora, e eram apenas a onda.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Ondas de Elliott — a mesma ideia, formalizada</h2>
+    <p class="ptext">
+      Charles Dow nunca falou de ondas — foi Ralph Nelson Elliott, três décadas depois, quem pegou essa ideia
+      de tendências aninhadas em escalas cada vez menores e tentou encaixá-la num padrão específico e
+      repetível: cinco movimentos na direção da tendência, seguidos de três movimentos de correção.
+    </p>
+    <svg viewBox="0 0 780 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Esquema de uma onda de Elliott: cinco movimentos de impulso numerados de 1 a 5 na direção da alta, seguidos de três movimentos de correção rotulados A, B e C.">
+      <line class="ew-guide" x1="140" y1="150" x2="740" y2="150"/>
+      <line class="ew-guide" x1="420" y1="110" x2="780" y2="110"/>
+      <polyline class="ew-line" points="40,220 140,150 200,185 340,60 420,110 540,45"/>
+      <polyline class="ew-corr" points="540,45 610,100 670,70 740,140"/>
+      <text x="34" y="238" font-size="12" fill="var(--wire)" font-family="ui-monospace, monospace">0</text>
+      <text x="140" y="138" font-size="12" fill="var(--dow)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">1</text>
+      <text x="200" y="200" font-size="12" fill="var(--dow)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">2</text>
+      <text x="340" y="48" font-size="12" fill="var(--dow)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">3</text>
+      <text x="420" y="125" font-size="12" fill="var(--dow)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">4</text>
+      <text x="540" y="33" font-size="12" fill="var(--dow)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">5</text>
+      <text x="610" y="115" font-size="12" fill="var(--danger)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">A</text>
+      <text x="670" y="58" font-size="12" fill="var(--danger)" font-weight="700" text-anchor="middle" font-family="ui-monospace, monospace">B</text>
+      <text x="746" y="145" font-size="12" fill="var(--danger)" font-weight="700" font-family="ui-monospace, monospace">C</text>
+      <text x="144" y="162" font-size="9.5" fill="var(--wire)" font-family="ui-monospace, monospace">topo da onda 1</text>
+      <text x="424" y="103" font-size="9.5" fill="var(--wire)" font-family="ui-monospace, monospace">a onda 4 não pode invadir aqui</text>
+    </svg>
+    <div class="formula">
+      1) A onda 2 nunca devolve mais que 100% da onda 1<br>
+      2) A onda 3 nunca é a mais curta entre 1, 3 e 5 &nbsp;<span style="color:var(--wire);">(costuma ser a mais longa)</span><br>
+      3) A onda 4 nunca invade o território de preço da onda 1
+    </div>
+    <p class="ptext" style="margin-bottom:0;">
+      A parte que conecta direto com Dow: cada uma dessas oito pernas é, ela mesma, feita de oito pernas
+      menores do mesmo formato — e essas, de oito ainda menores. É o aninhamento de "maré, onda, ondulação"
+      levado ao limite: não são só três escalas, são infinitas, cada uma repetindo a mesma estrutura 5-3.
+      Guias comuns (não regras): a onda 2 costuma devolver 50–61,8% da onda 1, e a onda 4 costuma devolver
+      38,2% da onda 3 — as mesmas razões de Fibonacci que aparecem espalhadas pelo resto da análise técnica.
+    </p>
+    <div class="insight" style="margin-top:16px;">
+      A ressalva que importa mais aqui: contagem de onda é notoriamente subjetiva. Duas pessoas raramente
+      concordam sobre "em que onda estamos agora", e quando a contagem não bate com o que aconteceu, a saída
+      costumeira é recontar — o que torna a teoria difícil de testar ou refutar. Ela sobrevive como framework
+      de leitura, não como sistema mecânico.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>As três fases da tendência primária</h2>
+    <p class="ptext">
+      Dow dizia que toda tendência primária de alta passa por três fases — e cada uma tem uma "personalidade"
+      de quem está comprando.
+    </p>
+    <div class="phases">
+      <div class="phase">
+        <span class="phase-num">1</span>
+        <div><p><b>Acumulação:</b> o mercado ainda "sente" a crise anterior. Preço lateralizado, notícia ruim,
+        e só o investidor mais informado (ou mais paciente) está comprando — contra o consenso.</p></div>
+      </div>
+      <div class="phase">
+        <span class="phase-num">2</span>
+        <div><p><b>Participação pública:</b> a tendência fica óbvia, os fundamentos melhoram visivelmente, e a
+        maioria dos analistas técnicos entra aqui. É a fase mais longa e a que rende mais pontos.</p></div>
+      </div>
+      <div class="phase">
+        <span class="phase-num">3</span>
+        <div><p><b>Excesso (distribuição):</b> a notícia está ótima, todo mundo quer entrar, o volume dispara —
+        e é exatamente quando quem comprou na fase 1 está vendendo para essa euforia.</p></div>
+      </div>
+    </div>
+    <p class="ptext" style="margin-top:14px; margin-bottom:0;">
+      <b style="color:var(--ink);">A ressalva honesta:</b> identificar essas fases só funciona olhando para trás.
+      Não existe um indicador que aponte "você está na fase 2 agora" — é uma lente para interpretar a história
+      depois, não um gatilho de entrada.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>Os índices precisam se confirmar</h2>
+    <p class="ptext">
+      No original, Dow olhava dois índices — o industrial e o de transportes — e só confiava num sinal de
+      tendência se <b style="color:var(--ink);">os dois</b> fizessem o mesmo movimento. A lógica: se as fábricas
+      produzem mais (industrial sobe) mas ninguém está transportando a produção (transportes não acompanha),
+      algo não fecha.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">A limitação aqui:</b> este guia segue uma ação só, a AMD — não há um segundo
+      índice para confirmar contra. Numa aplicação mais fiel ao tenet, você compararia a AMD com uma concorrente
+      do setor (outra fabricante de chips, por exemplo): se uma sobe sozinha e a outra não acompanha, isso já é
+      um sinal de alerta. O espírito do tenet sobrevive mesmo sem esse segundo ativo na tela: é por isso que o
+      próximo tenet — volume confirmando preço — vira o substituto prático de "duas fontes concordando" quando
+      você só tem um gráfico.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>O volume confirma a tendência</h2>
+    <p class="ptext" style="margin-bottom:0;">
+      Para Dow, uma tendência saudável precisa de volume crescente na direção dela — alta com volume forte é
+      "de verdade"; alta com volume caindo é suspeita, sustentada por cada vez menos gente. Esse tenet passou
+      praticamente intacto para o indicador que abre a família de volume deste guia: o
+      <a href="volume.html" style="color:var(--dow); font-weight:700;">OBV</a> não é nada além disso, formalizado
+      numa linha — e as "divergências" que ele detecta são o mesmo alerta que Dow via ao comparar preço e
+      volume a olho.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>A tendência vale até prova em contrário</h2>
+    <p class="ptext" style="margin-bottom:0;">
+      O tenet mais citado, e o mais mal-entendido: não significa "compre e não venda nunca" — significa que o
+      <b style="color:var(--ink);">ônus da prova</b> é de quem quer declarar a tendência morta. Uma correção
+      secundária, por si só, não é reversão. É exatamente a lógica por trás de manter um stop <em>abaixo</em> da
+      estrutura em vez de vender no primeiro solavanco — a ideia central da página de
+      <a href="risco.html" style="color:var(--dow); font-weight:700;">gestão de risco</a>, e o motivo de existir
+      um filtro como o <a href="adx.html" style="color:var(--dow); font-weight:700;">ADX</a>: ele tenta responder,
+      de forma mecânica, "a tendência ainda está de pé?".
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2>Como (não) usar</h2>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">Não é um sistema de trading.</b> Dow nunca publicou regras de entrada e saída
+      — a teoria é um vocabulário para descrever o que o mercado está fazendo, não um gatilho. Quem promete
+      "sinais da teoria de Dow" está vendendo uma interpretação própria, não algo que Dow escreveu.
+    </p>
+    <p class="ptext" style="margin-bottom:8px;">
+      <b style="color:var(--ink);">As fases são retrospectivas.</b> "Acumulação" só é óbvia depois que a alta
+      já aconteceu. Usada para prever, ela vira uma desculpa para ver o que você já queria ver no gráfico.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">O que sobrevive bem:</b> não os detalhes, mas a estrutura — pensar em
+      múltiplas escalas de tempo ao mesmo tempo, exigir confirmação entre duas fontes de informação diferentes
+      antes de confiar num sinal, e tratar reversão como algo que precisa ser <em>provado</em>, não assumido.
+      Isso é, essencialmente, o esqueleto deste guia inteiro.
+    </p>
+    <div class="insight">
+      Resumo: mais de 120 anos depois, a teoria de Dow não sobrou como sistema — sobrou como hábito mental.
+      Todo indicador nas outras abas é uma tentativa de mecanizar um pedaço dela.
+    </div>
+  </div>
+
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
+</main>
+
+<script src="assets/amd.js?v=2be7c134"></script>
+<script>
+/* ===== tendência primária real + duas correções secundárias ===== */
+var TW = 780, TH = 300, TX0 = 46, TX1 = TW - 14, TY0 = 16, TY1 = TH - 24;
+function txm(i) { return TX0 + i / (N - 1) * (TX1 - TX0); }
+
+function renderTri() {
+  var pm = mapper(CLOSES, TX0, TX1, TY0, TY1, 0.08);
+  var s = '<svg class="chart" viewBox="0 0 ' + TW + ' ' + TH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preço da AMD nos ~280 pregões, com a tendência primária ascendente tracejada e duas correções secundárias destacadas em faixas. A leitura em texto está logo acima." font-family="ui-monospace, monospace">';
+
+  /* correções secundárias reais: dia 57 (topo $184) a 73 (fundo $151), e dia 111 ($264) a 128 ($204) */
+  [[57, 73, 184.4, 151.1], [111, 128, 264.3, 203.8]].forEach(function(c) {
+    var x0 = txm(c[0]), x1 = txm(c[1]);
+    var yTop = pm.y(c[2]), yBot = pm.y(c[3]);
+    s += '<rect x="' + x0.toFixed(1) + '" y="' + yTop.toFixed(1) + '" width="' + (x1 - x0).toFixed(1) + '" height="' + (yBot - yTop).toFixed(1) + '" fill="var(--danger)" opacity="0.10"/>';
+  });
+
+  /* tendência primária: fundo dia 2 ($110) a fundo dia 195 ($191), estendida até o fim */
+  var d0 = 2, p0 = 110.31, d1 = 195, p1 = 190.9;
+  var slope = (p1 - p0) / (d1 - d0);
+  var pEnd = p0 + slope * (N - 1 - d0);
+  s += '<line x1="' + txm(d0).toFixed(1) + '" y1="' + pm.y(p0).toFixed(1) + '" x2="' + txm(N - 1).toFixed(1) + '" y2="' + pm.y(pEnd).toFixed(1) + '" stroke="var(--dow)" stroke-width="1.6" stroke-dasharray="6 4"/>';
+
+  s += poly(ptsOf(CLOSES, txm, pm.y), 'var(--ink)', 1.5);
+
+  s += '<text x="' + (txm(65)).toFixed(1) + '" y="' + (pm.y(184.4) - 8).toFixed(1) + '" font-size="10" fill="var(--danger)" text-anchor="middle">correção secundária · −18%</text>';
+  s += '<text x="' + (txm(119)).toFixed(1) + '" y="' + (pm.y(264.3) - 8).toFixed(1) + '" font-size="10" fill="var(--danger)" text-anchor="middle">correção secundária · −23%</text>';
+  s += '<text x="' + txm(d1).toFixed(1) + '" y="' + (pm.y(p1) + 16).toFixed(1) + '" font-size="10" fill="var(--dow)" font-weight="700">tendência primária</text>';
+
+  s += '<text x="' + TX0 + '" y="' + (TY1 + 16) + '" font-size="10" fill="var(--wire)">primeiro pregão</text>';
+  s += '<text x="' + TX1 + '" y="' + (TY1 + 16) + '" font-size="10" fill="var(--wire)" text-anchor="end">hoje</text>';
+  s += '</svg>';
+  document.getElementById('triChart').innerHTML = s;
+}
+renderTri();
+</script>
+<script src="assets/site.js?v=df9b442e"></script>
+<script src="assets/nav.js?v=3909ef44"></script>
+</body>
+</html>

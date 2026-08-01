@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
   :root { --accent: var(--lvl); --accent-soft: var(--lvl-soft); --tab-accent: var(--lvl); }
 
@@ -56,6 +56,7 @@
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -74,7 +75,7 @@
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -107,8 +108,13 @@
     <p class="ptext" style="margin-bottom:8px;">
       <b style="color:var(--ink);">Ancoragem:</b> números que todo mundo olhou — a máxima histórica, o número redondo ($100, $500), o preço do IPO — viram referências psicológicas.
     </p>
-    <p class="ptext" style="margin-bottom:0;">
+    <p class="ptext" style="margin-bottom:8px;">
       <b style="color:var(--ink);">Profecia autorrealizável:</b> se milhares de traders desenham a mesma linha e agem nela, a linha funciona — <em>porque</em> todos agem nela. É circular, e é real.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      <b style="color:var(--ink);">Liquidez:</b> todo stop deixado perto de um topo ou fundo é uma ordem pendente esperando para ser
+      executada — um bolsão previsível de negócios. É a mesma ideia de "ordens acumuladas" de outro ângulo;
+      o painel mais abaixo entra nesse mecanismo com mais calma.
     </p>
   </div>
 
@@ -134,6 +140,23 @@
       <span class="control-hint">Quão perto dois pivôs precisam estar, em preço, para contarem como o mesmo nível.
         <b>±1.5%</b> agrupa tudo dentro de 1,5% um do outro. Alargue e você tem menos zonas, porém mais gordas; estreite e as zonas ficam finas e precisas — mas nem toda junta os 3 toques mínimos.</span>
     </div>
+
+    <div class="formula">
+      <b style="color:var(--ink);">Rigor do pivô, na prática</b> — fechamentos ao redor de um candidato a topo:<br>
+      dia −4: $120&nbsp;&nbsp;dia −3: <b>$126</b>&nbsp;&nbsp;dia −2: $119&nbsp;&nbsp;dia −1: $121&nbsp;&nbsp;<b>dia 0: $124</b>&nbsp;&nbsp;dia +1: $122&nbsp;&nbsp;dia +2: $118 ...<br>
+      Com <b>±2</b>: os únicos vizinhos que contam são dia −2 a dia +2 — todos abaixo de $124 → <span style="color:var(--trend);">vira pivô</span>.<br>
+      Com <b>±4</b>: o dia −3 ($126) entra na janela e é <em>maior</em> que $124 → <span style="color:var(--danger);">deixa de ser pivô</span> (quem vira pivô é o próprio dia −3).<br>
+      <span style="color:var(--wire);">É só isso: aumentar o rigor amplia quantos vizinhos precisam perder — e alguns "topos" deixam de valer.</span>
+    </div>
+    <div class="formula">
+      <b style="color:var(--ink);">Largura da zona, na prática</b> — dois pivôs de topo, em dias diferentes:<br>
+      pivô A = $250&nbsp;&nbsp;&nbsp;pivô B = $253<br>
+      diferença = ($253 − $250) ÷ $250 × 100 = <b>1,2%</b><br>
+      Com <b>±1.5%</b>: 1,2% cabe dentro da tolerância → <span style="color:var(--trend);">os dois viram uma zona só</span> (~$251,50, 2 toques).<br>
+      Com <b>±0.5%</b>: 1,2% é maior que a tolerância → <span style="color:var(--danger);">ficam como duas zonas separadas</span>, cada uma com 1 toque só.<br>
+      <span style="color:var(--wire);">O slider está comparando exatamente essa % com a distância entre os pivôs — nada mais.</span>
+    </div>
+
     <div class="legend">
       <span><span class="dot" style="background:var(--danger);"></span>pivô de alta (possível teto)</span>
       <span><span class="dot" style="background:var(--trend);"></span>pivô de baixa (possível piso)</span>
@@ -148,13 +171,67 @@
     <h2>Quando o teto vira piso</h2>
     <p class="ptext">
       O fenômeno mais útil dos níveis: uma resistência rompida tende a virar suporte (e vice-versa) — a "troca de papel".
-      Os dados da AMD trazem dois exemplos limpos, detectados pelo mesmo algoritmo acima:
+      Os dados da AMD trazem dois exemplos limpos, detectados pelo mesmo algoritmo acima. O gráfico abaixo é um
+      <b style="color:var(--ink);">recorte</b> — só o trecho onde as duas zonas vivem; a série completa segue até $581.
     </p>
     <div id="flipChart"></div>
     <div class="readout" id="flipReadout"></div>
     <div class="insight">
       A lógica da troca de papel: quem vendeu no teto viu o preço fugir para cima e quer <b>recomprar no mesmo nível</b>;
       quem perdeu o rompimento espera o <b>reteste</b> para entrar. As ordens dos dois grupos viram o novo piso.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Zonas de liquidez — o mesmo fenômeno, pela ótica do stop</h2>
+    <p class="ptext">
+      Vocabulário mais recente (ligado ao "smart money"), mas descrevendo o mesmo bolsão de ordens de sempre —
+      só que agora nomeando quem está dos dois lados dele. <b style="color:var(--ink);">Liquidez de compra</b>
+      é o conjunto de stops de recompra empilhados <em>acima</em> de um topo, deixados por quem vendeu a
+      descoberto ali. <b style="color:var(--ink);">Liquidez de venda</b> é o espelho: stops de venda empilhados
+      <em>abaixo</em> de um fundo, deixados por quem comprou ali.
+    </p>
+    <p class="ptext">
+      Topos ou fundos <b style="color:var(--ink);">quase iguais</b> — os "equal highs/lows" — são o alvo
+      preferido: dois toques no mesmo preço concentram o dobro do bolsão de ordens no mesmo lugar. É
+      literalmente a mesma zona de 3+ toques que o detector acima encontra, vista como "onde estão os stops"
+      em vez de "onde o preço reagiu".
+    </p>
+    <svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Esquema de uma varredura de liquidez: o preço sobe até um nível de resistência, o pavio de um candle ultrapassa o nível, mas o fechamento volta para baixo dele, e os candles seguintes revertem com força.">
+      <line x1="14" y1="60" x2="306" y2="60" fill="none" stroke="var(--wire)" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="18" y="52" font-size="10" fill="var(--wire)" font-family="ui-monospace, monospace">nível · liquidez de compra acumulada acima</text>
+      <line x1="40" y1="90" x2="40" y2="118" stroke="var(--trend)" stroke-width="2"/>
+      <rect x="32" y="95" width="16" height="18" rx="2" fill="var(--trend)"/>
+      <line x1="80" y1="75" x2="80" y2="102" stroke="var(--trend)" stroke-width="2"/>
+      <rect x="72" y="80" width="16" height="17" rx="2" fill="var(--trend)"/>
+      <line x1="120" y1="60" x2="120" y2="87" stroke="var(--trend)" stroke-width="2"/>
+      <rect x="112" y="65" width="16" height="16" rx="2" fill="var(--trend)"/>
+      <line x1="160" y1="42" x2="160" y2="82" stroke="var(--danger)" stroke-width="2"/>
+      <rect x="152" y="58" width="16" height="20" rx="2" fill="var(--danger)"/>
+      <line x1="200" y1="65" x2="200" y2="112" stroke="var(--danger)" stroke-width="2"/>
+      <rect x="192" y="75" width="16" height="30" rx="2" fill="var(--danger)"/>
+      <line x1="240" y1="102" x2="240" y2="140" stroke="var(--danger)" stroke-width="2"/>
+      <rect x="232" y="106" width="16" height="28" rx="2" fill="var(--danger)"/>
+      <text x="160" y="34" font-size="9.5" fill="var(--danger)" text-anchor="middle" font-weight="700" font-family="ui-monospace, monospace">o pavio "varre" o nível...</text>
+      <text x="220" y="155" font-size="9.5" fill="var(--danger)" text-anchor="middle" font-weight="700" font-family="ui-monospace, monospace">...e reverte com força</text>
+    </svg>
+    <p class="ptext" style="margin-top:12px;">
+      Essa é a "varredura de liquidez": o preço espeta além do nível — o suficiente para acionar os stops
+      agrupados ali — e reverte logo em seguida. É a mesma figura que a página já chama de
+      <b style="color:var(--ink);">falso rompimento</b>; a leitura de liquidez só explica <em>por que</em> o
+      mercado parece "ir buscar" esses pavios com tanta frequência.
+    </p>
+    <p class="ptext" style="margin-bottom:0;">
+      Na AMD real: a tampa em ~$221 (painel acima) levou <b>4 toques ao longo de meses</b> antes de ceder —
+      cada toque deixando mais stops de recompra empilhados um pouco acima do nível. Quando finalmente rompeu
+      de vez, não foi um espeto isolado: o preço engoliu aquela liquidez inteira e seguiu — o mesmo evento,
+      as duas leituras.
+    </p>
+    <div class="insight">
+      A ressalva: dizer que "o mercado foi buscar liquidez de propósito" atribui intenção a algo que não dá
+      pra verificar só olhando o preço — é uma interpretação, não um fato observável. O que é observável, e já
+      está no restante desta página, é que o preço ultrapassa níveis e volta com frequência. A lente de
+      liquidez explica o mecanismo; não aumenta o poder preditivo além do que "zona, não linha" já dizia.
     </div>
   </div>
 
@@ -174,7 +251,7 @@
     </div>
   </div>
 
-  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
 </main>
 
 <script src="assets/amd.js?v=2be7c134"></script>
@@ -294,9 +371,14 @@ renderZones();
     if (allH && (!lid || z.pts.length > lid.pts.length)) lid = z;
   });
 
-  var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH - 20);
+  /* zoom: as duas zonas e a virada ficam entre os dias 15 e 232 — usar a série
+     inteira (até $581, no rali final) espremia as duas faixas num canto do gráfico */
+  var FS = 15, FE = 232, FN = FE - FS + 1;
+  var CLOSES_WIN = CLOSES.slice(FS, FE + 1);
+  function fxm(iLocal) { return ZX0 + iLocal / (FN - 1) * (ZX1 - ZX0); }
+  var pm = mapper(CLOSES_WIN, ZX0, ZX1, 14, ZH - 20);
   var tol = 1.5;
-  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD destacando a zona que passou de resistência a suporte e a zona que serviu de tampa por meses. A explicação está em texto abaixo.\" font-family="ui-monospace, monospace">';
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD, recortado nos pregões 16 a 233, destacando a zona que passou de resistência a suporte e a zona que serviu de tampa por meses. A explicação está em texto abaixo.\" font-family="ui-monospace, monospace">';
   [[flip, 'teto → piso'], [lid, 'a tampa']].forEach(function(pair) {
     var z = pair[0];
     if (!z) return;
@@ -304,14 +386,16 @@ renderZones();
     s += '<rect x="' + ZX0 + '" y="' + yTop.toFixed(1) + '" width="' + (ZX1 - ZX0) + '" height="' + (yBot - yTop).toFixed(1) + '" fill="var(--lvl)" opacity="0.25" rx="3"/>';
     s += '<text x="' + (ZX0 + 4) + '" y="' + (yTop - 4).toFixed(1) + '" font-size="10.5" fill="var(--lvl)" font-weight="700">' + pair[1] + ' · ~$' + z.c.toFixed(0) + '</text>';
   });
-  s += poly(ptsOf(CLOSES, zxm, pm.y), 'var(--ink)', 1.6);
+  s += poly(ptsOf(CLOSES_WIN, fxm, pm.y), 'var(--ink)', 1.6);
   [flip, lid].forEach(function(z) {
     if (!z) return;
     z.pts.forEach(function(pv) {
-      s += '<circle cx="' + zxm(pv.i).toFixed(1) + '" cy="' + pm.y(pv.p).toFixed(1) + '" r="4.5" fill="' +
+      s += '<circle cx="' + fxm(pv.i - FS).toFixed(1) + '" cy="' + pm.y(pv.p).toFixed(1) + '" r="4.5" fill="' +
            (pv.kind === 'H' ? 'var(--danger)' : 'var(--trend)') + '"/>';
     });
   });
+  s += '<text x="' + ZX0 + '" y="' + (ZH - 6) + '" font-size="10" fill="var(--wire)">pregão ' + (FS + 1) + '</text>';
+  s += '<text x="' + ZX1 + '" y="' + (ZH - 6) + '" font-size="10" fill="var(--wire)" text-anchor="end">pregão ' + (FE + 1) + ' (rompimento a caminho de $581)</text>';
   s += '</svg>';
   document.getElementById('flipChart').innerHTML = s;
 

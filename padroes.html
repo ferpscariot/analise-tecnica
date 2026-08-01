@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guia de Análise Técnica</title>
-<meta name="description" content="Os seis padrões gráficos clássicos desenhados um a um — o que cada figura sugere, onde o volume entra e como ela falha — mais um detector de topo duplo nos dados reais da AMD.">
+<meta name="description" content="Os seis padrões gráficos clássicos desenhados um a um, com a inversa de cada figura — o que cada uma sugere, onde o volume entra e como ela falha.">
 <link rel="canonical" href="https://ferpscariot.github.io/analise-tecnica/padroes.html">
 <link rel="icon" href="favicon.svg?v=8d6ddf6a" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=82493942">
@@ -14,14 +14,14 @@
 <meta property="og:site_name" content="Guia de Análise Técnica">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="Padrões gráficos — a forma que o preço desenha">
-<meta property="og:description" content="Os seis padrões gráficos clássicos desenhados um a um — o que cada figura sugere, onde o volume entra e como ela falha — mais um detector de topo duplo nos dados reais da AMD.">
+<meta property="og:description" content="Os seis padrões gráficos clássicos desenhados um a um, com a inversa de cada figura — o que cada uma sugere, onde o volume entra e como ela falha.">
 <meta property="og:url" content="https://ferpscariot.github.io/analise-tecnica/padroes.html">
 <meta property="og:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Padrões gráficos — a forma que o preço desenha">
-<meta name="twitter:description" content="Os seis padrões gráficos clássicos desenhados um a um — o que cada figura sugere, onde o volume entra e como ela falha — mais um detector de topo duplo nos dados reais da AMD.">
+<meta name="twitter:description" content="Os seis padrões gráficos clássicos desenhados um a um, com a inversa de cada figura — o que cada uma sugere, onde o volume entra e como ela falha.">
 <meta name="twitter:image" content="https://ferpscariot.github.io/analise-tecnica/og.png?v=eba28fa9">
 <script>
   (function() {
@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
   :root { --accent: var(--flow); --accent-soft: var(--flow-soft); }
 
@@ -65,6 +65,10 @@
   .pat svg { width: 100%; height: auto; display: block; }
   .pat-line { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
   .pat-guide { fill: none; stroke: var(--wire); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  /* ramo tracejado: o que acontece quando a figura falha, saindo do mesmo ponto de confirmação */
+  .pat-fail { fill: none; stroke: var(--danger); stroke-width: 1.6; stroke-dasharray: 3.5 3; stroke-linecap: round; opacity: 0.85; }
+  .pat-fail-candle { stroke: var(--danger); stroke-dasharray: 2.5 2.5; opacity: 0.6; }
+  .pat-fail-candle-body { fill: none; stroke: var(--danger); stroke-width: 1.4; stroke-dasharray: 2.5 2.5; opacity: 0.6; }
   /* legenda do desenho: texto de verdade, fora do SVG — dentro dele o rótulo
      escala junto com a figura e acaba passando por cima da linha de preço */
   .pat-cap {
@@ -119,13 +123,24 @@
   .pat dd { margin: 2px 0 0; color: var(--ink-soft); }
   .pat dd b { color: var(--ink); }
 
-  /* ---- laboratório ---- */
-  .lab-legend {
-    display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px;
-    font-family: var(--mono); font-size: 11.5px; color: var(--wire);
+  /* ---- dois candles de curiosidade, fora do catálogo espelhável ---- */
+  .extra-head {
+    font-family: var(--sans); font-weight: 800; font-size: 17px;
+    margin: 30px 0 10px; padding-top: 24px; border-top: 1px dashed var(--grid);
   }
-  .lab-legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .lab-legend i { width: 14px; height: 3px; border-radius: 2px; display: block; }
+  .extra {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px;
+  }
+  @media (max-width: 700px) { .extra { grid-template-columns: 1fr; } }
+  .extra-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: var(--card-strong); border: 1px solid var(--grid);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .extra-item svg { flex: none; width: 52px; height: auto; }
+  .extra-item h4 { font-family: var(--sans); font-weight: 800; font-size: 14.5px; margin: 0 0 5px; }
+  .extra-item p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.6; }
+  .extra-item p b { color: var(--ink); }
 
   .control-hint {
     font-size: 12.5px; color: var(--wire); margin: -8px 0 16px; line-height: 1.6;
@@ -138,6 +153,7 @@
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -156,7 +172,7 @@
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -197,7 +213,9 @@
     <p class="ptext">
       Cada desenho abaixo é esquemático — no gráfico real elas nunca aparecem tão limpas, e é justamente
       aí que mora o problema. Repare que toda figura tem uma <b style="color:var(--ink);">linha de
-      confirmação</b>: enquanto o preço não a rompe, não há padrão nenhum, só uma forma bonita.
+      confirmação</b>: enquanto o preço não a rompe, não há padrão nenhum, só uma forma bonita. O ramo
+      <span style="color:var(--danger);">tracejado vermelho</span> em cada desenho é o "Como falha" do
+      texto, saindo do mesmo ponto — a mesma figura, o outro desfecho possível.
     </p>
     <p class="ptext">
       São seis formas, mas doze nomes: cada uma existe também invertida. Use o botão para virar
@@ -221,8 +239,9 @@
           <h3><span data-d="a">Ombro-cabeça-ombro</span><span data-d="b">OCO invertido</span></h3>
           <span class="pat-kind rev">Reversão</span>
         </div>
-        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: três topos, o do meio mais alto, apoiados numa linha de pescoço horizontal que é rompida para baixo.">
+        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: três topos, o do meio mais alto, apoiados numa linha de pescoço horizontal que é rompida para baixo. Um ramo tracejado vermelho mostra a falha: o preço rompe e volta para cima do pescoço.">
           <line class="pat-guide" x1="14" y1="84" x2="206" y2="84"/>
+          <polyline class="pat-fail" points="196,90 203,76 210,58"/>
           <polyline class="pat-line" points="14,116 40,66 62,88 82,84 108,30 134,84 156,86 178,64 196,90 206,116"/>
         </svg>
         <p class="pat-cap"><span data-d="a">linha de pescoço — romper para baixo confirma</span><span data-d="b">linha de pescoço — romper para cima confirma</span></p>
@@ -241,8 +260,9 @@
           <h3><span data-d="a">Topo duplo</span><span data-d="b">Fundo duplo</span></h3>
           <span class="pat-kind rev">Reversão</span>
         </div>
-        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: dois topos na mesma altura separados por um vale, com o rompimento do vale para baixo.">
+        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: dois topos na mesma altura separados por um vale, com o rompimento do vale para baixo. Um ramo tracejado vermelho mostra a falha: o preço rompe o vale e volta para cima dele.">
           <line class="pat-guide" x1="14" y1="80" x2="206" y2="80"/>
+          <polyline class="pat-fail" points="176,98 190,72 204,52"/>
           <polyline class="pat-line" points="14,116 52,34 78,76 96,60 124,36 152,80 176,98 206,118"/>
         </svg>
         <p class="pat-cap"><span data-d="a">o vale entre os topos é a linha de confirmação</span><span data-d="b">o topo entre os fundos é a linha de confirmação</span></p>
@@ -261,9 +281,10 @@
           <h3><span data-d="a">Triângulo ascendente</span><span data-d="b">Triângulo descendente</span></h3>
           <span class="pat-kind cont">Continuação</span>
         </div>
-        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: topos alinhados num teto horizontal e fundos cada vez mais altos, comprimindo o preço até o rompimento para cima.">
+        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: topos alinhados num teto horizontal e fundos cada vez mais altos, comprimindo o preço até o rompimento para cima. Um ramo tracejado vermelho mostra a falha: o preço rompe para baixo, pelo lado errado.">
           <line class="pat-guide" x1="24" y1="44" x2="196" y2="44"/>
           <line class="pat-guide" x1="24" y1="112" x2="196" y2="52"/>
+          <polyline class="pat-fail" points="178,58 188,80 198,102"/>
           <polyline class="pat-line" points="14,120 26,110 48,46 66,92 88,45 106,78 126,46 142,66 160,45 178,58 196,20"/>
         </svg>
         <p class="pat-cap"><span data-d="a">teto fixo em cima, fundos subindo por baixo</span><span data-d="b">piso fixo embaixo, topos descendo por cima</span></p>
@@ -282,9 +303,10 @@
           <h3><span data-d="a">Bandeira de alta</span><span data-d="b">Bandeira de baixa</span></h3>
           <span class="pat-kind cont">Continuação</span>
         </div>
-        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: alta forte formando um mastro, seguida de um canal curto inclinado para baixo, e novo rompimento para cima.">
+        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: alta forte formando um mastro, seguida de um canal curto inclinado para baixo, e novo rompimento para cima. Um ramo tracejado vermelho mostra a falha: a correção devolve mais da metade do mastro em vez de estabilizar.">
           <line class="pat-guide" x1="86" y1="26" x2="150" y2="52"/>
           <line class="pat-guide" x1="86" y1="58" x2="150" y2="84"/>
+          <polyline class="pat-fail" points="130,72 144,92 156,110"/>
           <polyline class="pat-line" points="14,118 30,104 52,68 74,32 90,30 102,60 116,40 130,72 144,52 152,78 168,44 190,18 206,10"/>
         </svg>
         <p class="pat-cap"><span data-d="a">o mastro sobe, a bandeira devolve pouco, e o preço segue</span><span data-d="b">o mastro desce, a bandeira devolve pouco, e o preço segue</span></p>
@@ -303,9 +325,10 @@
           <h3><span data-d="a">Cunha descendente</span><span data-d="b">Cunha ascendente</span></h3>
           <span class="pat-kind rev">Reversão</span>
         </div>
-        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: duas linhas inclinadas para baixo que convergem, com o preço rompendo para cima no fim.">
+        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: duas linhas inclinadas para baixo que convergem, com o preço rompendo para cima no fim. Um ramo tracejado vermelho mostra a falha: o preço rompe a borda de baixo em vez de reverter.">
           <line class="pat-guide" x1="20" y1="30" x2="170" y2="78"/>
           <line class="pat-guide" x1="20" y1="76" x2="170" y2="92"/>
+          <polyline class="pat-fail" points="162,76 174,92 188,104"/>
           <polyline class="pat-line" points="14,60 24,32 40,68 58,42 74,78 92,54 110,84 128,66 146,88 162,76 178,44 200,18"/>
         </svg>
         <p class="pat-cap"><span data-d="a">as bordas convergem para baixo e o preço sai por cima</span><span data-d="b">as bordas convergem para cima e o preço sai por baixo</span></p>
@@ -324,7 +347,7 @@
           <h3><span data-d="a">Martelo e engolfo de alta</span><span data-d="b">Estrela cadente e engolfo de baixa</span></h3>
           <span class="pat-kind und">Candle isolado</span>
         </div>
-        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: à esquerda um martelo, com corpo pequeno no topo e sombra longa embaixo; à direita um engolfo de alta, em que o segundo candle cobre todo o corpo do primeiro.">
+        <svg viewBox="0 0 220 130" role="img" aria-label="Esquema: à esquerda um martelo, com corpo pequeno no topo e sombra longa embaixo; à direita um engolfo de alta, em que o segundo candle cobre todo o corpo do primeiro. Um candle tracejado vermelho mostra a falha: o dia seguinte devolve o ganho em vez de confirmar.">
           <line x1="52" y1="24" x2="52" y2="40" class="c-up" stroke-width="2"/>
           <rect x="44" y="40" width="17" height="14" rx="2" class="c-up"/>
           <line x1="52" y1="54" x2="52" y2="106" class="c-up" stroke-width="2"/>
@@ -334,6 +357,8 @@
           <line x1="176" y1="26" x2="176" y2="38" class="c-up" stroke-width="2"/>
           <rect x="167" y="38" width="18" height="44" rx="2" class="c-up"/>
           <line x1="176" y1="82" x2="176" y2="94" class="c-up" stroke-width="2"/>
+          <line x1="204" y1="32" x2="204" y2="98" class="pat-fail-candle"/>
+          <rect x="195" y="42" width="18" height="34" rx="2" class="pat-fail-candle-body"/>
         </svg>
         <p class="pat-cap plain"><span data-d="a">à esquerda o martelo; à direita o engolfo de alta</span><span data-d="b">à esquerda a estrela cadente; à direita o engolfo de baixa</span></p>
         <dl>
@@ -347,44 +372,43 @@
       </div>
 
     </div>
-  </div>
 
-  <div class="panel">
-    <h2>Quantos topos duplos existem na AMD?</h2>
+    <h3 class="extra-head">De quebra: os dois extremos da mesma régua</h3>
     <p class="ptext">
-      Aqui está o teste honesto. Programei um detector de topo duplo e apontei para os ~280 pregões reais.
-      A pergunta que o painel responde não é "o padrão funciona?", e sim uma anterior e mais incômoda:
-      <b style="color:var(--ink);">quantas figuras existem depende de quão exigente você resolve ser</b>.
+      Estes dois não são figuras no sentido das anteriores — são candles isolados, e ficam de fora do
+      espelhamento porque não têm inversa que mude o significado. Valem pela curiosidade: um é a ausência
+      total de decisão, o outro é decisão do primeiro ao último negócio do dia.
     </p>
-    <div class="controls-row">
-      <label for="dtTol">Tolerância entre os topos</label>
-      <input type="range" id="dtTol" min="1" max="5" step="0.5" value="2">
-      <span class="value-pill" id="dtTolVal">2%</span>
-    </div>
-    <p class="control-hint">
-      Quanto os dois topos podem diferir e ainda contar como "o mesmo teto". Com 1% você só aceita
-      topos quase idênticos; com 5%, quase qualquer dupla de máximas parecidas entra.
-    </p>
-    <div class="controls-row">
-      <label for="dtDrop">Queda para "ter funcionado"</label>
-      <input type="range" id="dtDrop" min="2" max="15" step="1" value="5">
-      <span class="value-pill" id="dtDropVal">5%</span>
-    </div>
-    <p class="control-hint">
-      Depois de romper o vale, quanto o preço precisa cair — em até 30 pregões — para dizermos que a
-      figura entregou o que prometia.
-    </p>
-    <div id="dtChart"></div>
-    <div class="lab-legend">
-      <span><i style="background:var(--ok)"></i> caiu o que prometia</span>
-      <span><i style="background:var(--danger)"></i> rompeu o vale e não caiu</span>
-      <span><i style="background:var(--wire)"></i> nunca rompeu o vale</span>
-    </div>
-    <div class="readout" id="dtReadout" aria-live="polite"></div>
-    <div class="insight">
-      Repare no que acontece ao arrastar a tolerância: o número de figuras <b>muda sem que o mercado
-      tenha mudado nada</b>. O gráfico é o mesmo — o que muda é o seu critério. Essa é a crítica central
-      aos padrões gráficos, e ela não tem defesa.
+    <div class="extra">
+      <div class="extra-item">
+        <svg viewBox="0 0 80 120" role="img" aria-label="Esquema do doji: sombras longas para cima e para baixo, com o corpo reduzido a um traço no meio.">
+          <line x1="40" y1="14" x2="40" y2="58" stroke="var(--wire)" stroke-width="2.5"/>
+          <line x1="20" y1="59" x2="60" y2="59" stroke="var(--wire)" stroke-width="4"/>
+          <line x1="40" y1="60" x2="40" y2="106" stroke="var(--wire)" stroke-width="2.5"/>
+        </svg>
+        <div>
+          <h4>Doji</h4>
+          <p>
+            Abertura e fechamento praticamente <b>no mesmo preço</b>. O corpo some e sobram só as sombras:
+            o dia inteiro de briga terminou empatado. Ele não aponta direção — aponta <b>indecisão</b>, e
+            por isso costuma aparecer perto do fim de um movimento, quando a pressão que mandava está
+            acabando.
+          </p>
+        </div>
+      </div>
+      <div class="extra-item">
+        <svg viewBox="0 0 80 120" role="img" aria-label="Esquema do marubozu: um corpo cheio ocupando todo o candle, sem nenhuma sombra em cima ou embaixo.">
+          <rect x="24" y="16" width="32" height="88" rx="2" fill="var(--trend)"/>
+        </svg>
+        <div>
+          <h4>Marubozu</h4>
+          <p>
+            O oposto exato: <b>nenhuma sombra</b>. Abriu na mínima e fechou na máxima — ou o contrário,
+            no marubozu de baixa. Significa que um lado mandou do primeiro ao último negócio, sem o
+            outro conseguir devolver nada. É o candle de <b>convicção máxima</b>.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -416,10 +440,9 @@
     </div>
   </div>
 
-  <div class="foot">Dados: fechamentos diários reais de AMD (NASDAQ), ~280 pregões · material educativo, não é recomendação</div>
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
 </main>
 
-<script src="assets/amd.js?v=2be7c134"></script>
 <script>
 /* ---- espelhar o catálogo ---- */
 (function() {
@@ -433,103 +456,6 @@
   a.addEventListener('click', function() { set(false); });
   b.addEventListener('click', function() { set(true); });
 })();
-
-/* ---- detector de topo duplo ---- */
-function localPeaks(c, w) {
-  var out = [];
-  for (var i = w; i < c.length - w; i++) {
-    var isMax = true;
-    for (var j = i - w; j <= i + w; j++) { if (c[j] > c[i]) { isMax = false; break; } }
-    if (isMax) out.push(i);
-  }
-  return out;
-}
-/* tol: quanto os dois topos podem diferir (%). drop: queda exigida abaixo do vale (%).
-   Critérios fixos: topos separados por 8 a 80 pregões e vale ao menos 1,5% abaixo deles. */
-function detectDoubleTops(c, tol, drop) {
-  var pk = localPeaks(c, 3), res = [], used = -1;
-  for (var a = 0; a < pk.length; a++) {
-    if (pk[a] <= used) continue;
-    for (var b = a + 1; b < pk.length; b++) {
-      var i = pk[a], j = pk[b], gap = j - i;
-      if (gap < 8) continue;
-      if (gap > 80) break;
-      var hi = Math.max(c[i], c[j]), lo = Math.min(c[i], c[j]);
-      if ((hi - lo) / lo * 100 > tol) continue;
-      var nv = Infinity, nI = i;
-      for (var k = i; k <= j; k++) { if (c[k] < nv) { nv = c[k]; nI = k; } }
-      if ((lo - nv) / lo * 100 < 1.5) continue;
-      /* confirmação: fecha abaixo do vale em até 30 pregões depois do 2º topo */
-      var conf = -1;
-      for (var k = j + 1; k < c.length && k <= j + 30; k++) { if (c[k] < nv) { conf = k; break; } }
-      var ok = false;
-      if (conf >= 0) {
-        var floor = nv * (1 - drop / 100);
-        for (var k = conf; k < c.length && k <= conf + 30; k++) { if (c[k] <= floor) { ok = true; break; } }
-      }
-      res.push({ i: i, j: j, neck: nI, nv: nv, conf: conf, ok: ok });
-      used = j;
-      break;
-    }
-  }
-  return res;
-}
-
-var PW = 780, PH = 300, PX0 = 52, PX1 = PW - 14, PY0 = 18, PY1 = PH - 30;
-function pxm(i) { return PX0 + i / (N - 1) * (PX1 - PX0); }
-
-function renderDT() {
-  var tol = parseFloat(document.getElementById('dtTol').value);
-  var drop = parseInt(document.getElementById('dtDrop').value, 10);
-  document.getElementById('dtTolVal').textContent = tol + '%';
-  document.getElementById('dtDropVal').textContent = drop + '%';
-
-  var found = detectDoubleTops(CLOSES, tol, drop);
-  var m = mapper(CLOSES, PX0, PX1, PY0, PY1, 0.06);
-  var ym = m.y;
-
-  var s = '<svg class="chart" viewBox="0 0 ' + PW + ' ' + PH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preço da AMD nos ~280 pregões, com as figuras de topo duplo encontradas marcadas em faixas coloridas conforme o desfecho. A leitura em texto está logo abaixo." font-family="ui-monospace, monospace">';
-  /* eixo de preço */
-  [m.min, (m.min + m.max) / 2, m.max].forEach(function(v) {
-    s += '<line x1="' + PX0 + '" y1="' + ym(v) + '" x2="' + PX1 + '" y2="' + ym(v) + '" stroke="var(--grid)"/>';
-    s += '<text x="' + (PX0 - 8) + '" y="' + (ym(v) + 3.5) + '" font-size="10" fill="var(--wire)" text-anchor="end">$' + Math.round(v) + '</text>';
-  });
-  /* faixas das figuras encontradas */
-  found.forEach(function(f) {
-    var col = f.conf < 0 ? 'var(--wire)' : (f.ok ? 'var(--ok)' : 'var(--danger)');
-    var x = pxm(f.i), w = pxm(f.j) - x;
-    s += '<rect x="' + x.toFixed(1) + '" y="' + PY0 + '" width="' + Math.max(w, 2).toFixed(1) + '" height="' + (PY1 - PY0) + '" fill="' + col + '" opacity="0.12"/>';
-    /* linha do vale, estendida até a confirmação */
-    var xEnd = f.conf >= 0 ? pxm(f.conf) : pxm(f.j);
-    s += '<line x1="' + x.toFixed(1) + '" y1="' + ym(f.nv).toFixed(1) + '" x2="' + xEnd.toFixed(1) + '" y2="' + ym(f.nv).toFixed(1) + '" stroke="' + col + '" stroke-width="1.4" stroke-dasharray="4 3"/>';
-    /* marcas nos dois topos */
-    [f.i, f.j].forEach(function(idx) {
-      s += '<circle cx="' + pxm(idx).toFixed(1) + '" cy="' + ym(CLOSES[idx]).toFixed(1) + '" r="3.4" fill="none" stroke="' + col + '" stroke-width="1.6"/>';
-    });
-  });
-  /* preço por cima */
-  s += poly(ptsOf(CLOSES, pxm, ym), 'var(--ink)', 1.4);
-  s += '<text x="' + PX0 + '" y="' + (PY1 + 18) + '" font-size="10" fill="var(--wire)">primeiro pregão</text>';
-  s += '<text x="' + PX1 + '" y="' + (PY1 + 18) + '" font-size="10" fill="var(--wire)" text-anchor="end">hoje</text>';
-  s += '</svg>';
-  document.getElementById('dtChart').innerHTML = s;
-
-  var conf = found.filter(function(f) { return f.conf >= 0; });
-  var win = found.filter(function(f) { return f.ok; });
-  var txt =
-    'Tolerância <span class="hi">' + tol + '%</span> → <span class="hi">' + found.length + '</span> ' +
-    (found.length === 1 ? 'figura encontrada' : 'figuras encontradas') + ' em ' + N + ' pregões<br>' +
-    'Dessas, <span class="hi">' + conf.length + '</span> chegaram a romper o vale' +
-    (conf.length ? ' e <span class="' + (win.length ? 'g' : 'r') + '">' + win.length + '</span> caíram os ' + drop + '% prometidos' : '') + '.<br>';
-  if (found.length < 10) {
-    txt += '<span style="color:var(--wire);">' + found.length + ' casos não são uma estatística — são anedota. ' +
-           'Servem para ver o formato do problema, não para medir uma taxa de acerto.</span>';
-  }
-  document.getElementById('dtReadout').innerHTML = txt;
-}
-document.getElementById('dtTol').addEventListener('input', renderDT);
-document.getElementById('dtDrop').addEventListener('input', renderDT);
-renderDT();
 </script>
 <script src="assets/site.js?v=df9b442e"></script>
 <script src="assets/nav.js?v=3909ef44"></script>

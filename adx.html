@@ -33,7 +33,7 @@
     document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<link rel="stylesheet" href="assets/base.css?v=509250f9">
+<link rel="stylesheet" href="assets/base.css?v=edd834d0">
 <style>
   :root { --accent: var(--trend); --accent-soft: var(--trend-soft); --tab-accent: var(--trend); }
 
@@ -52,6 +52,7 @@
 <nav class="site-tabs" aria-label="Páginas do guia">
   <div class="site-tabs-inner">
     <a href="index.html">Início</a>
+    <a href="dow.html">Teoria</a>
     <div class="tab-dropdown">
       <button type="button" class="tab-trigger current" id="indBtn" aria-haspopup="true" aria-expanded="false" aria-controls="indMenu">Indicadores <span class="caret" aria-hidden="true">▾</span></button>
     </div>
@@ -70,7 +71,7 @@
     <a role="menuitem" href="adx.html" aria-current="page">ADX — força da tendência</a>
     <a role="menuitem" href="macd.html">MACD — tendência com gatilho</a>
     <span class="tab-menu-head">Volume</span>
-    <a role="menuitem" href="volume.html">OBV e A/D — volume acumulado</a>
+    <a role="menuitem" href="volume.html">OBV — volume acumulado</a>
     <a role="menuitem" href="vwap.html">VWAP — preço médio ponderado</a>
   </div>
   <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false">
@@ -91,6 +92,34 @@
   <div class="formula">
     +DI = pressão compradora média &nbsp;·&nbsp; −DI = pressão vendedora média<br>
     ADX = média suavizada da diferença entre +DI e −DI &nbsp;<span style="color:var(--wire);">(quanto mais um lado domina, maior o ADX)</span>
+  </div>
+
+  <div class="panel">
+    <h2>O que tem dentro da conta</h2>
+    <p class="ptext">
+      "Pressão compradora média" esconde quatro passos. Nenhum é complicado sozinho — é a fila deles que
+      parece obscura. Um dia de exemplo: ontem a máxima foi $100, a mínima $96 e o fechamento $98; hoje a
+      máxima foi $104, a mínima $99.
+    </p>
+    <div class="formula">
+      1) Movimento direcional — quanto o range de hoje avançou além do de ontem:<br>
+      +DM = máxima de hoje − máxima de ontem = 104 − 100 = <b style="color:var(--ink);">$4</b><br>
+      −DM = mínima de ontem − mínima de hoje = 96 − 99 = −$3 → negativo, então <b style="color:var(--ink);">0</b><br>
+      <span style="color:var(--wire);">(só o maior dos dois candidatos conta; aqui foi tudo pra cima, então +DM vence e −DM zera)</span><br><br>
+      2) TR — o mesmo <a href="risco.html" style="color:var(--trend); font-weight:700;">True Range do ATR</a>, pra dar escala:<br>
+      TR = maior entre (104−99, |104−98|, |99−98|) = maior entre (5, 6, 1) = <b style="color:var(--ink);">$6</b><br><br>
+      3) +DI e −DI — o DM de cada lado, como % do TR:<br>
+      +DI = 100 × 4 ÷ 6 = <b style="color:var(--ink);">66,7</b> &nbsp;&nbsp; −DI = 100 × 0 ÷ 6 = <b style="color:var(--ink);">0</b><br><br>
+      4) DX — o desequilíbrio entre os dois, não a força bruta:<br>
+      DX = 100 × |66,7 − 0| ÷ (66,7 + 0) = <b style="color:var(--ink);">100</b>
+    </div>
+    <p class="ptext" style="margin-bottom:0;">
+      Um único dia quase nunca decide sozinho: na prática, +DM, −DM e TR são suavizados ao longo de 14 dias
+      (a mesma técnica de Wilder do ATR) antes de virarem +DI e −DI — e o próprio DX é suavizado <em>de novo</em>
+      para virar ADX. Duas camadas de suavização empilhadas é por isso que o ADX é o indicador mais atrasado
+      do guia, e por que dividir pelo TR importa: sem essa normalização, um ativo mais volátil sempre pareceria
+      ter "mais pressão", mesmo sem tendência de verdade.
+    </p>
   </div>
 
   <div class="panel">
@@ -135,7 +164,7 @@
     </div>
   </div>
 
-  <div class="foot">Referências: ADX(14) clássico de Wilder · leituras finais reais de AMD e TSM · material educativo, não é recomendação</div>
+  <div class="foot">Material educativo e ilustrativo — não é recomendação de investimento.</div>
 </main>
 
 <script>
