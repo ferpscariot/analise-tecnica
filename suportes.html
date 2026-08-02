@@ -126,6 +126,10 @@
       repetidas vezes. Os dois controles abaixo mudam <b>o que conta como pivô</b> e <b>o que conta como a mesma faixa</b>.
       Repare que suporte/resistência é sempre uma <b>faixa</b>, nunca uma linha exata.
     </p>
+    <p class="ptext">
+      O gráfico abaixo corta a série assim que as zonas detectadas acabam — o rali final da AMD (até $581) não
+      tem faixa nenhuma e só empurraria tudo para um canto minúsculo do desenho.
+    </p>
     <div class="formula">
       <b style="color:var(--ink);">Rigor do pivô, na prática</b> — fechamentos ao redor de um candidato a topo:<br>
       dia −4: $120&nbsp;&nbsp;dia −3: <b>$126</b>&nbsp;&nbsp;dia −2: $119&nbsp;&nbsp;dia −1: $121&nbsp;&nbsp;<b>dia 0: $124</b>&nbsp;&nbsp;dia +1: $122&nbsp;&nbsp;dia +2: $118 ...<br>
@@ -286,7 +290,6 @@ function findZones(closes, k, tolPct, minTouches) {
 
 /* ===== lab 1: detector interativo ===== */
 var ZW = 780, ZH = 320, ZX0 = 46, ZX1 = ZW - 14;
-function zxm(i) { return ZX0 + i / (N - 1) * (ZX1 - ZX0); }
 /* zoom: gráfico próprio, mais alto e com menos respiro vertical que o padrão —
    as 5 faixas de zona ficavam espremidas numa faixa fina no meio do gráfico */
 var ZH2 = 460;
@@ -299,9 +302,20 @@ function renderZones(selectedIdx) {
 
   var res = findZones(CLOSES, k, tol, 3);
   currentZones = res.zones;
-  var pm = mapper(CLOSES, ZX0, ZX1, 14, ZH2 - 20, 0.04);
 
-  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH2 + '" xmlns="http://www.w3.org/2000/svg" role=\"img\" aria-label=\"Preço da AMD com os pivôs detectados e as zonas de suporte e resistência destacadas em faixas. O resumo está em texto abaixo.\" font-family="ui-monospace, monospace" id="zoneSvg">';
+  /* recorte: as zonas com 3+ toques vivem só numa janela inicial da série —
+     o rali final até $581 não contém nenhuma e só espremia tudo num canto */
+  var winEnd = N - 1;
+  var touchDays = [];
+  res.zones.forEach(function(z) { z.pts.forEach(function(p) { touchDays.push(p.i); }); });
+  if (touchDays.length) {
+    winEnd = Math.min(N - 1, Math.max.apply(null, touchDays) + 15);
+  }
+  var CLOSES_WIN = CLOSES.slice(0, winEnd + 1);
+  function zxm(i) { return ZX0 + i / (CLOSES_WIN.length - 1) * (ZX1 - ZX0); }
+  var pm = mapper(CLOSES_WIN, ZX0, ZX1, 14, ZH2 - 20, 0.04);
+
+  var s = '<svg class="chart" viewBox="0 0 ' + ZW + ' ' + ZH2 + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preço da AMD com os pivôs detectados e as zonas de suporte e resistência destacadas em faixas, recortado até o pregão ' + (winEnd + 1) + ' — o rali final sem zonas relevantes fica de fora. O resumo está em texto abaixo." font-family="ui-monospace, monospace" id="zoneSvg">';
   // faixas primeiro (atrás do preço)
   res.zones.slice(0, 8).forEach(function(z, zi) {
     var yTop = pm.y(z.c * (1 + tol / 100)), yBot = pm.y(z.c * (1 - tol / 100));
@@ -316,9 +330,10 @@ function renderZones(selectedIdx) {
            '" font-weight="700">~$' + z.c.toFixed(0) + ' · ' + z.pts.length + ' toques</text>';
     }
   });
-  s += poly(ptsOf(CLOSES, zxm, pm.y), 'var(--ink)', 1.6);
+  s += poly(ptsOf(CLOSES_WIN, zxm, pm.y), 'var(--ink)', 1.6);
   // pivôs
   res.pivots.forEach(function(pv) {
+    if (pv.i > winEnd) return;
     s += '<circle cx="' + zxm(pv.i).toFixed(1) + '" cy="' + pm.y(pv.p).toFixed(1) + '" r="3" fill="' +
          (pv.kind === 'H' ? 'var(--danger)' : 'var(--trend)') + '" opacity="0.8"/>';
   });
