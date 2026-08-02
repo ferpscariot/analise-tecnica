@@ -157,9 +157,11 @@
     </div>
     <div id="triChart"></div>
     <div class="insight" style="margin-top:16px;">
-      Na AMD real: a linha tracejada é a tendência primária (uma sequência de fundos cada vez mais altos, de
-      $110 a $191). As duas faixas sombreadas são correções secundárias dentro dela — quedas de 18% e 23%
-      que pareciam o fim da alta na hora, e eram apenas a onda.
+      Gráfico genérico (não é a AMD nem nenhum ativo real) — construído de propósito para separar as três
+      escalas: a linha tracejada é só a <b style="color:var(--ink);">maré</b> (a direção de fundo, sem mais
+      nada); a linha colorida cheia soma a <b style="color:var(--ink);">onda</b> (as duas correções); e a
+      linha preta, a única que existiria de verdade num gráfico de preço, soma também a
+      <b style="color:var(--ink);">ondulação</b> — o ruído do dia a dia por cima de tudo.
     </div>
   </div>
 
@@ -308,35 +310,53 @@
 
 <script src="assets/amd.js?v=2be7c134"></script>
 <script>
-/* ===== tendência primária real + duas correções secundárias ===== */
+/* ===== gráfico genérico: maré (primária) + onda (secundária) + ondulação (terciária) ===== */
 var TW = 780, TH = 420, TX0 = 46, TX1 = TW - 14, TY0 = 16, TY1 = TH - 24;
-function txm(i) { return TX0 + i / (N - 1) * (TX1 - TX0); }
+var TN = 140;
+function txm(i) { return TX0 + i / (TN - 1) * (TX1 - TX0); }
+
+var SECS = [[30, 55, -16], [82, 108, -20]];
+function primary(t) { return 100 + 0.5 * t; }
+function secondary(t) {
+  var s = 0;
+  SECS.forEach(function(seg) {
+    if (t >= seg[0] && t <= seg[1]) s += seg[2] * Math.sin(Math.PI * (t - seg[0]) / (seg[1] - seg[0]));
+  });
+  return s;
+}
+function tertiary(t) { return 2.2 * Math.sin(t * 1.6) + 1.4 * Math.sin(t * 3.1 + 1.1) + 0.9 * Math.sin(t * 5.4 + 2.3); }
 
 function renderTri() {
-  var pm = mapper(CLOSES, TX0, TX1, TY0, TY1, 0.05);
-  var s = '<svg class="chart" viewBox="0 0 ' + TW + ' ' + TH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preço da AMD nos ~280 pregões, com a tendência primária ascendente tracejada e duas correções secundárias destacadas em faixas. A leitura em texto está logo acima." font-family="ui-monospace, monospace">';
+  var tide = [], wave = [], full = [];
+  for (var t = 0; t < TN; t++) {
+    var p = primary(t), s = secondary(t), r = tertiary(t);
+    tide.push(p); wave.push(p + s); full.push(p + s + r);
+  }
+  var pm = mapper(full, TX0, TX1, TY0, TY1, 0.08);
+  var s = '<svg class="chart" viewBox="0 0 ' + TW + ' ' + TH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfico genérico e ilustrativo, não é um ativo real, mostrando três camadas sobrepostas: a tendência primária tracejada, a tendência primária mais as correções secundárias, e a linha cheia final que soma também o ruído terciário do dia a dia. A leitura está em texto acima e abaixo." font-family="ui-monospace, monospace">';
 
-  /* correções secundárias reais: dia 57 (topo $184) a 73 (fundo $151), e dia 111 ($264) a 128 ($204) */
-  [[57, 73, 184.4, 151.1], [111, 128, 264.3, 203.8]].forEach(function(c) {
-    var x0 = txm(c[0]), x1 = txm(c[1]);
-    var yTop = pm.y(c[2]), yBot = pm.y(c[3]);
-    s += '<rect x="' + x0.toFixed(1) + '" y="' + yTop.toFixed(1) + '" width="' + (x1 - x0).toFixed(1) + '" height="' + (yBot - yTop).toFixed(1) + '" fill="var(--danger)" opacity="0.10"/>';
+  SECS.forEach(function(seg) {
+    var lo = Infinity, hi = -Infinity;
+    for (var t = seg[0]; t <= seg[1]; t++) { if (wave[t] < lo) lo = wave[t]; if (wave[t] > hi) hi = wave[t]; }
+    var x0 = txm(seg[0]), x1 = txm(seg[1]);
+    s += '<rect x="' + x0.toFixed(1) + '" y="' + pm.y(hi).toFixed(1) + '" width="' + (x1 - x0).toFixed(1) + '" height="' + (pm.y(lo) - pm.y(hi)).toFixed(1) + '" fill="var(--danger)" opacity="0.10"/>';
+    s += '<text x="' + ((x0 + x1) / 2).toFixed(1) + '" y="' + (pm.y(hi) - 8).toFixed(1) + '" font-size="10" fill="var(--danger)" text-anchor="middle">correção secundária</text>';
   });
 
-  /* tendência primária: fundo dia 2 ($110) a fundo dia 195 ($191), estendida até o fim */
-  var d0 = 2, p0 = 110.31, d1 = 195, p1 = 190.9;
-  var slope = (p1 - p0) / (d1 - d0);
-  var pEnd = p0 + slope * (N - 1 - d0);
-  s += '<line x1="' + txm(d0).toFixed(1) + '" y1="' + pm.y(p0).toFixed(1) + '" x2="' + txm(N - 1).toFixed(1) + '" y2="' + pm.y(pEnd).toFixed(1) + '" stroke="var(--dow)" stroke-width="1.6" stroke-dasharray="6 4"/>';
+  s += poly(ptsOf(tide, txm, pm.y), 'var(--dow)', 1.6, '6 4');
+  s += poly(ptsOf(wave, txm, pm.y), 'var(--danger)', 1.8);
+  s += poly(ptsOf(full, txm, pm.y), 'var(--ink)', 1.4);
 
-  s += poly(ptsOf(CLOSES, txm, pm.y), 'var(--ink)', 1.5);
+  /* ponte mostrando a ondulação isolada, num trecho limpo sem correção secundária */
+  var tb = 15;
+  s += '<line x1="' + txm(tb).toFixed(1) + '" x2="' + txm(tb).toFixed(1) + '" y1="' + pm.y(tide[tb]).toFixed(1) + '" y2="' + pm.y(full[tb]).toFixed(1) + '" stroke="var(--wire)" stroke-width="1" stroke-dasharray="2 2"/>';
+  s += '<text x="' + (txm(tb) + 8).toFixed(1) + '" y="' + (pm.y((tide[tb] + full[tb]) / 2) + 3).toFixed(1) + '" font-size="10" fill="var(--wire)">ondulação</text>';
 
-  s += '<text x="' + (txm(65)).toFixed(1) + '" y="' + (pm.y(184.4) - 8).toFixed(1) + '" font-size="10" fill="var(--danger)" text-anchor="middle">correção secundária · −18%</text>';
-  s += '<text x="' + (txm(119)).toFixed(1) + '" y="' + (pm.y(264.3) - 8).toFixed(1) + '" font-size="10" fill="var(--danger)" text-anchor="middle">correção secundária · −23%</text>';
-  s += '<text x="' + txm(d1).toFixed(1) + '" y="' + (pm.y(p1) + 16).toFixed(1) + '" font-size="10" fill="var(--dow)" font-weight="700">tendência primária</text>';
+  s += '<text x="' + txm(TN - 1).toFixed(1) + '" y="' + (pm.y(tide[TN - 1]) - 8).toFixed(1) + '" font-size="10" fill="var(--dow)" font-weight="700" text-anchor="end">tendência primária — a maré</text>';
+  s += '<text x="' + txm(TN - 1).toFixed(1) + '" y="' + (pm.y(full[TN - 1]) + 16).toFixed(1) + '" font-size="10" fill="var(--ink)" font-weight="700" text-anchor="end">preço real — maré + onda + ondulação</text>';
 
-  s += '<text x="' + TX0 + '" y="' + (TY1 + 16) + '" font-size="10" fill="var(--wire)">primeiro pregão</text>';
-  s += '<text x="' + TX1 + '" y="' + (TY1 + 16) + '" font-size="10" fill="var(--wire)" text-anchor="end">hoje</text>';
+  s += '<text x="' + TX0 + '" y="' + (TY1 + 16) + '" font-size="10" fill="var(--wire)">início do período</text>';
+  s += '<text x="' + TX1 + '" y="' + (TY1 + 16) + '" font-size="10" fill="var(--wire)" text-anchor="end">fim do período</text>';
   s += '</svg>';
   document.getElementById('triChart').innerHTML = s;
 }

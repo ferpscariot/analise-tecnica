@@ -108,13 +108,8 @@
     <p class="ptext" style="margin-bottom:8px;">
       <b style="color:var(--ink);">Ancoragem:</b> números que todo mundo olhou — a máxima histórica, o número redondo ($100, $500), o preço do IPO — viram referências psicológicas.
     </p>
-    <p class="ptext" style="margin-bottom:8px;">
-      <b style="color:var(--ink);">Profecia autorrealizável:</b> se milhares de traders desenham a mesma linha e agem nela, a linha funciona — <em>porque</em> todos agem nela. É circular, e é real.
-    </p>
     <p class="ptext" style="margin-bottom:0;">
-      <b style="color:var(--ink);">Liquidez:</b> todo stop deixado perto de um topo ou fundo é uma ordem pendente esperando para ser
-      executada — um bolsão previsível de negócios. É a mesma ideia de "ordens acumuladas" de outro ângulo;
-      o painel mais abaixo entra nesse mecanismo com mais calma.
+      <b style="color:var(--ink);">Profecia autorrealizável:</b> se milhares de traders desenham a mesma linha e agem nela, a linha funciona — <em>porque</em> todos agem nela. É circular, e é real.
     </p>
   </div>
 
@@ -180,59 +175,6 @@
     <div class="insight">
       A lógica da troca de papel: quem vendeu no teto viu o preço fugir para cima e quer <b>recomprar no mesmo nível</b>;
       quem perdeu o rompimento espera o <b>reteste</b> para entrar. As ordens dos dois grupos viram o novo piso.
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>Zonas de liquidez — o mesmo fenômeno, pela ótica do stop</h2>
-    <p class="ptext">
-      Vocabulário mais recente (ligado ao "smart money"), mas descrevendo o mesmo bolsão de ordens de sempre —
-      só que agora nomeando quem está dos dois lados dele. <b style="color:var(--ink);">Liquidez de compra</b>
-      é o conjunto de stops de recompra empilhados <em>acima</em> de um topo, deixados por quem vendeu a
-      descoberto ali. <b style="color:var(--ink);">Liquidez de venda</b> é o espelho: stops de venda empilhados
-      <em>abaixo</em> de um fundo, deixados por quem comprou ali.
-    </p>
-    <p class="ptext">
-      Topos ou fundos <b style="color:var(--ink);">quase iguais</b> — os "equal highs/lows" — são o alvo
-      preferido: dois toques no mesmo preço concentram o dobro do bolsão de ordens no mesmo lugar. É
-      literalmente a mesma zona de 3+ toques que o detector acima encontra, vista como "onde estão os stops"
-      em vez de "onde o preço reagiu".
-    </p>
-    <svg viewBox="0 0 320 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Esquema de uma varredura de liquidez: o preço sobe até um nível de resistência, o pavio de um candle ultrapassa o nível, mas o fechamento volta para baixo dele, e os candles seguintes revertem com força.">
-      <line x1="14" y1="60" x2="306" y2="60" fill="none" stroke="var(--wire)" stroke-width="1.2" stroke-dasharray="4 3"/>
-      <text x="18" y="52" font-size="10" fill="var(--wire)" font-family="ui-monospace, monospace">nível · liquidez de compra acumulada acima</text>
-      <line x1="40" y1="90" x2="40" y2="118" stroke="var(--trend)" stroke-width="2"/>
-      <rect x="32" y="95" width="16" height="18" rx="2" fill="var(--trend)"/>
-      <line x1="80" y1="75" x2="80" y2="102" stroke="var(--trend)" stroke-width="2"/>
-      <rect x="72" y="80" width="16" height="17" rx="2" fill="var(--trend)"/>
-      <line x1="120" y1="60" x2="120" y2="87" stroke="var(--trend)" stroke-width="2"/>
-      <rect x="112" y="65" width="16" height="16" rx="2" fill="var(--trend)"/>
-      <line x1="160" y1="42" x2="160" y2="82" stroke="var(--danger)" stroke-width="2"/>
-      <rect x="152" y="58" width="16" height="20" rx="2" fill="var(--danger)"/>
-      <line x1="200" y1="65" x2="200" y2="112" stroke="var(--danger)" stroke-width="2"/>
-      <rect x="192" y="75" width="16" height="30" rx="2" fill="var(--danger)"/>
-      <line x1="240" y1="102" x2="240" y2="140" stroke="var(--danger)" stroke-width="2"/>
-      <rect x="232" y="106" width="16" height="28" rx="2" fill="var(--danger)"/>
-      <text x="160" y="34" font-size="9.5" fill="var(--danger)" text-anchor="middle" font-weight="700" font-family="ui-monospace, monospace">o pavio "varre" o nível...</text>
-      <text x="220" y="155" font-size="9.5" fill="var(--danger)" text-anchor="middle" font-weight="700" font-family="ui-monospace, monospace">...e reverte com força</text>
-    </svg>
-    <p class="ptext" style="margin-top:12px;">
-      Essa é a "varredura de liquidez": o preço espeta além do nível — o suficiente para acionar os stops
-      agrupados ali — e reverte logo em seguida. É a mesma figura que a página já chama de
-      <b style="color:var(--ink);">falso rompimento</b>; a leitura de liquidez só explica <em>por que</em> o
-      mercado parece "ir buscar" esses pavios com tanta frequência.
-    </p>
-    <p class="ptext" style="margin-bottom:0;">
-      Na AMD real: a tampa em ~$221 (painel acima) levou <b>4 toques ao longo de meses</b> antes de ceder —
-      cada toque deixando mais stops de recompra empilhados um pouco acima do nível. Quando finalmente rompeu
-      de vez, não foi um espeto isolado: o preço engoliu aquela liquidez inteira e seguiu — o mesmo evento,
-      as duas leituras.
-    </p>
-    <div class="insight">
-      A ressalva: dizer que "o mercado foi buscar liquidez de propósito" atribui intenção a algo que não dá
-      pra verificar só olhando o preço — é uma interpretação, não um fato observável. O que é observável, e já
-      está no restante desta página, é que o preço ultrapassa níveis e volta com frequência. A lente de
-      liquidez explica o mecanismo; não aumenta o poder preditivo além do que "zona, não linha" já dizia.
     </div>
   </div>
 
