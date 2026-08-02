@@ -140,7 +140,7 @@ svg [fill="#fff"] { fill: var(--card); }
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
+    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
@@ -168,15 +168,32 @@ svg [fill="#fff"] { fill: var(--card); }
     <div class="phead"><span class="pnum">1</span><h2>ATR — o tamanho do passo diário</h2></div>
     <p class="ptext">ATR é <b>Average True Range</b> — a amplitude média diária. Em uma frase: <b>quantos dólares o ativo costuma percorrer num dia normal</b>. Não diz a direção, só o tamanho do passo. É a matéria-prima de todo o resto desta página.</p>
     <div class="formula" style="margin-top:0;margin-bottom:16px;">
-      <span style="color:var(--wire);">Para cada dia, a "amplitude real" é a <b>maior</b> destas três:</span><br>
+      <span style="color:var(--wire);">Passo 1 — para cada dia, o "true range" (TR) é a <b>maior</b> destas três:</span><br>
       máxima − mínima &nbsp;<span style="color:var(--wire);">(o range do dia)</span><br>
       |máxima − fechamento anterior| &nbsp;<span style="color:var(--wire);">(gap de alta)</span><br>
       |mínima − fechamento anterior| &nbsp;<span style="color:var(--wire);">(gap de baixa)</span><br>
       <span style="color:var(--wire);">────────────────────────────</span><br>
-      <b>ATR = média dessas amplitudes nos últimos 14 dias</b>
+      <b>TR(hoje) = maior das três acima</b><br><br>
+      <span style="color:var(--wire);">Passo 2 — o ATR não é a média simples dos TR: é a fórmula de Wilder, que nunca esquece de vez o passado:</span><br>
+      ATR(dia 14) = média dos primeiros 14 valores de TR<br>
+      <b>ATR(hoje) = (ATR(ontem) × 13 + TR(hoje)) ÷ 14</b>
     </div>
-    <p class="ptext">As duas últimas linhas existem por causa dos <b>gaps</b>: se a ação fecha a $100 e abre a $108, o range do dia sozinho esconderia esse salto. O "true" do nome é justamente isso — contar o movimento que aconteceu <em>entre</em> os pregões também. Você não precisa calcular à mão: todo home broker traz ATR(14) pronto como indicador.</p>
-    <p class="ptext">O número em dólares, sozinho, não diz nada — <b>$5 é muito ou pouco?</b> Depende do preço do ativo. Por isso o que importa é o ATR como <b>% do preço</b>. Mexa nos controles e veja:</p>
+    <p class="ptext">As duas últimas linhas do passo 1 existem por causa dos <b>gaps</b>: se a ação fecha a $100 e abre a $108, o range do dia sozinho esconderia esse salto. O "true" do nome é justamente isso — contar o movimento que aconteceu <em>entre</em> os pregões também.</p>
+    <p class="ptext">E o passo 2 é o mesmo alisamento de Wilder que aparece no <a href="adx.html">ADX</a> (lá, aplicado duas vezes seguidas): cada novo ATR é 13 partes do ATR de ontem para 1 parte do TR de hoje — reage à volatilidade nova sem esquecer a antiga de uma hora para outra. Você não precisa calcular nada disso à mão: todo home broker traz ATR(14) pronto como indicador.</p>
+    <p class="ptext">Mexa nos dois controles abaixo e veja o passo 1 acontecer: qual das três linhas da fórmula vence, e por quê.</p>
+    <div class="ctrl">
+      <label for="trRange">Amplitude do dia (máx − mín)</label>
+      <input type="range" id="trRange" min="2" max="20" value="8" step="0.5">
+      <span class="pill" id="trRangeV">$8.0</span>
+    </div>
+    <div class="ctrl">
+      <label for="trShift">Deslocamento vs. ontem</label>
+      <input type="range" id="trShift" min="-25" max="25" value="0" step="0.5">
+      <span class="pill" id="trShiftV">$0.0</span>
+    </div>
+    <div id="trChart"></div>
+    <div class="result" id="trResult" aria-live="polite"></div>
+    <p class="ptext" style="margin-top:14px;">O número em dólares, sozinho, não diz nada — <b>$5 é muito ou pouco?</b> Depende do preço do ativo. Por isso o que importa é o ATR como <b>% do preço</b>. Mexa nos controles e veja:</p>
     <div class="ctrl">
       <label for="atrPrice">Preço do ativo</label>
       <input type="range" id="atrPrice" min="20" max="600" value="517" step="1">
@@ -291,6 +308,52 @@ svg [fill="#fff"] { fill: var(--card); }
 <script>
 function $(id){ return document.getElementById(id); }
 function fmt(n){ return n.toLocaleString('pt-BR', {maximumFractionDigits:0}); }
+
+/* ---- PILLAR 1: ATR — calculadora de true range ---- */
+function renderTR() {
+  var range = +$('trRange').value, shift = +$('trShift').value;
+  $('trRangeV').textContent = '$' + range.toFixed(1);
+  $('trShiftV').textContent = (shift >= 0 ? '+$' : '−$') + Math.abs(shift).toFixed(1);
+
+  var prev = 100;
+  var mid = prev + shift;
+  var H = mid + range / 2, L = mid - range / 2;
+  var cRange = H - L;
+  var cGapUp = Math.abs(H - prev);
+  var cGapDown = Math.abs(L - prev);
+  var tr = Math.max(cRange, cGapUp, cGapDown);
+  var winner = tr === cRange ? 'range' : (tr === cGapUp ? 'gapUp' : 'gapDown');
+
+  var yMin = Math.min(L, prev) - 6, yMax = Math.max(H, prev) + 6;
+  function y(v) { return 178 - (v - yMin) / (yMax - yMin) * 156; }
+  var s = '<svg viewBox="0 0 460 200" role="img" aria-label="Diagrama do true range: fechamento de ontem em $100, a faixa de hoje entre mínima e máxima, e o alcance real que o ATR enxerga.">';
+  s += '<line x1="16" x2="444" y1="' + y(prev).toFixed(1) + '" y2="' + y(prev).toFixed(1) + '" stroke="var(--wire)" stroke-width="1.2" stroke-dasharray="4 3"/>';
+  s += '<text x="20" y="' + (y(prev) - 7).toFixed(1) + '" font-size="11" fill="var(--wire)" font-family="var(--mono)">fechamento de ontem — $100</text>';
+  var trTop = y(Math.max(H, prev)), trBot = y(Math.min(L, prev));
+  s += '<rect x="150" y="' + trTop.toFixed(1) + '" width="64" height="' + (trBot - trTop).toFixed(1) + '" fill="var(--accent)" opacity="0.14" rx="4"/>';
+  s += '<line x1="182" x2="182" y1="' + y(H).toFixed(1) + '" y2="' + y(L).toFixed(1) + '" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>';
+  s += '<text x="234" y="' + (y(H) + 4).toFixed(1) + '" font-size="11" fill="var(--ink)" font-family="var(--mono)">máxima $' + H.toFixed(1) + '</text>';
+  s += '<text x="234" y="' + (y(L) + 4).toFixed(1) + '" font-size="11" fill="var(--ink)" font-family="var(--mono)">mínima $' + L.toFixed(1) + '</text>';
+  s += '<text x="150" y="' + (trTop - 7).toFixed(1) + '" font-size="11.5" fill="var(--accent)" font-weight="700" font-family="var(--mono)">TR = $' + tr.toFixed(1) + '</text>';
+  s += '</svg>';
+  $('trChart').innerHTML = s;
+
+  var lr = 'range do dia (máx − mín) = $' + cRange.toFixed(1);
+  var lu = 'gap de alta = $' + cGapUp.toFixed(1);
+  var ld = 'gap de baixa = $' + cGapDown.toFixed(1);
+  if (winner === 'range') lr = '<span class="up">' + lr + '</span>';
+  if (winner === 'gapUp') lu = '<span class="up">' + lu + '</span>';
+  if (winner === 'gapDown') ld = '<span class="up">' + ld + '</span>';
+  $('trResult').innerHTML =
+    lr + '<br>' + lu + '<br>' + ld + '<br>' +
+    '<span style="color:var(--wire);">────────────────────────────</span><br>' +
+    'TR de hoje = <span class="big">$' + tr.toFixed(1) + '</span>' +
+    (winner !== 'range'
+      ? ' — <span class="warn">o gap venceu</span>: o range do próprio dia sozinho escondia parte do movimento'
+      : ' — o range do próprio dia já cobre tudo, gap não fez diferença hoje');
+}
+['trRange', 'trShift'].forEach(function(id){ $(id).addEventListener('input', renderTR); });
+renderTR();
 
 /* ---- PILLAR 1: ATR ---- */
 function renderATR() {

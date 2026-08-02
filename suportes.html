@@ -69,7 +69,7 @@
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
+    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
@@ -142,13 +142,6 @@
       <span style="color:var(--wire);">O slider está comparando exatamente essa % com a distância entre os pivôs — nada mais.</span>
     </div>
 
-    <div class="legend">
-      <span><span class="dot" style="background:var(--danger);"></span>pivô de alta (possível teto)</span>
-      <span><span class="dot" style="background:var(--trend);"></span>pivô de baixa (possível piso)</span>
-      <span><span class="dot" style="background:var(--lvl); border-radius:2px;"></span>zona com 3+ toques</span>
-    </div>
-    <p class="why-note">Por que <b>3 toques</b>? Dois pontos você liga em qualquer lugar — três ou mais é o mínimo para dizer que o mercado respeitou aquele nível de propósito, e não por acaso. Clique numa faixa amarela para ver em que dias ela foi tocada.</p>
-
     <div class="controls-row" style="margin-bottom:10px;">
       <label for="pivK">Rigor do pivô</label>
       <input type="range" id="pivK" min="2" max="10" value="4">
@@ -160,6 +153,14 @@
       <span class="value-pill" id="zoneTolVal">±1.5%</span>
     </div>
     <div id="zoneChart"></div>
+
+    <div class="legend">
+      <span><span class="dot" style="background:var(--danger);"></span>pivô de alta (possível teto)</span>
+      <span><span class="dot" style="background:var(--trend);"></span>pivô de baixa (possível piso)</span>
+      <span><span class="dot" style="background:var(--lvl); border-radius:2px;"></span>zona com 3+ toques</span>
+    </div>
+    <p class="why-note">Por que <b>3 toques</b>? Dois pontos você liga em qualquer lugar — três ou mais é o mínimo para dizer que o mercado respeitou aquele nível de propósito, e não por acaso. Clique numa faixa amarela para ver em que dias ela foi tocada.</p>
+
     <div class="readout" id="zoneReadout" aria-live="polite"></div>
   </div>
 

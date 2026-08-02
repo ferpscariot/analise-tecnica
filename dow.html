@@ -90,7 +90,7 @@
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
+    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
@@ -309,11 +309,11 @@
 <script src="assets/amd.js?v=2be7c134"></script>
 <script>
 /* ===== tendência primária real + duas correções secundárias ===== */
-var TW = 780, TH = 300, TX0 = 46, TX1 = TW - 14, TY0 = 16, TY1 = TH - 24;
+var TW = 780, TH = 420, TX0 = 46, TX1 = TW - 14, TY0 = 16, TY1 = TH - 24;
 function txm(i) { return TX0 + i / (N - 1) * (TX1 - TX0); }
 
 function renderTri() {
-  var pm = mapper(CLOSES, TX0, TX1, TY0, TY1, 0.08);
+  var pm = mapper(CLOSES, TX0, TX1, TY0, TY1, 0.05);
   var s = '<svg class="chart" viewBox="0 0 ' + TW + ' ' + TH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Preço da AMD nos ~280 pregões, com a tendência primária ascendente tracejada e duas correções secundárias destacadas em faixas. A leitura em texto está logo acima." font-family="ui-monospace, monospace">';
 
   /* correções secundárias reais: dia 57 (topo $184) a 73 (fundo $151), e dia 111 ($264) a 128 ($204) */

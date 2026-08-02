@@ -174,45 +174,6 @@ p + p { margin-top: 12px; }
 #hero .thesis .osc-word { color: var(--osc); }
 #hero .thesis .trend-word { color: var(--trend); }
 
-.section-nav {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 0 22px 38px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-}
-.section-nav a {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  width: fit-content;
-  color: var(--ink-soft);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.section-nav-num {
-  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-  background: var(--card-strong); border: 1px solid var(--grid); color: var(--ink-soft);
-  font-family: var(--font-mono); font-weight: 700; font-size: 11.5px;
-  display: flex; align-items: center; justify-content: center;
-  transition: border-color 0.15s, color 0.15s;
-}
-.section-nav a:hover,
-.section-nav a:focus-visible {
-  color: var(--ink);
-}
-.section-nav a:hover .section-nav-num,
-.section-nav a:focus-visible .section-nav-num {
-  border-color: var(--wire); color: var(--ink);
-}
-.section-nav a:focus-visible {
-  outline: 3px solid var(--osc);
-  outline-offset: 2px;
-}
 /* ============ FAMILY CARDS ============ */
 .families {
   display: grid;
@@ -557,7 +518,7 @@ footer {
     <span class="tab-menu-head">Osciladores</span>
     <a role="menuitem" href="rsi.html">RSI — força relativa</a>
     <a role="menuitem" href="estocastico.html">Estocástico — posição no range</a>
-    <a role="menuitem" href="momentum.html">Momentum e ROC — velocidade bruta</a>
+    <a role="menuitem" href="momentum.html">Momentum — velocidade bruta</a>
     <span class="tab-menu-head">Tendência</span>
     <a role="menuitem" href="medias.html">Médias móveis — SMA e EMA</a>
     <a role="menuitem" href="adx.html">ADX — força da tendência</a>
@@ -600,11 +561,6 @@ footer {
     </figure>
   </div>
 </section>
-
-<nav class="section-nav" aria-label="Navegação interna">
-  <a href="#families"><span class="section-nav-num">1</span>Mapa das famílias</a>
-  <a href="#trilha"><span class="section-nav-num">2</span>Trilha sugerida</a>
-</nav>
 
 <!-- ================= FAMILIES ================= -->
 <section id="families" style="padding-top:10px;">
@@ -654,7 +610,7 @@ footer {
         <ul>
           <li><a href="rsi.html">RSI — força relativa</a></li>
           <li><a href="estocastico.html">Estocástico — posição no range</a></li>
-          <li><a href="momentum.html">Momentum e ROC — velocidade bruta</a></li>
+          <li><a href="momentum.html">Momentum — velocidade bruta</a></li>
         </ul>
         <p class="asks">Pergunta que respondem: <em>"está esticado?"</em></p>
       </div>
